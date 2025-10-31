@@ -1,0 +1,39 @@
+[project]
+name = "automacao_certificados"
+version = "0.0.1"
+authors = [
+  { name="João Gabriel Sampaio de Barros", email="jgabrielsb2002@gmail.com"},
+]
+description = "A Python package for automating the process of downloading certificates from several sources"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+dependencies = [
+   "pytest>=8.4.2",
+]
+
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+# 👇 tell Hatchling exactly what to ship in the wheel
+[tool.hatch.build.targets.wheel]
+packages = ["src/automacao_certificados"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--verbose",
+    "--html=report.html",
+]
+markers = [
+  "selenium_workflow_tests: marks tests as selenium workflow tests (deselect with '-m \"not selenium_workflow_tests\"')",
+]
