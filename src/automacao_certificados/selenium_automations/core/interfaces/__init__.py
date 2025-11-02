@@ -1,2 +1,3 @@
 from .base_page import BasePage
 from .base_image_processor import BaseImageProcessor
+from .base_document_extractor import BaseDocumentExtractor
