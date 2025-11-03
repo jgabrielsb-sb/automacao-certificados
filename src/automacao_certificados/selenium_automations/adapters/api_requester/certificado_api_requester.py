@@ -25,11 +25,11 @@ class CertificadoAPIRequester(BaseAPIRequester):
         self, 
         supplier: dto_supplier.SupplierCreate
     ) -> dto_supplier.SupplierResponse:
-        route = f"{self.base_url}/suppliers/"
+        route = f"{self.base_url}/api/v1/suppliers/"
 
         response = requests.post(
             url=route,
-            json=supplier.model_dump(),
+            json=supplier.model_dump(mode="json"),
         )
 
         if response.status_code == HTTPStatus.CREATED:
@@ -68,12 +68,13 @@ class CertificadoAPIRequester(BaseAPIRequester):
         self,
         filter: dto_supplier.SupplierFilter
     ) -> list[dto_supplier.SupplierResponse]:
-        route = f"{self.base_url}/suppliers/"
+        route = f"{self.base_url}/api/v1/suppliers/"
 
         response = requests.get(
             url=route,
             params=filter.model_dump(),
         )
+        print(response.json())
 
         if response.status_code == HTTPStatus.OK:
             if not response.json():
@@ -81,11 +82,10 @@ class CertificadoAPIRequester(BaseAPIRequester):
                     route=route,
                     message=f"No suppliers found with the given filter: {filter.model_dump()}",
                 )
-
             return [dto_supplier.SupplierResponse(
-                id=supplier["id"],
+                id=int(supplier["id"]),
                 cnpj=supplier["cnpj"],
-            ) for supplier in response.json()]
+            ) for supplier in response.json()["data"]]
 
         elif (
             response.status_code == HTTPStatus.NOT_FOUND and 
@@ -111,11 +111,11 @@ class CertificadoAPIRequester(BaseAPIRequester):
         self, 
         document=dto_document.DocumentCreate
     ):
-        route = f"{self.base_url}/documents/"
+        route = f"{self.base_url}/api/v1/documents/"
 
         response = requests.post(
             url=route,
-            json=document.model_dump(),
+            json=document.model_dump(mode="json"),
         )
 
         if response.status_code == HTTPStatus.CREATED:
@@ -153,7 +153,7 @@ class CertificadoAPIRequester(BaseAPIRequester):
         self,
         filter: dto_document.DocumentFilter
     ) -> list[dto_document.DocumentResponse]:
-        route = f"{self.base_url}/documents/"
+        route = f"{self.base_url}/api/v1/documents/"
 
         response = requests.get(
             url=route,
@@ -171,7 +171,7 @@ class CertificadoAPIRequester(BaseAPIRequester):
                 document_type_id=document["document_type_id"],
                 identifier=document["identifier"],
                 expiration_date=document["expiration_date"],
-            ) for document in response.json()]
+            ) for document in response.json()["data"]]
         elif (
             response.status_code == HTTPStatus.NOT_FOUND and 
             response.json().get("detail") == "Not Found"
