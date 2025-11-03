@@ -74,6 +74,20 @@ class CertificadoCaixaExtractor(BaseDocumentExtractor):
         """
         return "CERTIFICADO CAIXA"
 
+    def get_identifier(self) -> str:
+        """
+        Gets the document identifier (Certificação Número).
+        """
+        try:
+            identifier = WebDriverWait(self.driver, 3).until(
+                EC.presence_of_element_located(
+                    (By.XPATH, "//strong[contains(normalize-space(),'Certificação Número')]/following-sibling::span[@class='valor']")
+                )
+            ).text.strip()
+            return identifier
+        except Exception as e:
+            raise ErrorExtractingDataException("identifier", e)
+
     def get_expiration_date(self) -> date:
         """
         Gets the expiration date.

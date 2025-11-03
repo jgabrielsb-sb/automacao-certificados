@@ -34,6 +34,13 @@ class BaseDocumentExtractor(ABC):
         """
         pass
 
+    @abstractmethod
+    def get_identifier(self) -> str:
+        """
+        Gets the document identifier.
+        """
+        pass
+
     def run(self) -> dto_document.DocumentExtracted:
         """
         Runs the document extractor.
@@ -46,6 +53,7 @@ class BaseDocumentExtractor(ABC):
             supplier=self.get_supplier(),
             document_type=self.get_document_type(),
             expiration_date=self.get_expiration_date(),
+            identifier=self.get_identifier(),
         )
         return document
         

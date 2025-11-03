@@ -486,5 +486,6 @@ class TestCertificadoCaixaExtractorRun:
             #assert document.supplier.name == "BUYERS CONSULTORIA ESTRATEGICA LTDA"
             assert document.supplier.cnpj == "60.604.235/0001-14"
             assert document.document_type == "CERTIFICADO CAIXA"
+            assert document.identifier == "2025110205156413642881"
             assert document.expiration_date == date(2025, 12, 1)
             
