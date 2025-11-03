@@ -12,12 +12,15 @@ from automacao_certificados.config import settings
 from automacao_certificados.selenium_automations.core.models import dto_document
 from automacao_certificados.selenium_automations.adapters.extractors.certificado_caixa_extractor import CertificadoCaixaExtractor
 
+from automacao_certificados.selenium_automations.application.services.api import CertificadoAPIService
+from automacao_certificados.selenium_automations.adapters.api_requester import CertificadoAPIRequester
+
 def get_certificado_using_groq(
     driver: WebDriver, 
     state_value: str,
     inscricao_value: str,
     img_path_to_save: Path,
-) -> dto_document.DocumentExtracted:
+) -> tuple[dto_document.DocumentExtracted, Path]:
     """
     Download the certificado of the company by CNPJ using Groq.
     IMPORTANT: the CNPJ must be a basic CNPJ, that means that the CNPJ
@@ -26,6 +29,9 @@ def get_certificado_using_groq(
         driver: The driver to use.
         state_value: The state value to use.
         inscricao_value: The CNPJ value to use.
+        img_path_to_save: The path to save the image.
+    Returns:
+        The certificado extracted and the path to save the image.
     Raises:
         IncorrectCNPJException: If the CNPJ is incorrect.
         NotBasicCNPJException: If the CNPJ is not a basic CNPJ.
@@ -113,7 +119,15 @@ def get_certificado_using_groq(
     
     img_path_to_save = _get_path_to_save(certificado=certificado)
     _download_certificado(img_path_to_save)
-    return certificado
+
+    certificado_api_service = CertificadoAPIService(
+        api_requester=CertificadoAPIRequester(
+            base_url=settings.base_certificado_api_url
+        )
+    )
+    document = certificado_api_service.register_document(document=certificado)
+
+    return document
 
 
 
