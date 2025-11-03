@@ -4,9 +4,14 @@ from unittest.mock import Mock
 
 import requests
 
+from datetime import date
+
 from automacao_certificados.selenium_automations.adapters.api_requester import CertificadoAPIRequester
-from automacao_certificados.selenium_automations.adapters.api_requester.exceptions import BadRequestError, ConflictError, UnexpectedError
-from automacao_certificados.selenium_automations.core.models import dto_supplier
+from automacao_certificados.selenium_automations.adapters.api_requester.exceptions import *
+from automacao_certificados.selenium_automations.core.models import (
+    dto_supplier,
+    dto_document
+)
 
 BASE_URL = "https://api.certificado.com"
 api_requester = CertificadoAPIRequester(
@@ -152,6 +157,159 @@ class TestRegisterSupplier:
 
             assert e.value.route == f"{BASE_URL}/suppliers"
             assert e.value.message == "test message"
+
+class TestRegisterDocument:
+    def test_sucess_response(
+        self,
+        monkeypatch,
+    ):
+        document_create = dto_document.DocumentCreate(
+            supplier_id=1,
+            document_type_id="1",
+            identifier="12345678912",
+            expiration_date=date(2025, 12, 31)
+        )
+
+        def mock_fake_post(
+            url,
+            json,
+        ):
+            response = Mock(spec=requests.Response)
+            response.status_code = 201
+            response.json.return_value = {
+                "id": 1,
+                "supplier_id": document_create.supplier_id,
+                "document_type_id": document_create.document_type_id,
+                "identifier": document_create.identifier,
+                "expiration_date": document_create.expiration_date.isoformat()
+            }
+            return response
+
+        monkeypatch.setattr(
+            requests,
+            "post",
+            mock_fake_post
+        )
+
+        document_response = api_requester.register_document(
+            document_create
+        )
+
+        assert isinstance(document_response, dto_document.DocumentResponse)
+        assert document_response.id == 1
+        assert document_response.supplier_id == 1
+        assert document_response.document_type_id == "1"
+        assert document_response.identifier == "12345678912"
+        assert document_response.expiration_date == date(2025, 12, 31)
+
+    def test_not_found_response(
+        self,
+        monkeypatch,
+    ):
+        document_create = dto_document.DocumentCreate(
+            supplier_id=1,
+            document_type_id="1",
+            identifier="12345678912",
+            expiration_date=date(2025, 12, 31)
+        )
+
+        def mock_fake_post(
+            url,
+            json
+        ):
+            response = Mock(spec=requests.Response)
+            response.status_code = 404
+            response.json.return_value = {
+                "message": "supplier with id 1 not found"
+                }
+            return response
+
+        monkeypatch.setattr(
+            requests,
+            "post",
+            mock_fake_post
+        )
+
+        with pytest.raises(NotFoundError) as e:
+            api_requester.register_document(
+                document_create
+            )
+
+        assert e.value.route == f"{BASE_URL}/documents/"
+        assert "supplier with id 1 not found" in e.value.message
+
+    def test_bad_request_response(
+        self,
+        monkeypatch,
+    ):
+        document_create = dto_document.DocumentCreate(
+            supplier_id=1,
+            document_type_id="1",
+            identifier="12345678912",
+            expiration_date=date(2025, 12, 31)
+        )
+
+        def mock_fake_post(
+            url,
+            json
+        ):
+            response = Mock(spec=requests.Response)
+            response.status_code = 400
+            response.json.return_value = {
+                "message": "bad request test message"
+            }
+            return response
+
+        monkeypatch.setattr(
+            requests,
+            "post",
+            mock_fake_post
+        )
+
+        with pytest.raises(BadRequestError) as e:
+            api_requester.register_document(
+                document_create
+            )
+
+        assert e.value.route == f"{BASE_URL}/documents/"
+        assert "bad request test message" in e.value.message
+
+    def test_unexpected_request_response(
+        self,
+        monkeypatch,
+    ):
+        document_create = dto_document.DocumentCreate(
+            supplier_id=1,
+            document_type_id="1",
+            identifier="12345678912",
+            expiration_date=date(2025, 12, 31)
+        )
+
+        def mock_fake_post(
+            url,
+            json
+        ):
+            response = Mock(spec=requests.Response)
+            response.status_code = 500
+            response.json.return_value = {
+                "message": "unexpected test message"
+            }
+            return response
+
+        monkeypatch.setattr(
+            requests,
+            "post",
+            mock_fake_post
+        )
+
+        with pytest.raises(UnexpectedError) as e:
+            api_requester.register_document(
+                document_create
+            )
+
+            assert e.value.route == f"{BASE_URL}/documents/"
+            assert e.value.message == "test message"
+
 
 
 

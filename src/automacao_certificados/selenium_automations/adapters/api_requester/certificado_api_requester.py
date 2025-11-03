@@ -57,9 +57,40 @@ class CertificadoAPIRequester(BaseAPIRequester):
             )
 
     def register_document(
-        self, document
+        self, 
+        document=dto_document.DocumentCreate
     ):
-        pass
+        route = f"{self.base_url}/documents/"
+
+        response = requests.post(
+            url=route,
+            json=document.model_dump(),
+        )
+
+        if response.status_code == HTTPStatus.CREATED:
+            return dto_document.DocumentResponse(
+                id=response.json()["id"],
+                supplier_id=response.json()["supplier_id"],
+                document_type_id=response.json()["document_type_id"],
+                identifier=response.json()["identifier"],
+                expiration_date=response.json()["expiration_date"],
+            )
+        elif response.status_code == HTTPStatus.BAD_REQUEST:
+            raise BadRequestError(
+                route=route,
+                message=response.json()["message"],
+            )
+        elif response.status_code == HTTPStatus.NOT_FOUND:
+            raise NotFoundError(
+                route=route,
+                message=response.json()["message"]
+            )
+        else:
+            raise UnexpectedError(
+                route=route,
+                message=response.json()["message"],
+                status_code=response.status_code,
+            )
 
         
         
