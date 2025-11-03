@@ -9,3 +9,6 @@ class SupplierCreate(Supplier):
 
 class SupplierResponse(Supplier):
     id: int
+
+class SupplierFilter(BaseModel):
+    cnpj: str

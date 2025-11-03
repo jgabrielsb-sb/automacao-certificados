@@ -22,3 +22,9 @@ class DocumentCreate(Document):
 
 class DocumentResponse(Document):
     id: int
+
+class DocumentFilter(BaseModel):
+    supplier_id: int
+    document_type_id: str
+    identifier: str
+    expiration_date: date
