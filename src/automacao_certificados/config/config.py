@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     Settings for the application.
     """
     groq_api_key: Optional[str] = None
+    base_certificado_api_url: Optional[str] = None
 
     # ✅ new way to define config
     model_config = SettingsConfigDict(
