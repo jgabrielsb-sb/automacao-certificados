@@ -74,14 +74,14 @@ class CertificadoAPIRequester(BaseAPIRequester):
             url=route,
             params=filter.model_dump(),
         )
-        print(response.json())
 
         if response.status_code == HTTPStatus.OK:
-            if not response.json():
+            if len(response.json().get("data")) == 0:
                 raise NotFoundError(
                     route=route,
                     message=f"No suppliers found with the given filter: {filter.model_dump()}",
                 )
+
             return [dto_supplier.SupplierResponse(
                 id=int(supplier["id"]),
                 cnpj=supplier["cnpj"],
@@ -153,22 +153,22 @@ class CertificadoAPIRequester(BaseAPIRequester):
         self,
         filter: dto_document.DocumentFilter
     ) -> list[dto_document.DocumentResponse]:
-        route = f"{self.base_url}/api/v1/documents/"
+        route = f"{self.base_url}/api/v1/documents"
 
         response = requests.get(
             url=route,
-            params=filter.model_dump(),
+            params=filter.model_dump(mode="json"),
         )
         if response.status_code == HTTPStatus.OK:
-            if not response.json():
+            if len(response.json().get("data")) == 0:
                 raise NotFoundError(
                     route=route,
                     message=f"No documents found with the given filter: {filter.model_dump()}",
                 )
             return [dto_document.DocumentResponse(
-                id=document["id"],
-                supplier_id=document["supplier_id"],
-                document_type_id=document["document_type_id"],
+                id=int(document["id"]),
+                supplier_id=int(document["supplier_id"]),
+                document_type_id=int(document["document_type_id"]),
                 identifier=document["identifier"],
                 expiration_date=document["expiration_date"],
             ) for document in response.json()["data"]]
@@ -183,12 +183,12 @@ class CertificadoAPIRequester(BaseAPIRequester):
         elif response.status_code == HTTPStatus.BAD_REQUEST:
             raise BadRequestError(
                 route=route,
-                message=response.json()["message"],
+                message=f"{response.json()}",
             )
         else:
             raise UnexpectedError(
                 route=route,
-                message=response.json()["message"],
+                message=f"{response.json()}",
                 status_code=response.status_code,
             )
         
