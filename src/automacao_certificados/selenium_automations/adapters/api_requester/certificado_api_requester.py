@@ -39,11 +39,11 @@ class CertificadoAPIRequester(BaseAPIRequester):
             )
         elif (
             response.status_code == HTTPStatus.NOT_FOUND and 
-            response.json()["detail"] == "Not Found"
+            response.json().get("detail") == "Not Found"
         ):
             raise RouteNotFoundError(
                 route=route,
-                message=response.json()["detail"],
+                message=response.json().get("detail"),
             )
         elif response.status_code == HTTPStatus.BAD_REQUEST:
             raise BadRequestError(
@@ -89,11 +89,11 @@ class CertificadoAPIRequester(BaseAPIRequester):
 
         elif (
             response.status_code == HTTPStatus.NOT_FOUND and 
-            response.json()["detail"] == "Not Found"
+            response.json().get("detail") == "Not Found"
         ):
             raise RouteNotFoundError(
                 route=route,
-                message=response.json()["detail"],
+                message=response.json().get("detail"),
             )
         elif response.status_code == HTTPStatus.BAD_REQUEST:
             raise BadRequestError(
@@ -132,10 +132,10 @@ class CertificadoAPIRequester(BaseAPIRequester):
                 message=response.json()["message"],
             )
         elif response.status_code == HTTPStatus.NOT_FOUND:
-            if response.json()["detail"] == "Not Found":
+            if response.json().get("detail") == "Not Found":
                 raise RouteNotFoundError(
                     route=route,
-                    message=response.json()["detail"],
+                    message=response.json().get("detail"),
                 )
 
             raise NotFoundError(
@@ -174,11 +174,11 @@ class CertificadoAPIRequester(BaseAPIRequester):
             ) for document in response.json()]
         elif (
             response.status_code == HTTPStatus.NOT_FOUND and 
-            response.json()["detail"] == "Not Found"
+            response.json().get("detail") == "Not Found"
         ):
             raise RouteNotFoundError(
                 route=route,
-                message=response.json()["detail"],
+                message=response.json().get("detail"),
             )
         elif response.status_code == HTTPStatus.BAD_REQUEST:
             raise BadRequestError(
