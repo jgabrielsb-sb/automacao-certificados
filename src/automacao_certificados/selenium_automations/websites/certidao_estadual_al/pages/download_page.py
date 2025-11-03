@@ -168,8 +168,29 @@ class DownloadPage(BasePage):
             raise ImgPathException(
                 message=f"Insufficient permissions to save the file: {img_path_to_save.parent}"
             )
+
+    def _go_to_certificado_page(
+        self,
+    ) -> None:
+        """
+        Go to the certificado page.
+        """
+        self.click_on_cnpj_executor().run()
+        self.click_on_certificado_href_executor().run()
+        self.click_on_visualizar_button_executor().run()
+
+    def _download_certificado(
+        self,
+        img_path_to_save: Path,
+    ) -> None:
+        """
+        Download the certificado.
+        Args:
+            img_path_to_save: The path to save the image. Example: Path("certificado.png").
+        """
+        self.get_certificado_image(img_path_to_save=img_path_to_save).run()
     
-        
+
     def run(
         self,
         img_path_to_save: Path,
