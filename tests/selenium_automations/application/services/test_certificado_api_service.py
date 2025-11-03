@@ -193,7 +193,7 @@ class TestRegisterDocument:
         )
         
         # Verify document was registered with correct supplier_id from existing supplier
-        mock_api_requester.register_document.assert_called_with(
+        mock_api_requester.register_document.assert_called_once_with(
             document=dto_document.DocumentCreate(
                 supplier_id=2,
                 document_type_id=1,
