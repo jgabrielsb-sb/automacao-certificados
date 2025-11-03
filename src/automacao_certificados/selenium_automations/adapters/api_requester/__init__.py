@@ -1,0 +1,1 @@
+from .certificado_api_requester import CertificadoAPIRequester
