@@ -37,6 +37,14 @@ class CertificadoAPIRequester(BaseAPIRequester):
                 id=response.json()["id"],
                 cnpj=response.json()["cnpj"],
             )
+        elif (
+            response.status_code == HTTPStatus.NOT_FOUND and 
+            response.json()["detail"] == "Not Found"
+        ):
+            raise RouteNotFoundError(
+                route=route,
+                message=response.json()["detail"],
+            )
         elif response.status_code == HTTPStatus.BAD_REQUEST:
             raise BadRequestError(
                 route=route,
@@ -66,6 +74,7 @@ class CertificadoAPIRequester(BaseAPIRequester):
             url=route,
             params=filter.model_dump(),
         )
+
         if response.status_code == HTTPStatus.OK:
             if not response.json():
                 raise NotFoundError(
@@ -78,6 +87,14 @@ class CertificadoAPIRequester(BaseAPIRequester):
                 cnpj=supplier["cnpj"],
             ) for supplier in response.json()]
 
+        elif (
+            response.status_code == HTTPStatus.NOT_FOUND and 
+            response.json()["detail"] == "Not Found"
+        ):
+            raise RouteNotFoundError(
+                route=route,
+                message=response.json()["detail"],
+            )
         elif response.status_code == HTTPStatus.BAD_REQUEST:
             raise BadRequestError(
                 route=route,
@@ -115,6 +132,12 @@ class CertificadoAPIRequester(BaseAPIRequester):
                 message=response.json()["message"],
             )
         elif response.status_code == HTTPStatus.NOT_FOUND:
+            if response.json()["detail"] == "Not Found":
+                raise RouteNotFoundError(
+                    route=route,
+                    message=response.json()["detail"],
+                )
+
             raise NotFoundError(
                 route=route,
                 message=response.json()["message"]
@@ -149,6 +172,14 @@ class CertificadoAPIRequester(BaseAPIRequester):
                 identifier=document["identifier"],
                 expiration_date=document["expiration_date"],
             ) for document in response.json()]
+        elif (
+            response.status_code == HTTPStatus.NOT_FOUND and 
+            response.json()["detail"] == "Not Found"
+        ):
+            raise RouteNotFoundError(
+                route=route,
+                message=response.json()["detail"],
+            )
         elif response.status_code == HTTPStatus.BAD_REQUEST:
             raise BadRequestError(
                 route=route,
