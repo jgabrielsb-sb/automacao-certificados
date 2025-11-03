@@ -139,9 +139,14 @@ class TestRegisterSupplier:
         ):
             response = Mock(spec=requests.Response)
             response.status_code = 200
-            response.json.return_value = [
-                {"id": 1, "cnpj": "12345678912"}
-            ]
+            response.json.return_value = {
+                "data": [
+                    {
+                        "id": 1, 
+                        "cnpj": "12345678912"
+                    }
+                ]
+            }
             return response
 
         monkeypatch.setattr(
@@ -173,7 +178,9 @@ class TestRegisterSupplier:
         ):
             response = Mock(spec=requests.Response)
             response.status_code = 200
-            response.json.return_value = []
+            response.json.return_value = {
+                "data": []
+            }
             return response
 
         monkeypatch.setattr(
@@ -186,7 +193,7 @@ class TestRegisterSupplier:
                 supplier_filter
             )
 
-        assert e.value.route == f"{BASE_URL}/suppliers/"
+        assert e.value.route == f"{BASE_URL}/api/v1/suppliers/"
         assert f"{supplier_filter.model_dump()}" in e.value.message
 
     def test_unexpected_request_response(
@@ -262,7 +269,7 @@ class TestRegisterDocument:
         assert isinstance(document_response, dto_document.DocumentResponse)
         assert document_response.id == 1
         assert document_response.supplier_id == 1
-        assert document_response.document_type_id == "1"
+        assert document_response.document_type_id == 1
         assert document_response.identifier == "12345678912"
         assert document_response.expiration_date == date(2025, 12, 31)
 
@@ -299,7 +306,7 @@ class TestRegisterDocument:
                 document_create
             )
 
-        assert e.value.route == f"{BASE_URL}/documents/"
+        assert e.value.route == f"{BASE_URL}/api/v1/documents/"
         assert "supplier with id 1 not found" in e.value.message
 
     def test_bad_request_response(
@@ -335,7 +342,7 @@ class TestRegisterDocument:
                 document_create
             )
 
-        assert e.value.route == f"{BASE_URL}/documents/"
+        assert e.value.route == f"{BASE_URL}/api/v1/documents/"
         assert "bad request test message" in e.value.message
 
     def test_unexpected_request_response(
@@ -371,7 +378,7 @@ class TestRegisterDocument:
                 document_create
             )
 
-            assert e.value.route == f"{BASE_URL}/documents/"
+            assert e.value.route == f"{BASE_URL}/api/v1/documents/"
             assert e.value.message == "test message"
 
 class TestGetDocument:
@@ -381,7 +388,7 @@ class TestGetDocument:
     ):
         document_filter = dto_document.DocumentFilter(
             supplier_id=1,
-            document_type_id="1",
+            document_type_id=1,
             identifier="12345678912",
             expiration_date=date(2025, 12, 31)
         )
@@ -392,9 +399,18 @@ class TestGetDocument:
         ):
             response = Mock(spec=requests.Response)
             response.status_code = 200
-            response.json.return_value = [
-                {"id": 1, "supplier_id": 1, "document_type_id": "1", "identifier": "12345678912", "expiration_date": "2025-12-31"}
-            ]
+            response.json.return_value = {
+                    "data": [
+                        {
+                            "id": 1, 
+                            "supplier_id": 1, 
+                            "document_type_id": 1, 
+                            "identifier": "12345678912", 
+                            "expiration_date": "2025-12-31"
+                        }
+                    ]
+                }
+            
 
             return response
 
@@ -412,7 +428,7 @@ class TestGetDocument:
         assert len(document_response) == 1
         assert document_response[0].id == 1
         assert document_response[0].supplier_id == 1
-        assert document_response[0].document_type_id == "1"
+        assert document_response[0].document_type_id == 1
         assert document_response[0].identifier == "12345678912"
         assert document_response[0].expiration_date == date(2025, 12, 31)
     
@@ -432,7 +448,9 @@ class TestGetDocument:
         ):
             response = Mock(spec=requests.Response)
             response.status_code = 200
-            response.json.return_value = []
+            response.json.return_value = {
+                "data": []
+            }
             return response
 
         monkeypatch.setattr(
@@ -445,7 +463,7 @@ class TestGetDocument:
                 document_filter
             )
 
-        assert e.value.route == f"{BASE_URL}/documents/"
+        assert e.value.route == f"{BASE_URL}/api/v1/documents"
         assert f"{document_filter.model_dump()}" in e.value.message
 
     def test_get_document_with_filter_bad_request_response(
@@ -479,7 +497,7 @@ class TestGetDocument:
                 document_filter
             )
 
-        assert e.value.route == f"{BASE_URL}/documents/"
+        assert e.value.route == f"{BASE_URL}/api/v1/documents"
         assert "bad request test message" in e.value.message
 
     def test_get_document_with_filter_unexpected_response(
@@ -514,6 +532,6 @@ class TestGetDocument:
                 document_filter
             )
 
-        assert e.value.route == f"{BASE_URL}/documents/"
+        assert e.value.route == f"{BASE_URL}/api/v1/documents"
         assert "unexpected test message" in e.value.message
         assert e.value.status_code == 500
