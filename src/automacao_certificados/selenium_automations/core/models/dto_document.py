@@ -11,6 +11,7 @@ from automacao_certificados.selenium_automations.core.models import (
 class DocumentExtracted(BaseModel):
     supplier: dto_supplier.Supplier
     document_type: str
+    identifier: str
     expiration_date: date
 
 class Document(BaseModel):
