@@ -1,3 +1,4 @@
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -11,4 +12,4 @@ class SupplierResponse(Supplier):
     id: int
 
 class SupplierFilter(BaseModel):
-    cnpj: str
+    cnpj: Optional[str] = None
