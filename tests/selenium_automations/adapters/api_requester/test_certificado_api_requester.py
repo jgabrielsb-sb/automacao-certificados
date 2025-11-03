@@ -10,7 +10,8 @@ from automacao_certificados.selenium_automations.adapters.api_requester import C
 from automacao_certificados.selenium_automations.adapters.api_requester.exceptions import *
 from automacao_certificados.selenium_automations.core.models import (
     dto_supplier,
-    dto_document
+    dto_document,
+    dto_document_type
 )
 
 BASE_URL = "https://api.certificado.com"
@@ -535,3 +536,140 @@ class TestGetDocument:
         assert e.value.route == f"{BASE_URL}/api/v1/documents"
         assert "unexpected test message" in e.value.message
         assert e.value.status_code == 500
+
+class TestGetDocumentType:
+    def test_get_document_type_with_filter_sucess_response_with_results(
+        self,
+        monkeypatch,
+    ):
+        document_type_filter = dto_document_type.DocumentTypeFilter(
+            name="CERTIFICADO CAIXA"
+        )
+
+        def mock_fake_get(
+            url,
+            params
+        ):
+            response = Mock(spec=requests.Response)
+            response.status_code = 200
+            response.json.return_value = {
+                "data": [
+                    {
+                        "id": 1,
+                        "name": "CERTIFICADO CAIXA"
+                    }
+                ]
+            }
+            return response
+
+        monkeypatch.setattr(
+            requests,
+            "get",
+            mock_fake_get
+        )
+
+        document_type_response = api_requester.get_document_type(
+            document_type_filter
+        )
+
+        assert isinstance(document_type_response, list)
+        assert len(document_type_response) == 1
+        assert document_type_response[0].id == 1
+        assert document_type_response[0].name == "CERTIFICADO CAIXA"
+
+    def test_get_document_type_with_filter_sucess_response_with_no_results(
+        self,
+        monkeypatch,
+    ):
+        document_type_filter = dto_document_type.DocumentTypeFilter(
+            name="CERTIFICADO CAIXA"
+        )
+        def mock_fake_get(
+            url,
+            params
+        ):
+            response = Mock(spec=requests.Response)
+            response.status_code = 200
+            response.json.return_value = {
+                "data": []
+            }
+            return response
+
+        monkeypatch.setattr(
+            requests,
+            "get",
+            mock_fake_get
+        )
+        with pytest.raises(NotFoundError) as e:
+            api_requester.get_document_type(
+                document_type_filter
+            )
+
+        assert e.value.route == f"{BASE_URL}/api/v1/document-types"
+        assert f"{document_type_filter.model_dump()}" in e.value.message
+
+    def test_get_document_type_with_filter_bad_request_response(
+        
+        self,
+        monkeypatch,
+    ):
+        document_type_filter = dto_document_type.DocumentTypeFilter(
+            name="CERTIFICADO CAIXA"
+        )   
+        def mock_fake_get(
+            url,
+            params
+        ):
+            response = Mock(spec=requests.Response)
+            response.status_code = 400
+            response.json.return_value = {
+                "message": "bad request test message"
+            }
+            return response
+
+        monkeypatch.setattr(
+            requests,
+            "get",
+            mock_fake_get
+        )
+        with pytest.raises(BadRequestError) as e:
+            api_requester.get_document_type(
+                document_type_filter
+            )
+
+        assert e.value.route == f"{BASE_URL}/api/v1/document-types"
+        assert "bad request test message" in e.value.message
+
+    def test_get_document_type_with_filter_unexpected_response(
+        self,
+        monkeypatch,
+    ):
+        document_type_filter = dto_document_type.DocumentTypeFilter(
+            name="CERTIFICADO CAIXA"
+        )
+        def mock_fake_get(
+            url,
+            params
+        ):
+            response = Mock(spec=requests.Response)
+            response.status_code = 500
+            response.json.return_value = {
+                "message": "unexpected test message"
+            }
+            return response
+
+        monkeypatch.setattr(
+            requests,
+            "get",
+            mock_fake_get
+        )
+        with pytest.raises(UnexpectedError) as e:
+            api_requester.get_document_type(
+                document_type_filter
+            )
+
+        assert e.value.route == f"{BASE_URL}/api/v1/document-types"
+        assert "unexpected test message" in e.value.message
+        assert e.value.status_code == 500
+
+        

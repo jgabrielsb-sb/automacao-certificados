@@ -2,7 +2,8 @@ from automacao_certificados.selenium_automations.core.interfaces.base_api_reques
 
 from automacao_certificados.selenium_automations.core.models import (
     dto_supplier,
-    dto_document
+    dto_document,
+    dto_document_type
 )
 
 import requests
@@ -189,6 +190,47 @@ class CertificadoAPIRequester(BaseAPIRequester):
             raise UnexpectedError(
                 route=route,
                 message=f"{response.json()}",
+                status_code=response.status_code,
+            )
+
+    def get_document_type(
+        self,
+        filter: dto_document_type.DocumentTypeFilter
+    ) -> list[dto_document_type.DocumentTypeResponse]:
+        route = f"{self.base_url}/api/v1/document-types"
+
+        response = requests.get(
+            url=route,
+            params=filter.model_dump(mode="json"),
+        )
+
+        if response.status_code == HTTPStatus.OK:
+            if len(response.json().get("data")) == 0:
+                raise NotFoundError(
+                    route=route,
+                    message=f"No document types found with the given filter: {filter.model_dump()}",
+                )
+            return [dto_document_type.DocumentTypeResponse(
+                id=int(document_type["id"]),
+                name=document_type["name"],
+            ) for document_type in response.json()["data"]]
+        elif (
+            response.status_code == HTTPStatus.NOT_FOUND and 
+            response.json().get("detail") == "Not Found"
+        ):
+            raise RouteNotFoundError(
+                route=route,
+                message=response.json().get("detail"),
+            )
+        elif response.status_code == HTTPStatus.BAD_REQUEST:
+            raise BadRequestError(
+                route=route,
+                message=response.json(),
+            )
+        else:
+            raise UnexpectedError(
+                route=route,
+                message=response.json(),
                 status_code=response.status_code,
             )
         
