@@ -1,4 +1,4 @@
-from automacao_certificados.selenium_automations.core.interfaces import BaseAPIRequester
+from automacao_certificados.selenium_automations.adapters.api_requester import CertificadoAPIRequester
 from automacao_certificados.selenium_automations.core.models import (
     dto_document,
     dto_supplier,
@@ -7,9 +7,11 @@ from automacao_certificados.selenium_automations.core.models import (
 
 from automacao_certificados.selenium_automations.adapters.api_requester.exceptions import NotFoundError
 
-
 class CertificadoAPIService:
-    def __init__(self, api_requester: BaseAPIRequester):
+    def __init__(
+        self, 
+        api_requester: CertificadoAPIRequester
+    ):
         self.api_requester = api_requester
 
     def is_supplier_already_registered(self, cnpj: str) -> bool:
