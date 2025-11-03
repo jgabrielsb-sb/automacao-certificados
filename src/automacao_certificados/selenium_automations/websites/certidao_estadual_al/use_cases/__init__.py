@@ -1,1 +1,1 @@
-from .download_certificado_by_cnpj_using_groq import download_certificado_by_cnpj_using_groq
+from .get_certificado_using_groq import get_certificado_using_groq

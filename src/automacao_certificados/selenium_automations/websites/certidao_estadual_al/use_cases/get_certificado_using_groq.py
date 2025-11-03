@@ -9,12 +9,15 @@ from automacao_certificados.selenium_automations.adapters.image_processor import
 from automacao_certificados.selenium_automations.websites.certidao_estadual_al.exceptions import *
 from automacao_certificados.config import settings
 
-def download_certificado_by_cnpj_using_groq(
+from automacao_certificados.selenium_automations.core.models import dto_document
+from automacao_certificados.selenium_automations.adapters.extractors.certificado_caixa_extractor import CertificadoCaixaExtractor
+
+def get_certificado_using_groq(
     driver: WebDriver, 
     state_value: str,
     inscricao_value: str,
-    img_path_to_save: Path
-) -> None:
+    img_path_to_save: Path,
+) -> dto_document.DocumentExtracted:
     """
     Download the certificado of the company by CNPJ using Groq.
     IMPORTANT: the CNPJ must be a basic CNPJ, that means that the CNPJ
@@ -68,19 +71,49 @@ def download_certificado_by_cnpj_using_groq(
             ):
                 raise
 
-    def _download_certificado() -> None:
+    def _go_to_certificado_page() -> None:
+        """
+        Go to the certificado page.
+        """
+        DownloadPage(
+            driver=driver
+        )._go_to_certificado_page()
+
+    def _download_certificado(
+        img_path_to_save: Path,
+    ) -> None:
         """
         Download the certificado of the company.
+        Args:
+            img_path_to_save: The path to save the image. Example: Path("certificado.png").
         """
-        try:
-            DownloadPage(
-                driver=driver
-            ).run(img_path_to_save=img_path_to_save)
-        except DownloadPageException:
-            raise
+        DownloadPage(driver=driver)._download_certificado(img_path_to_save=img_path_to_save)
+
+    def _get_certificado():
+        """
+        Get the certificado of the company.
+        """
+        certificado_extractor = CertificadoCaixaExtractor(driver=driver)
+        certificado = certificado_extractor.run()
+        return certificado
+    
+    def _get_path_to_save(
+        certificado: dto_document.DocumentExtracted,
+    ) -> Path:
+        """
+        Get the path to save the certificado.
+        """
+        cnpj = certificado.supplier.cnpj.replace('.', '').replace('/', '').replace('-', '')
+        expiration_date = certificado.expiration_date.strftime("%d%m%Y")
+        return Path("src/automacao_certificados/data/certificados_caixa") / f"{cnpj}_{expiration_date}.png"
         
     _pass_consulta_page()
-    _download_certificado()
+    _go_to_certificado_page()
+    certificado = _get_certificado()
+    
+    img_path_to_save = _get_path_to_save(certificado=certificado)
+    _download_certificado(img_path_to_save)
+    return certificado
 
 
 
