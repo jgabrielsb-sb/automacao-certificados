@@ -125,6 +125,70 @@ class TestRegisterSupplier:
             assert e.value.route == f"{BASE_URL}/suppliers"
             assert e.value.message == "test message"
 
+    def test_get_supplier_with_filter_sucess_response_with_results(
+        self,
+        monkeypatch,
+    ):
+        supplier_filter = dto_supplier.SupplierFilter(
+            cnpj="12345678912"
+        )
+        
+        def mock_fake_get(
+            url,
+            params
+        ):
+            response = Mock(spec=requests.Response)
+            response.status_code = 200
+            response.json.return_value = [
+                {"id": 1, "cnpj": "12345678912"}
+            ]
+            return response
+
+        monkeypatch.setattr(
+            requests,
+            "get",
+            mock_fake_get
+        )
+
+        supplier_response = api_requester.get_supplier(
+            supplier_filter
+        )
+
+        assert isinstance(supplier_response, list)
+        assert len(supplier_response) == 1
+        assert supplier_response[0].id == 1
+        assert supplier_response[0].cnpj == "12345678912"
+
+    def test_get_supplier_with_filter_sucess_response_with_no_results(
+        self,
+        monkeypatch,
+    ):
+        supplier_filter = dto_supplier.SupplierFilter(
+            cnpj="12345678912"
+        )
+        
+        def mock_fake_get(
+            url,
+            params
+        ):
+            response = Mock(spec=requests.Response)
+            response.status_code = 200
+            response.json.return_value = []
+            return response
+
+        monkeypatch.setattr(
+            requests,
+            "get",
+            mock_fake_get
+        )
+        with pytest.raises(NotFoundError) as e:
+            api_requester.get_supplier(
+                supplier_filter
+            )
+
+        assert e.value.route == f"{BASE_URL}/suppliers/"
+        assert f"{supplier_filter.model_dump()}" in e.value.message
+
     def test_unexpected_request_response(
         self,
         monkeypatch,
@@ -310,17 +374,146 @@ class TestRegisterDocument:
             assert e.value.route == f"{BASE_URL}/documents/"
             assert e.value.message == "test message"
 
+class TestGetDocument:
+    def test_get_document_with_filter_sucess_response_with_results(
+        self,
+        monkeypatch,
+    ):
+        document_filter = dto_document.DocumentFilter(
+            supplier_id=1,
+            document_type_id="1",
+            identifier="12345678912",
+            expiration_date=date(2025, 12, 31)
+        )
 
+        def mock_fake_get(
+            url,
+            params
+        ):
+            response = Mock(spec=requests.Response)
+            response.status_code = 200
+            response.json.return_value = [
+                {"id": 1, "supplier_id": 1, "document_type_id": "1", "identifier": "12345678912", "expiration_date": "2025-12-31"}
+            ]
 
+            return response
 
-        
+        monkeypatch.setattr(
+            requests,
+            "get",
+            mock_fake_get
+        )
 
+        document_response = api_requester.get_document(
+            document_filter
+        )
+
+        assert isinstance(document_response, list)
+        assert len(document_response) == 1
+        assert document_response[0].id == 1
+        assert document_response[0].supplier_id == 1
+        assert document_response[0].document_type_id == "1"
+        assert document_response[0].identifier == "12345678912"
+        assert document_response[0].expiration_date == date(2025, 12, 31)
     
-            
+    def test_get_document_with_filter_sucess_response_with_no_results(
+        self,
+        monkeypatch,
+    ):
+        document_filter = dto_document.DocumentFilter(
+            supplier_id=1,
+            document_type_id="1",
+            identifier="12345678912",
+            expiration_date=date(2025, 12, 31)
+        )
+        def mock_fake_get(
+            url,
+            params
+        ):
+            response = Mock(spec=requests.Response)
+            response.status_code = 200
+            response.json.return_value = []
+            return response
 
+        monkeypatch.setattr(
+            requests,
+            "get",
+            mock_fake_get
+        )
+        with pytest.raises(NotFoundError) as e:
+            api_requester.get_document(
+                document_filter
+            )
 
-        
+        assert e.value.route == f"{BASE_URL}/documents/"
+        assert f"{document_filter.model_dump()}" in e.value.message
 
+    def test_get_document_with_filter_bad_request_response(
+        self,
+        monkeypatch,
+    ):
+        document_filter = dto_document.DocumentFilter(
+            supplier_id=1,
+            document_type_id="1",
+            identifier="12345678912",
+            expiration_date=date(2025, 12, 31)
+        )
+        def mock_fake_get(
+            url,
+            params
+        ):
+            response = Mock(spec=requests.Response)
+            response.status_code = 400
+            response.json.return_value = {
+                "message": "bad request test message"
+            }
+            return response
 
+        monkeypatch.setattr(
+            requests,
+            "get",
+            mock_fake_get
+        )
+        with pytest.raises(BadRequestError) as e:
+            api_requester.get_document(
+                document_filter
+            )
 
-    
+        assert e.value.route == f"{BASE_URL}/documents/"
+        assert "bad request test message" in e.value.message
+
+    def test_get_document_with_filter_unexpected_response(
+        self,
+        monkeypatch,
+    ):
+        document_filter = dto_document.DocumentFilter(
+            supplier_id=1,
+            document_type_id="1",
+            identifier="12345678912",
+            expiration_date=date(2025, 12, 31)
+        )
+
+        def mock_fake_get(
+            url,
+            params
+        ):
+            response = Mock(spec=requests.Response)
+            response.status_code = 500
+            response.json.return_value = {
+                "message": "unexpected test message"
+            }
+            return response
+
+        monkeypatch.setattr(
+            requests,
+            "get",
+            mock_fake_get
+        )
+        with pytest.raises(UnexpectedError) as e:
+            api_requester.get_document(
+                document_filter
+            )
+
+        assert e.value.route == f"{BASE_URL}/documents/"
+        assert "unexpected test message" in e.value.message
+        assert e.value.status_code == 500
