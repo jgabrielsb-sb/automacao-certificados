@@ -1,3 +1,2 @@
-
-
 from .certificado_caixa_extractor import CertificadoCaixaExtractor
+from .certificado_maceio_extractor import CertificadoMaceioExtractor
