@@ -2,7 +2,8 @@ from abc import ABC, abstractmethod
 
 from automacao_certificados.selenium_automations.core.models import (
     dto_supplier,
-    dto_document
+    dto_document,
+    dto_document_type,
 )
 
 class BaseAPIRequester(ABC):
@@ -65,6 +66,21 @@ class BaseAPIRequester(ABC):
         """
         pass
 
-        
+    @abstractmethod
+    def get_document_type(
+        self,
+        filter: dto_document_type.DocumentTypeFilter
+    ) -> list[dto_document_type.DocumentTypeResponse]:
+        """
+        Gets a document type by filter.
+        Method to be implemented by the child classes.
+        Args:
+            filter: The filter to get the document type.
+        Returns:
+            The document type response.
+        """
+        pass
 
+        
+    
     
