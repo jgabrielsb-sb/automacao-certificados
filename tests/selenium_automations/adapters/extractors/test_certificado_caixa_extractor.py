@@ -488,4 +488,4 @@ class TestCertificadoCaixaExtractorRun:
             assert document.document_type == "CERTIFICADO CAIXA"
             assert document.identifier == "2025110205156413642881"
             assert document.expiration_date == date(2025, 12, 1)
-            
+    
