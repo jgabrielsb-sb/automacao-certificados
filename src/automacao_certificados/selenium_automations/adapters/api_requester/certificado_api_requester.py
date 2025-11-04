@@ -1,237 +1,181 @@
-from automacao_certificados.selenium_automations.core.interfaces.base_api_requester import BaseAPIRequester
+from automacao_certificados.selenium_automations.core.interfaces import (
+    BaseAPIRequester,
+    HttpClient
+)
 
+from automacao_certificados.selenium_automations.core.interfaces.http_client import HttpClient
 from automacao_certificados.selenium_automations.core.models import (
     dto_supplier,
     dto_document,
     dto_document_type
 )
 
-import requests
 
 from http import HTTPStatus
 
 from .exceptions import *
+from .error_mapping import map_error_response
 
 class CertificadoAPIRequester(BaseAPIRequester):
     """
     API requester for the Certificado.
     """
-    def __init__(self, base_url: str):
+    def __init__(
+        self, 
+        base_url: str,
+        http: HttpClient
+    ):
         if not isinstance(base_url, str):
             raise ValueError("base_url must be a string")
 
         self.base_url = base_url
+        self.http = http
     
     def register_supplier(
         self, 
         supplier: dto_supplier.SupplierCreate
     ) -> dto_supplier.SupplierResponse:
+        """
+        Register a new supplier.
+        Arguments:
+            supplier
+        Returns:
+            The created supplier
+        Raises:
+            ConflictError: if a supplier with the same cnoj already exists.
+            UnexpectedError: if an uenxpected error occurs
+        """
+        
         route = f"{self.base_url}/api/v1/suppliers/"
-
-        response = requests.post(
-            url=route,
-            json=supplier.model_dump(mode="json"),
-        )
+        response = self.http.post(url=route, json=supplier.model_dump(mode="json"))
 
         if response.status_code == HTTPStatus.CREATED:
             return dto_supplier.SupplierResponse(
                 id=response.json()["id"],
                 cnpj=response.json()["cnpj"],
             )
-        elif (
-            response.status_code == HTTPStatus.NOT_FOUND and 
-            response.json().get("detail") == "Not Found"
-        ):
-            raise RouteNotFoundError(
-                route=route,
-                message=response.json().get("detail"),
-            )
-        elif response.status_code == HTTPStatus.BAD_REQUEST:
-            raise BadRequestError(
-                route=route,
-                message=response.json()["message"],
-            )
-        elif response.status_code == HTTPStatus.CONFLICT:
-            raise ConflictError(
-                route=route,
-                object="supplier",
-                resource_name="cnpj",
-                resource_value=supplier.cnpj,
-            )
         else:
-            raise UnexpectedError(
-                route=route,
-                message=response.json()["message"],
-                status_code=response.status_code,
+            return map_error_response(
+                route,
+                response.status_code,
+                response.json()
             )
+
 
     def get_supplier(
         self,
         filter: dto_supplier.SupplierFilter
     ) -> list[dto_supplier.SupplierResponse]:
+        """
+        Get a list of suppliers.
+        Arguments:
+            filter
+        Returns:
+            A list of suppliers
+        Raises:
+            NotFoundError: if no suppliers are found with the given filter.
+            UnexpectedError: if an unexpected error occurs
+        """
         route = f"{self.base_url}/api/v1/suppliers/"
+        
+        response = self.http.get(url=route, params=filter.model_dump(mode="json"))
+        status_code = response.status_code
 
-        response = requests.get(
-            url=route,
-            params=filter.model_dump(),
-        )
-
-        if response.status_code == HTTPStatus.OK:
-            if len(response.json().get("data")) == 0:
+        if status_code == HTTPStatus.OK:
+            data = response.json().get("data", [])
+            if not data:
                 raise NotFoundError(
                     route=route,
                     message=f"No suppliers found with the given filter: {filter.model_dump()}",
                 )
 
-            return [dto_supplier.SupplierResponse(
-                id=int(supplier["id"]),
-                cnpj=supplier["cnpj"],
-            ) for supplier in response.json()["data"]]
-
-        elif (
-            response.status_code == HTTPStatus.NOT_FOUND and 
-            response.json().get("detail") == "Not Found"
-        ):
-            raise RouteNotFoundError(
-                route=route,
-                message=response.json().get("detail"),
-            )
-        elif response.status_code == HTTPStatus.BAD_REQUEST:
-            raise BadRequestError(
-                route=route,
-                message=response.json()["message"],
-            )
+            return [dto_supplier.SupplierResponse(**x) for x in data]
         else:
-            raise UnexpectedError(
-                route=route,
-                message=response.json()["message"],
-                status_code=response.status_code,
-            )
+            map_error_response(route, status_code, response.json())
 
     def register_document(
         self, 
         document=dto_document.DocumentCreate
     ):
+        """
+        Register a new document.
+        Arguments:
+            document
+        Returns:
+            The created document
+        Raises:
+            UnexpectedError: if an unexpected error occurs
+        """
         route = f"{self.base_url}/api/v1/documents/"
 
-        response = requests.post(
-            url=route,
-            json=document.model_dump(mode="json"),
-        )
+        response = self.http.post(route, json=document.model_dump(mode="json"))
+        status_code = response.status_code
+
 
         if response.status_code == HTTPStatus.CREATED:
-            return dto_document.DocumentResponse(
-                id=response.json()["id"],
-                supplier_id=response.json()["supplier_id"],
-                document_type_id=response.json()["document_type_id"],
-                identifier=response.json()["identifier"],
-                expiration_date=response.json()["expiration_date"],
-            )
-        elif response.status_code == HTTPStatus.BAD_REQUEST:
-            raise BadRequestError(
-                route=route,
-                message=response.json()["message"],
-            )
-        elif response.status_code == HTTPStatus.NOT_FOUND:
-            if response.json().get("detail") == "Not Found":
-                raise RouteNotFoundError(
-                    route=route,
-                    message=response.json().get("detail"),
-                )
-
-            raise NotFoundError(
-                route=route,
-                message=response.json()["message"]
-            )
+            return dto_document.DocumentResponse(**response.json())
         else:
-            raise UnexpectedError(
-                route=route,
-                message=response.json()["message"],
-                status_code=response.status_code,
-            )
+            map_error_response(route, status_code, body=response.json())
+        
 
     def get_document(
         self,
         filter: dto_document.DocumentFilter
     ) -> list[dto_document.DocumentResponse]:
+        """
+        Get a list of documents.
+        Arguments:
+            filter
+        Returns:
+            A list of documents
+        Raises:
+            NotFoundError: if no documents are found with the given filter.
+            UnexpectedError: if an unexpected error occurs
+        """
         route = f"{self.base_url}/api/v1/documents"
 
-        response = requests.get(
-            url=route,
-            params=filter.model_dump(mode="json"),
-        )
-        if response.status_code == HTTPStatus.OK:
-            if len(response.json().get("data")) == 0:
+        response = self.http.get(url=route, params=filter.model_dump(mode="json"))
+        status_code = response.status_code
+
+        if status_code == HTTPStatus.OK:
+            data = response.json().get("data", [])
+            if not data:
                 raise NotFoundError(
                     route=route,
-                    message=f"No documents found with the given filter: {filter.model_dump()}",
+                    message=f"No documents found with the given filter: {filter.model_dump()}"
                 )
-            return [dto_document.DocumentResponse(
-                id=int(document["id"]),
-                supplier_id=int(document["supplier_id"]),
-                document_type_id=int(document["document_type_id"]),
-                identifier=document["identifier"],
-                expiration_date=document["expiration_date"],
-            ) for document in response.json()["data"]]
-        elif (
-            response.status_code == HTTPStatus.NOT_FOUND and 
-            response.json().get("detail") == "Not Found"
-        ):
-            raise RouteNotFoundError(
-                route=route,
-                message=response.json().get("detail"),
-            )
-        elif response.status_code == HTTPStatus.BAD_REQUEST:
-            raise BadRequestError(
-                route=route,
-                message=f"{response.json()}",
-            )
+            return [dto_document.DocumentResponse(**x) for x in data]
         else:
-            raise UnexpectedError(
-                route=route,
-                message=f"{response.json()}",
-                status_code=response.status_code,
-            )
+            map_error_response(route, status_code, body=response.json())
 
     def get_document_type(
         self,
         filter: dto_document_type.DocumentTypeFilter
     ) -> list[dto_document_type.DocumentTypeResponse]:
+        """
+        Get a list of document types.
+        Arguments:
+            filter
+        Returns:
+            A list of document types
+        Raises:
+            NotFoundError: if no document types are found with the given filter.
+            UnexpectedError: if an unexpected error occurs
+        """
         route = f"{self.base_url}/api/v1/document-types"
 
-        response = requests.get(
-            url=route,
-            params=filter.model_dump(mode="json"),
-        )
+        response = self.http.get(url=route, params=filter.model_dump(mode="json"))
+        status_code = response.status_code
 
-        if response.status_code == HTTPStatus.OK:
-            if len(response.json().get("data")) == 0:
+        if status_code == HTTPStatus.OK:
+            data = response.json().get("data", [])
+            if not data:
                 raise NotFoundError(
                     route=route,
-                    message=f"No document types found with the given filter: {filter.model_dump()}",
+                    message=f"No document types found with the given filter: {filter.model_dump()}"
                 )
-            return [dto_document_type.DocumentTypeResponse(
-                id=int(document_type["id"]),
-                name=document_type["name"],
-            ) for document_type in response.json()["data"]]
-        elif (
-            response.status_code == HTTPStatus.NOT_FOUND and 
-            response.json().get("detail") == "Not Found"
-        ):
-            raise RouteNotFoundError(
-                route=route,
-                message=response.json().get("detail"),
-            )
-        elif response.status_code == HTTPStatus.BAD_REQUEST:
-            raise BadRequestError(
-                route=route,
-                message=response.json(),
-            )
+            return [dto_document_type.DocumentTypeResponse(**x) for x in data]
         else:
-            raise UnexpectedError(
-                route=route,
-                message=response.json(),
-                status_code=response.status_code,
-            )
+            map_error_response(route, status_code, body=response.json())
         
         
