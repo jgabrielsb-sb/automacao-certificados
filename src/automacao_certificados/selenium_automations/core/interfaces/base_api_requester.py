@@ -22,6 +22,9 @@ class BaseAPIRequester(ABC):
             supplier: The supplier to register.
         Returns:
             The supplier response.
+        Raises:
+            ConflictAPIError: if a supplier with the same cnpj
+            already exists.
         """
         pass
 
@@ -37,6 +40,8 @@ class BaseAPIRequester(ABC):
             filter: The filter to get the supplier.
         Returns:
             The supplier response.
+        Raises:
+            NotFoundError: if supplier is not found with that filter
         """
         pass
 
@@ -52,6 +57,9 @@ class BaseAPIRequester(ABC):
             document: The document to register.
         Returns:
             The document response.
+        Raises:
+            ConflictAPIError: if a document with the same identifier
+            already exists.
         """
         pass
 
@@ -63,6 +71,12 @@ class BaseAPIRequester(ABC):
         """
         Gets a document by filter.
         Method to be implemented by the child classes.
+        Argument:
+            filter: document filter
+        Returns:
+            A list of document response
+        Raises:
+            NotFoundError: if supplier is not found with that filter
         """
         pass
 
@@ -78,6 +92,8 @@ class BaseAPIRequester(ABC):
             filter: The filter to get the document type.
         Returns:
             The document type response.
+        Raises:
+            NotFoundError: if supplier is not found with that filter
         """
         pass
 
