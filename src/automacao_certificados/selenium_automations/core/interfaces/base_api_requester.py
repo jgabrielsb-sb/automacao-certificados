@@ -8,7 +8,7 @@ from automacao_certificados.selenium_automations.core.models import (
 
 class BaseAPIRequester(ABC):
     """
-    Base class for all API requesters.
+    Base interface for the API Requesters.
     """
     @abstractmethod
     def register_supplier(
