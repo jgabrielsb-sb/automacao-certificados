@@ -1,4 +1,8 @@
-from automacao_certificados.selenium_automations.core.interfaces import BaseImageProcessor
+from automacao_certificados.selenium_automations.core.interfaces import (
+    ImageProcessorPort,
+    ImageProcessorInput,
+    ImageProcessorOutput
+)
 
 from groq import (
     Groq,
@@ -14,38 +18,34 @@ from automacao_certificados.selenium_automations.adapters.image_processor.except
 
 SERVICE_NAME = "Groq"
 
-class GroqImageProcessor(BaseImageProcessor):
+class GroqImageProcessor(ImageProcessorPort):
     """
     Image processor that uses the Groq API to get the text from the image.
     It uses the meta-llama/llama-4-scout-17b-16e-instruct model by default.
     """
     def __init__(
         self,
-        groq_api_key: str,
+        client: Groq,
         model: str = "meta-llama/llama-4-scout-17b-16e-instruct",
     ):
-        """
-        Args:
-            groq_api_key: The Groq API key.
-            model: The model to use.
-        Raises:
-            ValueError: If the groq_api_key is not a string or model is not a string.
-        """
-        if not isinstance(groq_api_key, str):
-            raise ValueError("groq_api_key must be a string")
-
         if not isinstance(model, str):
             raise ValueError("model must be a string")
 
+        if not isinstance(client, Groq):
+            raise ValueError("client must be a Groq client")
+
         super().__init__()
         
-        self.client = Groq(api_key=groq_api_key)
+        self.client = client
         self.model = model
     
-    def _get_text_from_image(self, image_base64: str) -> str:
+    def get_text(
+        self, 
+        input: ImageProcessorInput
+    ) -> ImageProcessorOutput:
         """
         Gets the text from the image using the Groq API.
-        Returns:
+        Returns:p
             str: The text from the image.
         Raises:
             ValueError: If the image_base64 is not a string.
@@ -54,6 +54,8 @@ class GroqImageProcessor(BaseImageProcessor):
             UnexpectedImageProcessingException: If an unexpected error occurs.
         """
         try:
+            base64_img = input.base64_img
+
             chat = self.client.chat.completions.create(
                 messages=[{
                     "role": "user",
@@ -61,14 +63,16 @@ class GroqImageProcessor(BaseImageProcessor):
                         {"type": "text",
                         "text": "Read the CAPTCHA text. Return ONLY those characters (no spaces, no quotes)."},
                         {"type": "image_url",
-                        "image_url": {"url": f"data:image/png;base64,{image_base64}"}}
+                        "image_url": {"url": f"data:image/png;base64,{base64_img}"}}
                     ],
                 }],
                 model=self.model,
             )
 
             text = chat.choices[0].message.content.strip()
-            return text
+            return ImageProcessorOutput(
+                text=text
+            )
         except AuthenticationError as e: # API KEY is invalid
             raise AuthenticationException(
                 service_name=SERVICE_NAME,
