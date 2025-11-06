@@ -169,7 +169,8 @@ class TestRegisterDocument:
             supplier_id=1,
             document_type_id=1,
             identifier="12345678912",
-            expiration_date=date(2025, 12, 31)
+            expiration_date=date(2025, 12, 31),
+            base64_pdf="%PDF"
         )
 
         route = respx.post(f"{BASE_URL}/api/v1/documents/").mock(
@@ -180,7 +181,8 @@ class TestRegisterDocument:
                     "supplier_id": document_create.supplier_id,
                     "document_type_id": document_create.document_type_id,
                     "identifier": document_create.identifier,
-                    "expiration_date": document_create.expiration_date.isoformat()
+                    "expiration_date": document_create.expiration_date.isoformat(),
+                    "base64_pdf": "%PDF"
                 }
             )
         )
@@ -197,6 +199,7 @@ class TestRegisterDocument:
         assert document_response.document_type_id == 1
         assert document_response.identifier == "12345678912"
         assert document_response.expiration_date == date(2025, 12, 31)
+        assert document_response.base64_pdf == "%PDF"
 
     @respx.mock
     def test_not_found_response(self):
@@ -204,7 +207,8 @@ class TestRegisterDocument:
             supplier_id=1,
             document_type_id=1,
             identifier="12345678912",
-            expiration_date=date(2025, 12, 31)
+            expiration_date=date(2025, 12, 31),
+            base64_pdf="%PDF"
         )
 
         route = respx.post(f"{BASE_URL}/api/v1/documents/").mock(
@@ -230,7 +234,8 @@ class TestRegisterDocument:
             supplier_id=1,
             document_type_id=1,
             identifier="12345678912",
-            expiration_date=date(2025, 12, 31)
+            expiration_date=date(2025, 12, 31),
+            base64_pdf=b"%PDF"
         )
 
         route = respx.post(f"{BASE_URL}/api/v1/documents/").mock(
@@ -256,7 +261,8 @@ class TestRegisterDocument:
             supplier_id=1,
             document_type_id=1,
             identifier="12345678912",
-            expiration_date=date(2025, 12, 31)
+            expiration_date=date(2025, 12, 31),
+            base64_pdf=b"%PDF"
         )
 
         route = respx.post(f"{BASE_URL}/api/v1/documents/").mock(
@@ -284,7 +290,7 @@ class TestGetDocument:
             supplier_id=1,
             document_type_id=1,
             identifier="12345678912",
-            expiration_date=date(2025, 12, 31)
+            expiration_date=date(2025, 12, 31),
         )
 
         route = respx.get(f"{BASE_URL}/api/v1/documents").mock(
@@ -297,7 +303,8 @@ class TestGetDocument:
                             "supplier_id": 1,
                             "document_type_id": 1,
                             "identifier": "12345678912",
-                            "expiration_date": "2025-12-31"
+                            "expiration_date": "2025-12-31",
+                            "base64_pdf": "%PDF"
                         }
                     ]
                 }
