@@ -90,7 +90,8 @@ class TestRun:
             ),
             document_type="TEST DOCUMENT",
             identifier="123",
-            expiration_date=date(2025,1,1)
+            expiration_date=date(2025,1,1),
+            base64_pdf="%PDF"
         )
 
     def test_if_raises_document_type_not_found_error_if_document_type_does_not_exist(
@@ -141,6 +142,7 @@ class TestRun:
             document_type_id=1,
             identifier="123",
             expiration_date=date(2025, 1, 1),
+            base64_pdf="%PDF"
         )
 
         def fake_get_or_create_supplier(supplier):
