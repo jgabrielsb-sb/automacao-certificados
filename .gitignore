@@ -39,3 +39,5 @@ captcha.jpg
 .env.local
 
 test.ipynb
+
+pdf_copy.pdf
