@@ -13,7 +13,6 @@ class DocumentExtracted(BaseModel):
     document_type: str
     identifier: str
     expiration_date: date
-    base64_pdf: str
 
 class Document(BaseModel):
     supplier_id: int
