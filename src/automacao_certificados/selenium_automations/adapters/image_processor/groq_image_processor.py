@@ -1,7 +1,5 @@
 from automacao_certificados.selenium_automations.core.interfaces import (
     ImageProcessorPort,
-    ImageProcessorInput,
-    ImageProcessorOutput
 )
 
 from groq import (
@@ -41,11 +39,13 @@ class GroqImageProcessor(ImageProcessorPort):
     
     def get_text(
         self, 
-        input: ImageProcessorInput
-    ) -> ImageProcessorOutput:
+        base64_img: str
+    ) -> str:
         """
         Gets the text from the image using the Groq API.
-        Returns:p
+        Arguments:
+            base64_img: the encoded base64 image
+        Returns:
             str: The text from the image.
         Raises:
             ValueError: If the image_base64 is not a string.
@@ -54,7 +54,6 @@ class GroqImageProcessor(ImageProcessorPort):
             UnexpectedImageProcessingException: If an unexpected error occurs.
         """
         try:
-            base64_img = input.base64_img
 
             chat = self.client.chat.completions.create(
                 messages=[{
@@ -70,9 +69,7 @@ class GroqImageProcessor(ImageProcessorPort):
             )
 
             text = chat.choices[0].message.content.strip()
-            return ImageProcessorOutput(
-                text=text
-            )
+            return text
         except AuthenticationError as e: # API KEY is invalid
             raise AuthenticationException(
                 service_name=SERVICE_NAME,
