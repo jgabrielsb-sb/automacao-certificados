@@ -14,7 +14,7 @@ from selenium_package.executors import *
 from selenium_package.interfaces import BaseExecutor
 
 from automacao_certificados.selenium_automations.core.interfaces import (
-    BaseImageProcessor,
+    ImageProcessorPort,
     BasePage
 )
 
@@ -35,7 +35,7 @@ class CaptchaPage(BasePage):
         driver: WebDriver,
         img_web_element: WebElement,
         input_web_element: WebElement,
-        image_processor: BaseImageProcessor,
+        image_processor: ImageProcessorPort,
     ):
         """
         Args:
@@ -49,7 +49,7 @@ class CaptchaPage(BasePage):
         if not isinstance(input_web_element, WebElement):
             raise ValueError("input_web_element must be a WebElement")
 
-        if not isinstance(image_processor, BaseImageProcessor):
+        if not isinstance(image_processor, ImageProcessorPort):
             raise ValueError("image_processor must be a BaseImageProcessor")
 
         super().__init__(driver)
