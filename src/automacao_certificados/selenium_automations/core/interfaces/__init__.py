@@ -16,12 +16,14 @@ from .document_persistance import (
 
 from .image_processor import (
     ImageProcessorPort,
-    ImageProcessorInput,
-    ImageProcessorOutput
 )
 
 from .selenium_workflow import (
     SeleniumWorkflowInput,
     SeleniumWorkflowOutput,
     SeleniumWorkflowPort
+)
+
+from .captcha_gateway import (
+    CaptchaGatewayPort,
 )
