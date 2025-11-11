@@ -1,7 +1,8 @@
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 
 from pydantic import BaseModel
 
+@runtime_checkable
 class ImageProcessorPort(Protocol):
     """
     Image processors protocol.
