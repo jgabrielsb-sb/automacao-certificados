@@ -4,11 +4,6 @@ from unittest.mock import patch, MagicMock
 
 from groq import Groq
 
-from automacao_certificados.selenium_automations.core.interfaces import (
-    ImageProcessorInput,
-    ImageProcessorOutput
-)
-
 from automacao_certificados.selenium_automations.adapters import GroqImageProcessor
 from automacao_certificados.selenium_automations.adapters.image_processor.exceptions import (
     AuthenticationException,
@@ -63,9 +58,7 @@ class TestGroqImageProcessor:
                 )
             ):
                 processor.get_text(
-                    input=ImageProcessorInput(
-                        base64_img="dhfjsdkfh"
-                    )
+                    base64_img="dhfjsdkfh"
                 )
 
     def test_if_raises_invalid_parameters_exception_if_model_is_invalid(self):
@@ -93,9 +86,7 @@ class TestGroqImageProcessor:
                 )
             ):
                 processor.get_text(
-                    input=ImageProcessorInput(
-                        base64_img="dhfjsdkfh"
-                    )
+                    base64_img="dhfjsdkfh"
                 )
                     
         assert exc_info.value.service_name == "Groq"
@@ -130,9 +121,7 @@ class TestGroqImageProcessor:
                 )
             ):
                 processor.get_text(
-                    input=ImageProcessorInput(
-                        base64_img="dhfjsdkfh"
-                    )
+                    base64_img="dhfjsdkfh"
                 )
         
         assert exc_info.value.service_name == "Groq"
@@ -156,9 +145,7 @@ class TestGroqImageProcessor:
                 side_effect=Exception()
             ):
                 processor.get_text(
-                    input=ImageProcessorInput(
-                        base64_img="dhfjsdkfh"
-                    )
+                    base64_img="dhfjsdkfh"
                 )
         
         assert exc_info.value.service_name == "Groq"
@@ -175,15 +162,13 @@ class TestGroqImageProcessor:
 
         processor = GroqImageProcessor(client=mock_groq)
 
-        input_data = MagicMock()
-        input_data.base64_img = "fakebase64"
+        base64_img = "fakebase64"
 
         # Act
-        result = processor.get_text(input_data)
-        assert isinstance(result, ImageProcessorOutput)
+        result = processor.get_text(base64_img)
 
         # Assert
-        assert result.text == "HELLO123"
+        assert result == "HELLO123"
         mock_groq.chat.completions.create.assert_called_once()
 
             
