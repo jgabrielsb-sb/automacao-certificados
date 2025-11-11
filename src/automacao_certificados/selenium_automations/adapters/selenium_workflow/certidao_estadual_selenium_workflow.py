@@ -23,11 +23,11 @@ class CertidaoEstadualALSeleniumWorkflow(SeleniumWorkflowPort):
         self,
         driver: WebDriver,
         img_path_to_save_file: Path,
-        base_image_processor: ImageProcessorPort,
+        image_processor: ImageProcessorPort,
         captcha_gateway: CaptchaGatewayPort,
     ):
-        if not isinstance(base_image_processor, ImageProcessorPort):
-            raise ValueError("base_image_processor must be a ImageProcessorPort")
+        if not isinstance(image_processor, ImageProcessorPort):
+            raise ValueError("image_processor must be a ImageProcessorPort")
         
         if not isinstance(captcha_gateway, CaptchaGatewayPort):
             raise ValueError("captcha_gateway must be a CaptchaGatewayPort")
@@ -36,40 +36,48 @@ class CertidaoEstadualALSeleniumWorkflow(SeleniumWorkflowPort):
             raise ValueError("img_path_to_save_file must be a Path")
         
         self.driver = driver
-        self.base_image_processor = base_image_processor
+        self.image_processor = image_processor
         self.img_path_to_save_file = img_path_to_save_file
         self.captcha_gateway = captcha_gateway
 
-    def get_document(
-        self, 
-        input: SeleniumWorkflowInput
-    ) -> SeleniumWorkflowOutput:
+    def _solve_captcha(self, cnpj=str) -> int:
         
         captcha_passed = False
+        attempts = 0
         
         while not captcha_passed:
             try:
                 ConsultaPage(
                     self.driver,
-                    self.base_image_processor,
+                    self.image_processor,
                     self.captcha_gateway
                 ).run(
                     state_value='AL',
                     tipo_inscricao_value='CNPJ',
-                    inscricao_value=input.supplier_cnpj
+                    inscricao_value=cnpj
                 )
                 captcha_passed = True
             except InvalidCaptchaException:
+                attempts += 1
                 pass
 
+        return attempts
+
+
+    def get_document(
+        self, 
+        input: SeleniumWorkflowInput
+    ) -> SeleniumWorkflowOutput:
+
+        self._solve_captcha(input.supplier_cnpj)
 
         document_extracted, base64_pdf = DownloadPage(
             self.driver
         ).run(self.img_path_to_save_file)
 
         return SeleniumWorkflowOutput(
-            document_extracted,
-            base64_pdf
+            document=document_extracted,
+            base64_pdf=base64_pdf
         )
 
 
