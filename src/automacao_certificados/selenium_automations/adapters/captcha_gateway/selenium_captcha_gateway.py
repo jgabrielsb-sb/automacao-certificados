@@ -35,12 +35,12 @@ class SeleniumCaptchaGateway(CaptchaGatewayPort):
         self.img_locator = img_locator
 
     def _get_input_web_element(self):
-        return WebDriverWait(self.driver, self.wait_for).until(
+        return WebDriverWait(self.webdriver, self.wait_for).until(
             EC.presence_of_element_located(self.input_locator)
         )
 
     def _get_img_web_element(self):
-        return WebDriverWait(self.driver, self.wait_for).until(
+        return WebDriverWait(self.webdriver, self.wait_for).until(
             EC.presence_of_element_located(self.img_locator)
         )
 
@@ -66,9 +66,9 @@ class SeleniumCaptchaGateway(CaptchaGatewayPort):
             web_element=input_web_element,
             property_name="value",
             property_value=text,
-        )
+        ).run()
 
-        return executor
+        
 
     
 
