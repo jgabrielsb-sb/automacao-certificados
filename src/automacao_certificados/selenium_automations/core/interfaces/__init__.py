@@ -25,5 +25,5 @@ from .selenium_workflow import (
 )
 
 from .captcha_gateway import (
-    CaptchaGatewayPort,
+    SeleniumCaptchaGatewayPort,
 )
