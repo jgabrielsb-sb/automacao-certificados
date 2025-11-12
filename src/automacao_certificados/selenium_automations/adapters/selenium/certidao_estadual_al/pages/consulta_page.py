@@ -43,7 +43,7 @@ class ConsultaPage(ConsultaPagePort):
     def __init__(
         self, 
         driver: WebDriver,
-        captcha_solver: CaptchaSolverPort
+        captcha_solver: CaptchaSolverPort,
     ):
         self.captcha_solver = captcha_solver
         self.driver = driver
@@ -303,14 +303,30 @@ class ConsultaPage(ConsultaPagePort):
             tipo_inscricao_value: the type of subscription value as a str
             inscricao_value: the subscription value as a str
         """
-        self.redirect_to_page_executor().run()
-        self.insert_tipo_inscricao_value_executor(tipo_inscricao_value).run()
-        self.insert_inscricao_value_executor(inscricao_value).run()
-        self.insert_estado_value_executor(state_value).run()
-        self.solve_captcha()
-        self.click_consultar_button_executor().run()
-        error_text = self.get_error_text()
-        self.handle_error_text(state_value, inscricao_value, error_text)
+        passed_captcha = False
+
+        while not passed_captcha:
+            self.redirect_to_page_executor().run()
+            self.insert_tipo_inscricao_value_executor(tipo_inscricao_value).run()
+            self.insert_inscricao_value_executor(inscricao_value).run()
+            self.insert_estado_value_executor(state_value).run()
+            self.solve_captcha()
+            self.click_consultar_button_executor().run()
+            error_text = self.get_error_text()
+
+            try:
+                self.handle_error_text(state_value, inscricao_value, error_text)
+                passed_captcha = True
+            except InvalidCaptchaException:
+                continue
+            except Exception:
+                raise
+
+
+        
+
+        
+
 
 
 
