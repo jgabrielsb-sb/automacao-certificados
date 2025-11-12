@@ -46,7 +46,7 @@ class ConsultaPage(ConsultaPagePort):
         captcha_solver: CaptchaSolverPort
     ):
         self.captcha_solver = captcha_solver
-        super().__init__(driver)
+        self.driver = driver
 
     def redirect_to_page_executor(
         self
@@ -251,7 +251,7 @@ class ConsultaPage(ConsultaPagePort):
         self,
         state_value: str,
         inscricao_value: str,
-        error_text: str | None
+        error_text: str | None = None
     ) -> None:
         """
         Handle the error text.
@@ -310,7 +310,7 @@ class ConsultaPage(ConsultaPagePort):
         self.solve_captcha()
         self.click_consultar_button_executor().run()
         error_text = self.get_error_text()
-        self.handle_error_text(error_text)
+        self.handle_error_text(state_value, inscricao_value, error_text)
 
 
 
