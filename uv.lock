@@ -9,13 +9,17 @@ resolution-markers = [
 [[package]]
 name = "automacao-certificados"
 version = "0.0.1"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "pytest" },
+    { name = "sync" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "pytest", specifier = ">=8.4.2" }]
+requires-dist = [
+    { name = "pytest", specifier = ">=8.4.2" },
+    { name = "sync", specifier = ">=1.0.0" },
+]
 
 [[package]]
 name = "colorama"
@@ -107,6 +111,12 @@ sdist = { url = "https://files.pythonhosted.org/packages/a3/5c/00a0e072241553e1a
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a8/a4/20da314d277121d6534b3a980b29035dcd51e6744bd79075a6ce8fa4eb8d/pytest-8.4.2-py3-none-any.whl", hash = "sha256:872f880de3fc3a5bdc88a11b39c9710c3497a547cfa9320bc3c5e62fbf272e79", size = 365750, upload-time = "2025-09-04T14:34:20.226Z" },
 ]
+
+[[package]]
+name = "sync"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/89/72/60d97fe2f6b74993230148bc25106569c6e8ed5292eab46f5f917d120b82/sync-1.0.0.zip", hash = "sha256:9f8e9a5c89dec5e82efaa2ae64a8c6f63690a3c4f4d5f0f84660202306ea078e", size = 6388, upload-time = "2014-12-14T05:42:39.238Z" }
 
 [[package]]
 name = "tomli"

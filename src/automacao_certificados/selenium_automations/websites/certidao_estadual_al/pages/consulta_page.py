@@ -4,10 +4,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from automacao_certificados.selenium_automations.core.interfaces import (
     BasePage,
-    BaseImageProcessor,
-)
-from automacao_certificados.selenium_automations.application.use_cases.captcha.solve_selenium_captcha import (
-    solve_selenium_captcha, 
+    ImageProcessorPort,
+    SeleniumCaptchaGatewayPort
 )
 
 from selenium_package.interfaces import (
@@ -51,12 +49,17 @@ class ConsultaPage(BasePage):
     def __init__(
         self, 
         driver: WebDriver,
-        captcha_adapter: BaseImageProcessor,
+        captcha_adapter: ImageProcessorPort,
+        captcha_gateway: SeleniumCaptchaGatewayPort,
     ):
-        if not isinstance(captcha_adapter, BaseImageProcessor):
-            raise ValueError("captcha_adapter must be a BaseImageProcessor")
+        if not isinstance(captcha_adapter, ImageProcessorPort):
+            raise ValueError("captcha_adapter must be a ImageProcessorPort")
+
+        if not isinstance(captcha_gateway, SeleniumCaptchaGatewayPort):
+            raise ValueError("captcha_gateway must be a SeleniumCaptchaGatewayPort")
         
         self.captcha_adapter = captcha_adapter
+        self.captcha_gateway = captcha_gateway
         super().__init__(driver)
 
     def redirect_to_page_executor(
@@ -119,35 +122,6 @@ class ConsultaPage(BasePage):
             action=action,
             web_element=label_element,
             desired_text=tipo_inscricao_value,
-        )
-
-        return executor
-
-    def insert_captcha_value_executor(
-        self, 
-        captcha_value: str
-    ) -> BaseExecutor:
-        """
-        Insert the captcha value on the captcha input field.
-        To execute an executor the method 'run()' must be called.
-
-        Args:
-            captcha_value: the captcha value as a string
-        """
-        captcha_input_element = WebDriverWait(self.driver, 3).until(
-            EC.presence_of_element_located(locators.CAPTCHA_INPUT_LOCATOR)
-        )
-        action = InsertText(
-            self.driver,
-            captcha_input_element,
-            captcha_value
-        )
-
-        executor = RetryActionUntilElementContainsAPropertyValue(
-            action=action,
-            web_element=captcha_input_element,
-            property_name="value",
-            property_value=captcha_value,
         )
 
         return executor
@@ -224,6 +198,18 @@ class ConsultaPage(BasePage):
 
         return executor
 
+    def solve_captcha(
+        self
+    ) -> str:
+        """
+        Solves the captcha by getting the captcha text from the image 
+        and inserting it on the input field.
+        """
+        captcha_text = self.captcha_gateway.get_captcha_base64_img()
+        captcha_text = self.captcha_adapter.get_text(captcha_text)
+        self.captcha_gateway.fill_captcha_text(captcha_text)
+        return captcha_text
+
     def click_consultar_button_executor(
         self
     ) -> BaseExecutor:
@@ -244,29 +230,6 @@ class ConsultaPage(BasePage):
         )
 
         return executor
-
-    def solve_captcha(
-        self
-    ) -> None:
-        """
-        Solves the captcha by getting the captcha text from the image 
-        and inserting it on the input field.
-        """
-        captcha_image_element = WebDriverWait(self.driver, 3).until(
-            EC.presence_of_element_located(locators.CAPTCHA_IMAGE_LOCATOR)
-        )
-        captcha_input_element = WebDriverWait(self.driver, 3).until(
-            EC.presence_of_element_located(locators.CAPTCHA_INPUT_LOCATOR)
-        )
-        
-        captcha_text = solve_selenium_captcha(
-            driver=self.driver,
-            adapter=self.captcha_adapter,
-            img_web_element=captcha_image_element,
-            input_web_element=captcha_input_element,
-        )
-
-        return captcha_text
 
 
     def get_error_text(
@@ -302,6 +265,7 @@ class ConsultaPage(BasePage):
             tipo_inscricao_value: the type of subscription value as a str
             inscricao_value: the subscription value as a str
         """
+        import time
         self.redirect_to_page_executor().run()
         self.insert_tipo_inscricao_value_executor(tipo_inscricao_value).run()
         

@@ -1,5 +1,8 @@
+from httpx._transports import base
 import pytest
 from unittest.mock import patch, MagicMock
+
+from groq import Groq
 
 from automacao_certificados.selenium_automations.adapters import GroqImageProcessor
 from automacao_certificados.selenium_automations.adapters.image_processor.exceptions import (
@@ -16,13 +19,13 @@ class TestGroqImageProcessor:
     """
     Test class for the GroqImageProcessor adapter.
     """
-    def test_if_raises_value_error_if_groq_api_key_is_not_a_string(self):
+    def test_if_raises_value_error_if_client_is_not_a_groq_client(self):
         """
-        Test if the GroqImageProcessor raises a ValueError if the groq_api_key is not a string.
+        Test if the GroqImageProcessor raises a ValueError if the client is not a Groq client.
         """
         with pytest.raises(ValueError):
             GroqImageProcessor(
-                groq_api_key=123,
+                client=123,
                 model="meta-llama/llama-4-scout-17b-16e-instruct",
             )
 
@@ -32,7 +35,7 @@ class TestGroqImageProcessor:
         """
         with pytest.raises(ValueError):
             GroqImageProcessor(
-                groq_api_key="KEY",
+                client=Groq(api_key="KEY"),
                 model=123,
             )   
 
@@ -40,7 +43,7 @@ class TestGroqImageProcessor:
         from groq import AuthenticationError
 
         processor = GroqImageProcessor(
-            groq_api_key="invalid",
+            client=Groq(api_key="invalid"),
         )
 
         with pytest.raises(AuthenticationException):
@@ -54,20 +57,21 @@ class TestGroqImageProcessor:
                     body='{"error":{"code":"invalid_api_key","message":"Invalid API key"}}',
                 )
             ):
-                processor._get_text_from_image(image_base64="hsfjlshfjdsl")
+                processor.get_text(
+                    base64_img="dhfjsdkfh"
+                )
 
     def test_if_raises_invalid_parameters_exception_if_model_is_invalid(self):
         """
         Test if the GroqImageProcessor raises a InvalidParametersException if the model is invalid.
         """
         processor = GroqImageProcessor(
-                groq_api_key="KEY",
+                client=Groq(api_key="KEY"),
                 model="invalid",
             )
         
         with pytest.raises(InvalidParametersException) as exc_info:
             from groq import NotFoundError
-            from requests import Response
             
             mock_response = MagicMock()
             mock_response.text = '{"error":{"code":"model_not_found","message":"Model not found"}}'
@@ -81,8 +85,10 @@ class TestGroqImageProcessor:
                     body='{"error":{"code":"model_not_found","message":"Model not found"}}',
                 )
             ):
-                processor._get_text_from_image(image_base64="hsfjlshfjdsl")
-        
+                processor.get_text(
+                    base64_img="dhfjsdkfh"
+                )
+                    
         assert exc_info.value.service_name == "Groq"
         assert exc_info.value.parameter_name == "model"
         assert exc_info.value.parameter_value == "invalid"
@@ -96,7 +102,7 @@ class TestGroqImageProcessor:
         Test if the GroqImageProcessor raises a UnexpectedImageProcessingException if an unexpected error occurs.
         """
         processor = GroqImageProcessor(
-                groq_api_key="KEY",
+                client=Groq(api_key="KEY"),
                 model="meta-llama/llama-4-scout-17b-16e-instruct",
             )
         
@@ -114,7 +120,9 @@ class TestGroqImageProcessor:
                     body='{"error":{"code":"model_not_found","message":"Model not found"}}',
                 )
             ):
-                processor._get_text_from_image(image_base64="hsfjlshfjdsl")
+                processor.get_text(
+                    base64_img="dhfjsdkfh"
+                )
         
         assert exc_info.value.service_name == "Groq"
 
@@ -122,7 +130,7 @@ class TestGroqImageProcessor:
 
     def test_if_raises_unexpected_captcha_solver_exception_if_unexpected_error_occurs(self):
         processor = GroqImageProcessor(
-                groq_api_key="KEY",
+                client=Groq(api_key="KEY"),
                 model="meta-llama/llama-4-scout-17b-16e-instruct",
             )
         
@@ -136,9 +144,31 @@ class TestGroqImageProcessor:
                 'create', 
                 side_effect=Exception()
             ):
-                processor._get_text_from_image(image_base64="hsfjlshfjdsl")
+                processor.get_text(
+                    base64_img="dhfjsdkfh"
+                )
         
         assert exc_info.value.service_name == "Groq"
 
         assert "Groq" in str(exc_info.value)
+
+    def test_get_text_success(self):
+        # Arrange
+        mock_groq = MagicMock(spec=Groq)
+        mock_chat = MagicMock()
+        mock_chat.choices = [MagicMock()]
+        mock_chat.choices[0].message.content = "HELLO123"
+        mock_groq.chat.completions.create.return_value = mock_chat
+
+        processor = GroqImageProcessor(client=mock_groq)
+
+        base64_img = "fakebase64"
+
+        # Act
+        result = processor.get_text(base64_img)
+
+        # Assert
+        assert result == "HELLO123"
+        mock_groq.chat.completions.create.assert_called_once()
+
             

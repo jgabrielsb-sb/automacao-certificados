@@ -7,13 +7,17 @@ from selenium_package.interfaces import BaseExecutor
 
 from automacao_certificados.selenium_automations.websites.certidao_estadual_al.pages import ConsultaPage
 from automacao_certificados.selenium_automations.websites.certidao_estadual_al.exceptions import *
-from automacao_certificados.selenium_automations.core.interfaces import BaseImageProcessor
+from automacao_certificados.selenium_automations.core.interfaces import (
+    ImageProcessorPort,
+    CaptchaGatewayPort
+)
 
 @pytest.fixture
 def consulta_page_instance():
     return ConsultaPage(
         driver=Mock(spec=WebDriver),
-        captcha_adapter=Mock(spec=BaseImageProcessor),
+        captcha_adapter=Mock(spec=ImageProcessorPort),
+        captcha_gateway=Mock(spec=CaptchaGatewayPort)
     )
 
 
