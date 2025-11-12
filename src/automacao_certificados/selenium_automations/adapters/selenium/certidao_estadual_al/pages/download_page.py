@@ -15,7 +15,10 @@ from ..objects import CertificadoTable
 from ..locators import locators
 
 from automacao_certificados.selenium_automations.core.interfaces import *
+from automacao_certificados.selenium_automations.core.models import dto_document
 from automacao_certificados.selenium_package_extension.actions import TakeScreenshot
+from automacao_certificados.selenium_automations.adapters.extractors import CertificadoCaixaExtractor
+from automacao_certificados.selenium_automations.utils.utils import html_to_base64_pdf
 
 
 class DownloadPage(DownloadPagePort):
@@ -105,12 +108,38 @@ class DownloadPage(DownloadPagePort):
 
         return executor
 
-    def get_certificado_image(
+    # def get_certificado_image(
+    #     self,
+    #     img_path_to_save: Path,
+    # ) -> Path:
+    #     """
+    #     Get the certificado image.
+    #     To execute an executor the method 'run()' must be called.
+    #     Args:
+    #         img_path_to_save: The path to save the image. Example: Path("certificado.png").
+    #     Returns:
+    #         The path to the saved image.
+    #     """
+    #     certificado_image_element = WebDriverWait(self.driver, 3).until(
+    #         EC.presence_of_element_located(locators.CERTIFICADO_TABLE_LOCATOR)
+    #     )
+        
+    #     action = TakeScreenshot(
+    #         web_instance=self.driver,
+    #         web_element=certificado_image_element,
+    #         path_to_save=img_path_to_save
+    #     )
+    #     executor = RetryActionUntilNewFileHasBeenDetected(
+    #         action=action,
+    #         path=img_path_to_save.parent
+    #     )
+    #     return executor
+
+    def get_certificado_base64_pdf(
         self,
-        img_path_to_save: Path,
-    ) -> Path:
+    ) -> str:
         """
-        Get the certificado image.
+        Get the certificado base64 pdf.
         To execute an executor the method 'run()' must be called.
         Args:
             img_path_to_save: The path to save the image. Example: Path("certificado.png").
@@ -120,16 +149,8 @@ class DownloadPage(DownloadPagePort):
         certificado_image_element = WebDriverWait(self.driver, 3).until(
             EC.presence_of_element_located(locators.CERTIFICADO_TABLE_LOCATOR)
         )
-        action = TakeScreenshot(
-            web_instance=self.driver,
-            web_element=certificado_image_element,
-            path_to_save=img_path_to_save
-        )
-        executor = RetryActionUntilNewFileHasBeenDetected(
-            action=action,
-            path=img_path_to_save.parent
-        )
-        return executor
+        html = certificado_image_element.get_attribute("innerHTML")
+        return html_to_base64_pdf(html=html)
 
     def _validate_img_path(
         self,
@@ -195,7 +216,7 @@ class DownloadPage(DownloadPagePort):
     def run(
         self,
         img_path_to_save: Path,
-    ) -> None:
+    ) -> tuple[dto_document.DocumentExtracted, str]:
         """
         Run the download page.
         Args:
@@ -206,7 +227,8 @@ class DownloadPage(DownloadPagePort):
             ImgPathException: If the file parent directory does not exist, is not a directory, or has insufficient permissions.
         """
         self._validate_img_path(img_path_to_save=img_path_to_save)
-        self.click_on_cnpj_executor().run()
         self.click_on_certificado_href_executor().run()
         self.click_on_visualizar_button_executor().run()
-        self.get_certificado_image(img_path_to_save=img_path_to_save).run()
+        base64_pdf = self.get_certificado_base64_pdf()
+        document_extracted = CertificadoCaixaExtractor(self.driver).run()
+        return document_extracted, base64_pdf
