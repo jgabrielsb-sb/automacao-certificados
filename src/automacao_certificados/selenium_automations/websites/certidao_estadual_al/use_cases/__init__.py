@@ -1,1 +1,0 @@
-from .get_certificado_using_groq import get_certificado_using_groq

@@ -4,7 +4,7 @@ from automacao_certificados.selenium_automations.core.interfaces import (
     SeleniumWorkflowOutput,
 
     ImageProcessorPort,
-    CaptchaGatewayPort,
+    SeleniumCaptchaGatewayPort,
 )
 
 
@@ -24,12 +24,12 @@ class CertidaoEstadualALSeleniumWorkflow(SeleniumWorkflowPort):
         driver: WebDriver,
         img_path_to_save_file: Path,
         image_processor: ImageProcessorPort,
-        captcha_gateway: CaptchaGatewayPort,
+        captcha_gateway: SeleniumCaptchaGatewayPort,
     ):
         if not isinstance(image_processor, ImageProcessorPort):
             raise ValueError("image_processor must be a ImageProcessorPort")
         
-        if not isinstance(captcha_gateway, CaptchaGatewayPort):
+        if not isinstance(captcha_gateway, SeleniumCaptchaGatewayPort):
             raise ValueError("captcha_gateway must be a CaptchaGatewayPort")
         
         if not isinstance(img_path_to_save_file, Path):

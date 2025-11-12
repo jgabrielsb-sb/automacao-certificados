@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from automacao_certificados.selenium_automations.core.interfaces import (
     BasePage,
     ImageProcessorPort,
-    CaptchaGatewayPort
+    SeleniumCaptchaGatewayPort
 )
 
 from selenium_package.interfaces import (
@@ -50,13 +50,13 @@ class ConsultaPage(BasePage):
         self, 
         driver: WebDriver,
         captcha_adapter: ImageProcessorPort,
-        captcha_gateway: CaptchaGatewayPort,
+        captcha_gateway: SeleniumCaptchaGatewayPort,
     ):
         if not isinstance(captcha_adapter, ImageProcessorPort):
             raise ValueError("captcha_adapter must be a ImageProcessorPort")
 
-        if not isinstance(captcha_gateway, CaptchaGatewayPort):
-            raise ValueError("captcha_gateway must be a CaptchaGatewayPort")
+        if not isinstance(captcha_gateway, SeleniumCaptchaGatewayPort):
+            raise ValueError("captcha_gateway must be a SeleniumCaptchaGatewayPort")
         
         self.captcha_adapter = captcha_adapter
         self.captcha_gateway = captcha_gateway

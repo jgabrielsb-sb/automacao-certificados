@@ -1,6 +1,6 @@
 from automacao_certificados.selenium_automations.core.interfaces import (
     ImageProcessorPort,
-    CaptchaGatewayPort, FillCaptchaTextResult
+    CaptchaGatewayPort
 )
 
 from pydantic import BaseModel
