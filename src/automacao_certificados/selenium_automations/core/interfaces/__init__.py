@@ -29,3 +29,8 @@ from .captcha_gateway import (
 )
 
 from .pages import *
+
+from .captcha_solver import (
+    CaptchaSolverPort,
+    CaptchaSolverInput,
+)
