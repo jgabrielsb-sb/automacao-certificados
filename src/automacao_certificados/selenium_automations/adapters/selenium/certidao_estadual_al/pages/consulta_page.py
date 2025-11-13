@@ -9,7 +9,7 @@ from selenium_package.actions import *
 from selenium_package.executors import *
 
 from ..locators import locators
-from ..exceptions import *
+from ...exceptions import *
 
 from automacao_certificados.selenium_package_extension.actions import *
 from automacao_certificados.selenium_package_extension.executors import *

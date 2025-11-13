@@ -5,7 +5,7 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 
 from automacao_certificados.selenium_automations.adapters.selenium.certidao_estadual_al.pages import ConsultaPage
 
-from automacao_certificados.selenium_automations.adapters.selenium.certidao_estadual_al.exceptions import *
+from automacao_certificados.selenium_automations.adapters.selenium.exceptions import *
 from automacao_certificados.selenium_automations.core.interfaces import CaptchaSolverPort
 
 @pytest.fixture

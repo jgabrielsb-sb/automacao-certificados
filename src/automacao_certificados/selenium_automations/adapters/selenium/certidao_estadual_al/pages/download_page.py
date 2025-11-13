@@ -10,7 +10,7 @@ from pathlib import Path
 import os
 
 
-from ..exceptions import *
+from ...exceptions import *
 from ..objects import CertificadoTable
 from ..locators import locators
 
@@ -152,45 +152,6 @@ class DownloadPage(DownloadPagePort):
         html = certificado_image_element.get_attribute("innerHTML")
         return html_to_base64_pdf(html=html)
 
-    def _validate_img_path(
-        self,
-        img_path_to_save: Path,
-    ) -> None:
-        """
-        Validate the img path.
-        Args:
-            img_path_to_save: The path to save the image. Example: Path("certificado.png").
-        Raises:
-            ImgPathAlreadyExistsException: If the file already exists.
-            ImgPathException: If the file parent directory does not exist, is not a directory, or has insufficient permissions.
-        """
-        if not isinstance(img_path_to_save, Path):
-            raise ValueError("img_path_to_save must be a Path object")
-         
-        # check if the file already exists
-        if img_path_to_save.exists():
-            raise ImgPathAlreadyExistsException(
-                img_path=img_path_to_save
-            )
-
-        # check if the file parent directory exists
-        if not img_path_to_save.parent.exists():
-            raise ImgPathException(
-                message=f"The file parent directory does not exist: {img_path_to_save.parent}"
-            )
-
-        # check if the file suffix is valid
-        if not img_path_to_save.suffix.lower() in [".png", ".jpg", ".jpeg"]:
-            raise ImgPathException(
-                message=f"The file suffix is not valid: {img_path_to_save.suffix}"
-            )
-
-        # check if has write permissions to save the file
-        if not os.access(img_path_to_save.parent, os.W_OK):
-            raise ImgPathException(
-                message=f"Insufficient permissions to save the file: {img_path_to_save.parent}"
-            )
-
     def _go_to_certificado_page(
         self,
     ) -> None:
@@ -215,7 +176,6 @@ class DownloadPage(DownloadPagePort):
 
     def run(
         self,
-        img_path_to_save: Path,
     ) -> tuple[dto_document.DocumentExtracted, str]:
         """
         Run the download page.
@@ -226,7 +186,6 @@ class DownloadPage(DownloadPagePort):
             ImgPathAlreadyExistsException: If the file already exists.
             ImgPathException: If the file parent directory does not exist, is not a directory, or has insufficient permissions.
         """
-        self._validate_img_path(img_path_to_save=img_path_to_save)
         self.click_on_certificado_href_executor().run()
         self.click_on_visualizar_button_executor().run()
         base64_pdf = self.get_certificado_base64_pdf()
