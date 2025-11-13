@@ -53,4 +53,6 @@ def download_certidao_estadual_al(
         raise DownloadCertidaoEstadualAlException(
             original_exception=e
         )
+    finally:
+        driver.quit()
     
