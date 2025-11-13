@@ -1,5 +1,14 @@
 import base64
 
+def validate_cnpj(cnpj: str) -> str:
+    if not isinstance(cnpj, str):
+        raise ValueError("cnpj must be a string")
+    if not cnpj.isdigit():
+        raise ValueError("cnpj must be a number")
+    if len(cnpj) != 14:
+        raise ValueError("cnpj must have 14 digits")
+    return cnpj
+
 def format_cnpj(cnpj: str) -> str:
     """
     Format the CNPJ to the format 00.000.000/0000-00.
@@ -10,13 +19,7 @@ def format_cnpj(cnpj: str) -> str:
     Raises:
         ValueError: If the CNPJ is not a string or is not 14 digits or is not a number.
     """
-    if not isinstance(cnpj, str):
-        raise ValueError("cnpj must be a string")
-    if not cnpj.isdigit():
-        raise ValueError("cnpj must be a number")
-    if len(cnpj) != 14:
-        raise ValueError("cnpj must have 14 digits")
-
+    cnpj = validate_cnpj(cnpj)
     return f"{cnpj[:2]}.{cnpj[2:5]}.{cnpj[5:8]}/{cnpj[8:12]}-{cnpj[12:]}"
 
 def validate_document_file(base64_pdf: str) -> None:
