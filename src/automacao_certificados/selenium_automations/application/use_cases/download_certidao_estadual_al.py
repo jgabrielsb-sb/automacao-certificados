@@ -32,7 +32,6 @@ def _get_download_page() -> DownloadPage:
 def download_certidao_estadual_al(
     state_value: str,
     inscricao_value: str,
-    img_path_to_save: Path,
 ) -> tuple[dto_document.DocumentExtracted, str]:
 
     consulta_page = _get_consulta_page()
@@ -41,7 +40,6 @@ def download_certidao_estadual_al(
     certidao_estadual_al_workflow = CertidaoEstadualALWorkflow(
         consulta_page=consulta_page,
         download_page=download_page,
-        img_path_to_save=img_path_to_save,
     )
     try:
         return certidao_estadual_al_workflow.run(
