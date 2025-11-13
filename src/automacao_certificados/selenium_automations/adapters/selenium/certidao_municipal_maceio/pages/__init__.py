@@ -1,0 +1,1 @@
+from .consulta_page import ConsultaPage
