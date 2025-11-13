@@ -13,13 +13,8 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 groq = Groq(api_key=settings.groq_api_key)
 driver = WebDriver()
 
-def download_certidao_estadual_al(
-    state_value: str,
-    inscricao_value: str,
-    img_path_to_save: Path,
-) -> tuple[dto_document.DocumentExtracted, str]:
-
-    consulta_page = ConsultaPage(
+def _get_consulta_page() -> ConsultaPage:
+    return ConsultaPage(
         driver=driver,
         captcha_solver=ImageCaptchaSolver(
             image_processor=GroqImageProcessor(client=groq),
@@ -29,9 +24,19 @@ def download_certidao_estadual_al(
         )
     )
 
-    download_page = DownloadPage(
+def _get_download_page() -> DownloadPage:
+    return DownloadPage(
         driver=driver,
     )
+
+def download_certidao_estadual_al(
+    state_value: str,
+    inscricao_value: str,
+    img_path_to_save: Path,
+) -> tuple[dto_document.DocumentExtracted, str]:
+
+    consulta_page = _get_consulta_page()
+    download_page = _get_download_page()
 
     certidao_estadual_al_workflow = CertidaoEstadualALWorkflow(
         consulta_page=consulta_page,
@@ -45,5 +50,7 @@ def download_certidao_estadual_al(
             inscricao_value=inscricao_value,
         )
     except Exception as e:
-        raise DownloadCertidaoEstadualAlException(original_exception=e)
+        raise DownloadCertidaoEstadualAlException(
+            original_exception=e
+        )
     
