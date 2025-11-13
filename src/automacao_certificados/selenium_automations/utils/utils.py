@@ -33,3 +33,21 @@ def validate_document_file(base64_pdf: str) -> None:
     
     if b"%%EOF" not in pdf_bytes:
         raise ValueError("base64_pdf is not a valid pdf file: it does not contains %%EOF")
+
+
+
+def html_to_base64_pdf(html: str, data_uri: bool = False) -> str:
+    """
+    Render HTML to PDF (in memory) and return a Base64 string.
+    - base_url: set this so relative image/CSS paths (e.g., ../estaticos/...) resolve correctly.
+    - data_uri: if True, prefix with 'data:application/pdf;base64,' (handy for frontends).
+    """
+    from io import BytesIO
+    from weasyprint import HTML
+    import base64
+
+    buf = BytesIO()
+    HTML(string=html).write_pdf(buf)
+    pdf_bytes = buf.getvalue()
+    b64 = base64.b64encode(pdf_bytes).decode("ascii")
+    return f"data:application/pdf;base64,{b64}" if data_uri else b64

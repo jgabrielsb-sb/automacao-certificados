@@ -17,5 +17,7 @@ class TestInit:
 
         assert "webdriver" in str(e.value)
 
+    
+
 
         

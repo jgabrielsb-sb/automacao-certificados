@@ -18,12 +18,13 @@ from .image_processor import (
     ImageProcessorPort,
 )
 
-from .selenium_workflow import (
-    SeleniumWorkflowInput,
-    SeleniumWorkflowOutput,
-    SeleniumWorkflowPort
-)
-
 from .captcha_gateway import (
     SeleniumCaptchaGatewayPort,
+)
+
+from .pages import *
+
+from .captcha_solver import (
+    CaptchaSolverPort,
+    CaptchaSolverInput,
 )
