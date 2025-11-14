@@ -1,2 +1,3 @@
 from .certidao_estadual_al_workflow import CertidaoEstadualALWorkflow
 from .certificado_maceio_workflow import CertificadoMaceioWorkflow
+from .certificado_arapiraca_workflow import CertificadoArapiracaWorkflow

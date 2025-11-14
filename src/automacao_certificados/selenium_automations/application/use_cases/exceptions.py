@@ -27,3 +27,15 @@ class DownloadCertificadoMaceioException(UseCaseException):
         self.original_exception = original_exception
         self.message = f"Error downloading certificado maceio: {original_exception}"
         super().__init__(self.message)
+
+class DownloadCertificadoArapiracaException(UseCaseException):
+    """
+    Exception for the download certificado arapiraca.
+    """
+    def __init__(
+        self,
+        original_exception: Exception,
+    ):
+        self.original_exception = original_exception
+        self.message = f"Error downloading certificado arapiraca: {original_exception}"
+        super().__init__(self.message)
