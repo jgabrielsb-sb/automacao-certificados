@@ -9,7 +9,7 @@ from pathlib import Path
 import base64
 
 from automacao_certificados.selenium_automations.adapters.extractors import CertificadoMaceioExtractor
-from automacao_certificados.selenium_automations.adapters.selenium.exceptions import SeleniumAdapterException
+from automacao_certificados.selenium_automations.adapters.selenium.exceptions import SeleniumAdapterException, IncorrectCNPJException
 from automacao_certificados.selenium_automations.core.interfaces import *
 from automacao_certificados.selenium_automations.core.models import dto_document
 from automacao_certificados.selenium_automations.utils.utils import *
@@ -77,7 +77,13 @@ class DownloadPage(DownloadPagePort):
         Args:
             cnpj: The CNPJ of the company.
         """
-        cnpj = validate_cnpj(cnpj)
+        try:
+            cnpj = validate_cnpj(cnpj)
+        except Exception as e:
+            raise IncorrectCNPJException(
+                cnpj_value=cnpj
+            )
+
         self.redirect_to_page_executor().run() 
         base64_pdf = self.get_certificado_base64_pdf(cnpj=cnpj)
         document_extracted = CertificadoMaceioExtractor(base64_pdf=base64_pdf).run()
