@@ -2,12 +2,15 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.common.exceptions import TimeoutException
 
 from selenium_package.interfaces import BaseExecutor
 from selenium_package.actions import *
 from selenium_package.executors import *
 
 from automacao_certificados.selenium_automations.core.interfaces import *
+from automacao_certificados.selenium_automations.utils.utils import validate_cnpj
+from automacao_certificados.selenium_automations.adapters.selenium.exceptions import IncorrectCNPJException
 from ..locators import locators
 
 URL = 'https://arapiraca.abaco.com.br/eagata/portal/'
@@ -132,13 +135,26 @@ class ConsultaPage(ConsultaPagePort):
             self.driver,
             consultar_button_element
         )
-        executor = RetryActionUntilAnotherTabIsOpened(
-            action=action,
-            current_tabs_count=2,
+        # executor = RetryActionUntilAnotherTabIsOpened(
+        #     action=action,
+        #     current_tabs_count=2,
+        # )
+        executor = DefaultExecutor(
+            action=action
         )
         return executor
 
-
+    def is_cnpj_invalid(
+        self
+    ) -> bool:
+        try:
+            cnpj_invalid_text = WebDriverWait(self.driver, 2).until(
+                EC.presence_of_element_located(locators.CNPJ_INVALIDO)
+            )
+            return True
+        except TimeoutException:
+            return False
+        
     def run(
         self,
         cnpj: str
@@ -148,6 +164,13 @@ class ConsultaPage(ConsultaPagePort):
         To execute an executor the method 'run()' must be called.
         """
         import time
+        try:
+            cnpj = validate_cnpj(cnpj)
+            print('passed validation ')
+        except Exception as e:
+            raise IncorrectCNPJException(
+                cnpj_value=cnpj
+            )
         self.redirect_to_page_executor().run()
         self.click_certidao_geral_button_executor().run()
         self.go_to_certidao_tab_executor().run()
@@ -155,3 +178,9 @@ class ConsultaPage(ConsultaPagePort):
         time.sleep(2)
         self.insert_cnpj_executor(cnpj).run()
         self.click_consultar_button_executor().run()
+        
+        is_cnpj_invalid = self.is_cnpj_invalid()
+        if is_cnpj_invalid:
+            raise IncorrectCNPJException(
+                cnpj_value=cnpj
+            )
