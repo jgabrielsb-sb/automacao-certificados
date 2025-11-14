@@ -137,32 +137,36 @@ class CertidaoArapiracaExtractor(BaseDocumentExtractor):
     def get_identifier(self) -> str | None:
         """
         Extract the certificate identifier/number.
+        The identifier is the "Identificação" or "Inscrição Geral" number (e.g., 491441535).
         """
         try:
             text = self._get_text_from_html()
 
-            # Try to find "N.º" or "N.°" followed by the certificate number
-            # Pattern 1: "N.º 41925 / 2025" (certificate number)
-            pattern1 = r"CERTIDÃO\s+NEGATIVA\s+DE\s+DEBITOS.*?N\.?[º°]\s*(\d+\s*/\s*\d{4})"
+            # Pattern 1: "Identificação: 491441535" (primary identifier)
+            pattern1 = r"Identificação\s*:?\s*(\d+)"
             match = re.search(pattern1, text, re.IGNORECASE | re.MULTILINE)
             if match:
-                identifier = match.group(1).strip()
-                identifier = re.sub(r"\s+", " ", identifier)
-                return identifier
+                return match.group(1).strip()
 
-            # Pattern 2: "N.° De Autenticidade: 542.F1F.465.99D" (authentication code)
-            pattern2 = r"N\.?[º°]\s*De\s+Autenticidade\s*:?\s*([A-Z0-9\.\-]+)"
+            # Pattern 2: "Inscrição Geral: 491441535" (fallback - same value)
+            pattern2 = r"Inscrição\s+Geral\s*:?\s*(\d+)"
             match = re.search(pattern2, text, re.IGNORECASE | re.MULTILINE)
             if match:
-                identifier = match.group(1).strip()
-                return identifier
+                return match.group(1).strip()
 
-            # Pattern 3: Generic "N.º" or "Número" pattern
-            pattern3 = r"(?:Número|Numero|N\.?[º°])\s*:?\s*(\d+\s*/\s*\d{4})"
+            # Pattern 3: "N.º 41925 / 2025" (certificate number - secondary option)
+            pattern3 = r"CERTIDÃO\s+NEGATIVA\s+DE\s+DEBITOS.*?N\.?[º°]\s*(\d+\s*/\s*\d{4})"
             match = re.search(pattern3, text, re.IGNORECASE | re.MULTILINE)
             if match:
                 identifier = match.group(1).strip()
                 identifier = re.sub(r"\s+", " ", identifier)
+                return identifier
+
+            # Pattern 4: "N.° De Autenticidade: 542.F1F.465.99D" (authentication code - last resort)
+            pattern4 = r"N\.?[º°]\s*De\s+Autenticidade\s*:?\s*([A-Z0-9\.\-]+)"
+            match = re.search(pattern4, text, re.IGNORECASE | re.MULTILINE)
+            if match:
+                identifier = match.group(1).strip()
                 return identifier
 
             return None
@@ -174,12 +178,36 @@ class CertidaoArapiracaExtractor(BaseDocumentExtractor):
         """
         Extract the expiration date of the certificate.
         The date appears as "Validade: 12/01/2026" in the HTML.
+        Works with both plain text and HTML with nested tags.
         """
         try:
+            # First, try to extract from raw HTML to handle nested spans
+            html_content = self._html_content
+            
+            # Pattern to match "Validade:" followed by date, even with HTML tags in between
+            # This handles cases like: <strong>Validade:</strong><span><strong>12/01/2026</strong></span>
+            # Try multiple patterns to handle different HTML structures
+            html_patterns = [
+                # Pattern 1: Validade followed by any characters and tags, then date
+                r"Validade.*?(\d{2}/\d{2}/\d{4})",
+                # Pattern 2: More specific - Validade, then skip tags
+                r"Validade[^<]*<[^>]*>[^<]*<[^>]*>[^<]*<[^>]*>(\d{2}/\d{2}/\d{4})",
+                # Pattern 3: Validade in tag, then date in next tag content
+                r"Validade[^>]*>([^<]*\d{2}/\d{2}/\d{4})",
+            ]
+            
+            for html_pattern in html_patterns:
+                match = re.search(html_pattern, html_content, re.IGNORECASE | re.DOTALL)
+                if match:
+                    date_str = match.group(1)
+                    # Clean up the date string (remove any extra characters)
+                    date_str = re.search(r'(\d{2}/\d{2}/\d{4})', date_str).group(1)
+                    return datetime.strptime(date_str, "%d/%m/%Y").date()
+            
+            # Fallback: try with extracted text
             text = self._get_text_from_html()
-
-            # Pattern to match "Validade:" followed by the date
-            # This is the most common format in Arapiraca certificates
+            
+            # Pattern to match "Validade:" followed by the date in plain text
             patterns = [
                 r"Validade\s*:?\s*(\d{2}/\d{2}/\d{4})",
                 r"(?:Válida\s+até|Válido\s+até|Vencimento)\s*:?\s*(\d{2}/\d{2}/\d{4})",
@@ -192,7 +220,7 @@ class CertidaoArapiracaExtractor(BaseDocumentExtractor):
                     date_str = match.group(1)
                     return datetime.strptime(date_str, "%d/%m/%Y").date()
 
-            # Fallback: try to find any date in DD/MM/YYYY format
+            # Last fallback: try to find any date in DD/MM/YYYY format
             date_pattern = r"\b(\d{2}/\d{2}/\d{4})\b"
             all_dates = re.findall(date_pattern, text)
 
