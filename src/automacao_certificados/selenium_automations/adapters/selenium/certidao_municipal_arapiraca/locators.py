@@ -21,4 +21,9 @@ class Locators:
         "//input[contains(@value, 'Consultar')]"
     )
 
+    CNPJ_INVALIDO = (
+        By.XPATH,
+        "//b[contains(text(), 'CPF/CNPJ')]"
+    )
+
 locators = Locators()
