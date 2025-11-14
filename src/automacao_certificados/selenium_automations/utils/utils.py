@@ -37,8 +37,6 @@ def validate_document_file(base64_pdf: str) -> None:
     if b"%%EOF" not in pdf_bytes:
         raise ValueError("base64_pdf is not a valid pdf file: it does not contains %%EOF")
 
-
-
 def html_to_base64_pdf(html: str, data_uri: bool = False) -> str:
     """
     Render HTML to PDF (in memory) and return a Base64 string.
@@ -54,3 +52,29 @@ def html_to_base64_pdf(html: str, data_uri: bool = False) -> str:
     pdf_bytes = buf.getvalue()
     b64 = base64.b64encode(pdf_bytes).decode("ascii")
     return f"data:application/pdf;base64,{b64}" if data_uri else b64
+
+def get_full_page_screenshot(driver):
+    # Use Chrome DevTools Protocol
+    result = driver.execute_cdp_cmd("Page.captureScreenshot", {
+        "fromSurface": True,
+        "captureBeyondViewport": True
+    })
+    
+    return result["data"]   # this is a base64 PNG string
+
+def png_base64_to_pdf_base64(png_base64: str) -> str:
+    import base64
+    from io import BytesIO
+    from PIL import Image
+    
+    # decode PNG
+    png_bytes = base64.b64decode(png_base64)
+    img = Image.open(BytesIO(png_bytes)).convert("RGB")  # PDF needs RGB
+    
+    # convert to PDF in memory
+    pdf_bytes_io = BytesIO()
+    img.save(pdf_bytes_io, format="PDF")
+    
+    # encode PDF to base64
+    pdf_bytes = pdf_bytes_io.getvalue()
+    return base64.b64encode(pdf_bytes).decode("utf-8")
