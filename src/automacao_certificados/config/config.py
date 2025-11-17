@@ -8,6 +8,10 @@ class Settings(BaseSettings):
     groq_api_key: Optional[str] = None
     base_certificado_api_url: Optional[str] = None
 
+    # ppe api
+    base_ppe_api_url: str
+    ppe_api_key: str
+
     # ✅ new way to define config
     model_config = SettingsConfigDict(
         env_file=".env",
