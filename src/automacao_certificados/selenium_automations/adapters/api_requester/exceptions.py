@@ -52,3 +52,17 @@ class UnexpectedError(APIRequesterException):
         self.route = route
         self.status_code = status_code
         self.message = message
+
+class InvalidCNPJException(APIRequesterException):
+    def __init__(
+        self,
+        cnpj: str,
+        custom_message: str = None
+    ) -> None:
+        self.cnpj = cnpj
+
+        if not custom_message:
+            custom_message = f"CNPJ inválido: {cnpj}"
+
+        self.message = custom_message
+        super().__init__(self.message)
