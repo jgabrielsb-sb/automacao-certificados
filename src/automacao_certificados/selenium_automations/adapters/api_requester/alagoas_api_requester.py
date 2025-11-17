@@ -46,13 +46,11 @@ class AlagoasAPIRequester:
             'numeroDocumento': cnpj,
             'tipoDocumento': "CNPJ"
         })
-        print(response.json())
         
         if response.status_code == HTTPStatus.OK:
             file = response.json().get('conteudo')
-
             if file:
-                return base64.b64decode(file)
+                return file
             else:
                 raise UnexpectedError(
                     route=url,

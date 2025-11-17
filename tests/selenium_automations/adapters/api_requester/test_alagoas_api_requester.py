@@ -36,7 +36,7 @@ class TestAlagoasAPIRequester:
         response = api_requester.get_certificado(cnpj="32652832000189")
         
         assert route.called
-        assert response == file_content
+        assert response == file_content_b64
 
     @respx.mock
     def test_200_response_with_no_content(self):
