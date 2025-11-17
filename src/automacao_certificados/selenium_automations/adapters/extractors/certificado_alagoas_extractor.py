@@ -23,6 +23,7 @@ class CertificadoAlagoasExtractor(BaseDocumentExtractor):
         Args:
             base64_pdf (str): A BASE64 string that encodes a PDF file.
         """
+        print(type(base64_pdf))
         if not isinstance(base64_pdf, str):
             raise ValueError("base64_pdf must be a string")
 
