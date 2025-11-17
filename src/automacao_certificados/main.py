@@ -4,5 +4,6 @@ if __name__ == "__main__":
     b64 = download_certificado_arapiraca(
         cnpj="12345678912345"
     )
+    print('hello')
     
     
