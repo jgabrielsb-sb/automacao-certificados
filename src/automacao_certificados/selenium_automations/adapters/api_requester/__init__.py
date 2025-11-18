@@ -3,3 +3,7 @@ from .alagoas_api_requester import (
     AlagoasAPIRequester,
     CertificadoPostRequest
 )
+from .ppe_api_requester import (
+    PPEAPIRequester, 
+    CertificateToDownload
+)
