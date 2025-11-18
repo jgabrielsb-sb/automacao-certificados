@@ -1,1 +1,2 @@
 from .document_maceio_downloader import DocumentMaceioDownloader
+from .document_fgts_downloader import DocumentFGTSDownloader
