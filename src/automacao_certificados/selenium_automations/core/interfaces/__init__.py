@@ -28,3 +28,5 @@ from .captcha_solver import (
     CaptchaSolverPort,
     CaptchaSolverInput,
 )
+
+from .selenium_downloader import SeleniumDocumentDownloaderPort
