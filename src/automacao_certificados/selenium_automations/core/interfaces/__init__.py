@@ -29,4 +29,4 @@ from .captcha_solver import (
     CaptchaSolverInput,
 )
 
-from .selenium_downloader import SeleniumDocumentDownloaderPort
+from .document_downloader import DocumentDownloaderPort

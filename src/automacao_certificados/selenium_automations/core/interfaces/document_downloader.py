@@ -10,18 +10,12 @@ from automacao_certificados.selenium_automations.core.models import (
 
 from automacao_certificados.selenium_automations.utils import validate_cnpj
 
-class SeleniumDocumentDownloaderPort(ABC):
+class DocumentDownloaderPort(ABC):
     """
     Interface responsible for aggregate selenium steps
     and extraction logic to get the document file as a 
     base64 string and the extracted informations.
     """
-    def __init__(self, driver: WebDriver):
-        if not isinstance(driver, WebDriver):
-            raise ValueError('driver must be a Webdriver')
-
-        self.driver = driver
-
     @abstractmethod
     def get_document(self, cnpj) -> Tuple[dto_document.DocumentExtracted,str]:
         """
