@@ -4,7 +4,7 @@ from .acquisition import *
 from .extractors import *
 from .http import *
 from .image_processor import *
-from .persistence import *
+from .persistance import *
 from .ui import *
 from .captcha_solver import *
 from .document_downloader import *
