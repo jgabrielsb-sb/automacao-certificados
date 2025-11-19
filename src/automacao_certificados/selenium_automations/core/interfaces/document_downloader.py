@@ -2,15 +2,10 @@ from abc import ABC, abstractmethod
 
 from typing import Tuple
 
-from selenium.webdriver.remote.webdriver import WebDriver
-
-from automacao_certificados.selenium_automations.core.models import (
-    dto_document
-)
-
+from automacao_certificados.selenium_automations.core.models import *
+from automacao_certificados.selenium_automations.core.exceptions import *
 from automacao_certificados.selenium_automations.utils import validate_cnpj
 
-from automacao_certificados.selenium_automations.core.exceptions import *
 
 class DocumentDownloaderPort(ABC):
     """
@@ -19,11 +14,11 @@ class DocumentDownloaderPort(ABC):
     base64 string and the extracted informations.
     """
     @abstractmethod
-    def get_document(self, cnpj) -> Tuple[dto_document.DocumentExtracted,str]:
+    def _get_document(self, input: DocumentDownloaderInput) -> Tuple[dto_document.DocumentExtracted, str]:
         """
         Method to be implemented by child classes.
         Args:
-            cnpj: the cnpj of the company.
+            input: the input of the document downloader.
         Returns:
             Tuple that contains the extracted document and a base64
             string of the file.
@@ -31,20 +26,19 @@ class DocumentDownloaderPort(ABC):
         pass
     
    
-    def run(self, cnpj: str) -> Tuple[dto_document.DocumentExtracted,str]:
-        validate_cnpj(cnpj)
+    def run(self, input: DocumentDownloaderInput) -> DocumentDownloaderOutput:
+        validate_cnpj(input.cnpj)
         
         try:
-            document_extracted, base64_pdf = self.get_document(cnpj)
+            document_extracted, base64_pdf = self._get_document(input)
+            return DocumentDownloaderOutput(
+                document_extracted=document_extracted,
+                base64_pdf=base64_pdf
+            )
         except Exception as e:
             raise DocumentDownloaderException(e)
 
-        if not isinstance(document_extracted, dto_document.DocumentExtracted):
-            raise ValueError("document_extracted must be a dto_document.DocumentExtracted")
-
-        if not isinstance(base64_pdf, str):
-            raise ValueError("base64_pdf must a str")
-
-        return document_extracted, base64_pdf
+        
+        
 
             
