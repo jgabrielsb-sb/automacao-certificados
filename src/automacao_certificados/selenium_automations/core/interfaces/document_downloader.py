@@ -10,6 +10,8 @@ from automacao_certificados.selenium_automations.core.models import (
 
 from automacao_certificados.selenium_automations.utils import validate_cnpj
 
+from automacao_certificados.selenium_automations.core.exceptions import *
+
 class DocumentDownloaderPort(ABC):
     """
     Interface responsible for aggregate selenium steps
@@ -31,7 +33,11 @@ class DocumentDownloaderPort(ABC):
    
     def run(self, cnpj: str) -> Tuple[dto_document.DocumentExtracted,str]:
         validate_cnpj(cnpj)
-        document_extracted, base64_pdf = self.get_document(cnpj)
+        
+        try:
+            document_extracted, base64_pdf = self.get_document(cnpj)
+        except Exception as e:
+            raise DocumentDownloaderException(e)
 
         if not isinstance(document_extracted, dto_document.DocumentExtracted):
             raise ValueError("document_extracted must be a dto_document.DocumentExtracted")
