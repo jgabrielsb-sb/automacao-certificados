@@ -1,5 +1,5 @@
-from automacao_certificados.selenium_automations.adapters import DocumentMaceioDownloader
-from automacao_certificados.selenium_automations.core.models import dto_document
+from automacao_certificados.selenium_automations.adapters.document_downloader.document_maceio_downloader import DocumentMaceioDownloader
+from automacao_certificados.selenium_automations.core.models import *
 
 import pytest
 
@@ -25,7 +25,7 @@ class TestDocumentMaceioDownloader:
         with pytest.raises(ValueError) as e:
             DocumentMaceioDownloader(
                 download_page=download_page,
-            ).run("wrong_cnpj")
+            ).run(input=DocumentDownloaderInput(cnpj="wrong_cnpj"))
 
         assert "cnpj must be a number" in str(e.value)
 
@@ -38,14 +38,14 @@ class TestDocumentMaceioDownloader:
         with pytest.raises(ValueError) as e:
             DocumentMaceioDownloader(
                 download_page=download_page,
-            ).run("123")
+            ).run(input=DocumentDownloaderInput(cnpj="123"))
 
         assert "cnpj must have 14 digits" in str(e.value)
 
     def test_sucess_case(self, download_page: DownloadPage):
-        document_extracted, base64_pdf = DocumentMaceioDownloader(
+        output = DocumentMaceioDownloader(
             download_page=download_page,
-        ).run(cnpj="32652832000189")
+        ).run(input=DocumentDownloaderInput(cnpj="32652832000189"))
 
-        assert isinstance(document_extracted, dto_document.DocumentExtracted)
-        assert isinstance(base64_pdf, str)
+        assert isinstance(output.document_extracted, DocumentExtracted)
+        assert isinstance(output.base64_pdf, str)

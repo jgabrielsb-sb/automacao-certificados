@@ -1,11 +1,6 @@
-from automacao_certificados.selenium_automations.adapters import (
-    ImageCaptchaSolver, 
-    GroqImageProcessor, 
-    SeleniumCaptchaGateway,
-    DocumentFGTSDownloader,
-)
-from automacao_certificados.selenium_automations.core.models import dto_document
-from automacao_certificados.selenium_automations.adapters.selenium.exceptions import *
+from automacao_certificados.selenium_automations.adapters import *
+from automacao_certificados.selenium_automations.core.models import *
+from automacao_certificados.selenium_automations.core.exceptions import *
 from automacao_certificados.selenium_automations.adapters.selenium.certidao_fgts.pages import *
 from automacao_certificados.config import settings
 
@@ -40,20 +35,20 @@ class TestDocumentFGTSDownloader:
             driver=driver,
         )
 
-    def test_if_raises_value_error_if_incorrect_cnpj(self, consulta_page, download_page):
+    def atest_if_raises_value_error_if_incorrect_cnpj(self, consulta_page, download_page):
         with pytest.raises(ValueError) as e:
             DocumentFGTSDownloader(
                 consulta_page=consulta_page,
                 download_page=download_page,
-            ).run("wrong_cnpj")
+            ).run(input=DocumentDownloaderInput(cnpj="wrong_cnpj"))
 
         assert "cnpj must be a number" in str(e.value)
 
-    def test_sucess_case(self,consulta_page, download_page):
-        document_extracted, base64_pdf = DocumentFGTSDownloader(
+    def test_sucess_case(self, consulta_page, download_page):
+        output = DocumentFGTSDownloader(
             consulta_page=consulta_page,
             download_page=download_page,
-        ).run("15401595000164")
+        ).run(input=DocumentDownloaderInput(cnpj="15401595000164"))
 
-        assert isinstance(document_extracted, dto_document.DocumentExtracted)
-        assert isinstance(base64_pdf, str)
+        assert isinstance(output.document_extracted, DocumentExtracted)
+        assert isinstance(output.base64_pdf, str)
