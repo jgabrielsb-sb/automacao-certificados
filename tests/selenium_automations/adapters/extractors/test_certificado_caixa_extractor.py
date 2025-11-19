@@ -4,12 +4,12 @@ import types
 from urllib.parse import quote
 from datetime import date
 
-from automacao_certificados.selenium_automations.core.models import dto_supplier
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 
-from automacao_certificados.selenium_automations.adapters.extractors import CertificadoCaixaExtractor
-from automacao_certificados.selenium_automations.adapters.extractors.exceptions import ErrorExtractingDataException
+from automacao_certificados.selenium_automations.core.models import *
+from automacao_certificados.selenium_automations.adapters.extractors import *
+from automacao_certificados.selenium_automations.core.exceptions import *
 
 class TestCertificadoCaixaExtractor:
     """

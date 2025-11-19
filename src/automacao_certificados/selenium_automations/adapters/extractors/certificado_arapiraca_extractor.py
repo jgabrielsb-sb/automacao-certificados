@@ -1,6 +1,6 @@
-from automacao_certificados.selenium_automations.core.interfaces import BaseDocumentExtractor
-from automacao_certificados.selenium_automations.core.models import dto_supplier
-from .exceptions import *
+from automacao_certificados.selenium_automations.core.interfaces import *
+from automacao_certificados.selenium_automations.core.models import *
+from automacao_certificados.selenium_automations.core.exceptions import *
 
 from datetime import datetime, date
 import re
@@ -29,7 +29,7 @@ class HTMLTextExtractor(HTMLParser):
         return ' '.join(self.text_parts)
 
 
-class CertidaoArapiracaExtractor(BaseDocumentExtractor):
+class CertidaoArapiracaExtractor(DocumentExtractorPort):
     """
     Extractor for the Certidão Municipal de Arapiraca.
     Accepts HTML content as a string.

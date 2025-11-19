@@ -1,12 +1,14 @@
 import pytest
-from unittest.mock import Mock
+
 
 from pathlib import Path
 import base64
 
 from datetime import date
-from automacao_certificados.selenium_automations.adapters.extractors import CertificadoMaceioExtractor
-from automacao_certificados.selenium_automations.adapters.extractors.exceptions import ErrorExtractingDataException
+
+from automacao_certificados.selenium_automations.core.exceptions import *
+from automacao_certificados.selenium_automations.core.models import *
+from automacao_certificados.selenium_automations.adapters.extractors import *
 
 class TestCertificadoMaceioExtractor:
     def test_if_raises_value_error_if_not_str(self):

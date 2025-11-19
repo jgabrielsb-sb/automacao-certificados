@@ -1,8 +1,6 @@
-from automacao_certificados.selenium_automations.core.interfaces import BaseDocumentExtractor
-from automacao_certificados.selenium_automations.core.models import (
-    dto_supplier
-)
-from .exceptions import *
+from automacao_certificados.selenium_automations.core.interfaces import DocumentExtractorPort
+from automacao_certificados.selenium_automations.core.models import *
+from automacao_certificados.selenium_automations.core.exceptions import *
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -11,7 +9,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from datetime import date, datetime
 
-class CertificadoCaixaExtractor(BaseDocumentExtractor):
+class CertificadoCaixaExtractor(DocumentExtractorPort):
     """
     Extractor for the Certificado Caixa.
     """

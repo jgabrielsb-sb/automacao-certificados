@@ -1,6 +1,6 @@
-from automacao_certificados.selenium_automations.core.interfaces import BaseDocumentExtractor
-from automacao_certificados.selenium_automations.core.models import dto_supplier
-from .exceptions import *
+from automacao_certificados.selenium_automations.core.interfaces import *
+from automacao_certificados.selenium_automations.core.models import *
+from automacao_certificados.selenium_automations.core.exceptions import *
 
 from datetime import datetime, date
 from io import BytesIO
@@ -9,7 +9,7 @@ import re
 import pdfplumber
 
 
-class CertificadoAlagoasExtractor(BaseDocumentExtractor):
+class CertificadoAlagoasExtractor(DocumentExtractorPort):
     """
     Extractor for the Certidão Estadual de Alagoas.
     Accepts ONLY a base64 string representing a PDF.
