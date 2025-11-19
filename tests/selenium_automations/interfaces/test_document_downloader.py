@@ -1,13 +1,14 @@
 
 import pytest
 
-from automacao_certificados.selenium_automations.core.exceptions.interfaces.exceptions import DocumentDownloaderException
+from automacao_certificados.selenium_automations.core.exceptions import *
 from automacao_certificados.selenium_automations.core.interfaces import *
+from automacao_certificados.selenium_automations.core.models import *
 
 @pytest.fixture
 def document_downloader_implementation():
     class DocumentDownloaderImplementation(DocumentDownloaderPort):
-        def get_document(self, cnpj):
+        def _get_document(self, input: DocumentDownloaderInput):
             return "test"
 
     return DocumentDownloaderImplementation()
@@ -18,17 +19,17 @@ class TestDocumentDownloader:
         monkeypatch,
         document_downloader_implementation
     ):
-        def fake_get_document(cnpj):
+        def fake_get_document(input: DocumentDownloaderInput):
             raise Exception('test exception')
 
         monkeypatch.setattr(
             document_downloader_implementation,
-            "get_document",
+            "_get_document",
             fake_get_document
         )
 
         with pytest.raises(DocumentDownloaderException) as e:
-            document_downloader_implementation.run('12345678912345')
+            document_downloader_implementation.run(DocumentDownloaderInput(cnpj='12345678912345'))
 
         assert 'test exception' in str(e.value)
 
