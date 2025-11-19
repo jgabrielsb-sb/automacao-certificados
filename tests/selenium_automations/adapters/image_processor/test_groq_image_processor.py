@@ -6,6 +6,7 @@ from groq import Groq, NotFoundError
 
 from automacao_certificados.selenium_automations.adapters import GroqImageProcessor
 from automacao_certificados.selenium_automations.core.exceptions import *
+from automacao_certificados.selenium_automations.core.models import *
 
 class TestGroqImageProcessor:
     """
@@ -49,8 +50,8 @@ class TestGroqImageProcessor:
                     body='{"error":{"code":"invalid_api_key","message":"Invalid API key"}}',
                 )
             ):
-                processor.get_text(
-                    base64_img="dhfjsdkfh"
+                processor._get_text(
+                    input=ImageProcessorInput(base64_img="dhfjsdkfh")
                 )
 
     def test_if_raises_invalid_parameters_exception_if_model_is_invalid(self):
@@ -77,8 +78,8 @@ class TestGroqImageProcessor:
                     body='{"error":{"code":"model_not_found","message":"Model not found"}}',
                 )
             ):
-                processor.get_text(
-                    base64_img="dhfjsdkfh"
+                processor._get_text(
+                    input=ImageProcessorInput(base64_img="dhfjsdkfh")
                 )
                     
         assert exc_info.value.service_name == "Groq"
@@ -89,62 +90,7 @@ class TestGroqImageProcessor:
         assert "model" in str(exc_info.value)
         assert "invalid" in str(exc_info.value)
 
-    def test_if_raises_unexpected_image_processing_exception_if_unexpected_error_occurs_with_unexpected_error_code(self):
-        """
-        Test if the GroqImageProcessor raises a UnexpectedImageProcessingException if an unexpected error occurs.
-        """
-        processor = GroqImageProcessor(
-                client=Groq(api_key="KEY"),
-                model="meta-llama/llama-4-scout-17b-16e-instruct",
-            )
-        
-        with pytest.raises(UnexpectedImageProcessingException) as exc_info:
-            
-            mock_response = MagicMock()
-            mock_response.text = '{"error":{"code":"UNEXPECTED_ERROR","message":"Unexpected error"}}'
-
-            with patch.object(
-                processor.client.chat.completions, 
-                'create', 
-                side_effect=NotFoundError(
-                    message="Model not found",
-                    response=mock_response,
-                    body='{"error":{"code":"model_not_found","message":"Model not found"}}',
-                )
-            ):
-                processor.get_text(
-                    base64_img="dhfjsdkfh"
-                )
-        
-        assert exc_info.value.service_name == "Groq"
-
-        assert "Groq" in str(exc_info.value)
-
-    def test_if_raises_unexpected_captcha_solver_exception_if_unexpected_error_occurs(self):
-        processor = GroqImageProcessor(
-                client=Groq(api_key="KEY"),
-                model="meta-llama/llama-4-scout-17b-16e-instruct",
-            )
-        
-        with pytest.raises(UnexpectedImageProcessingException) as exc_info:
-            
-            mock_response = MagicMock()
-            mock_response.text = '{"error":{"code":"API_REQUEST_ERROR","message":"API request error"}}'
-
-            with patch.object(
-                processor.client.chat.completions, 
-                'create', 
-                side_effect=Exception()
-            ):
-                processor.get_text(
-                    base64_img="dhfjsdkfh"
-                )
-        
-        assert exc_info.value.service_name == "Groq"
-
-        assert "Groq" in str(exc_info.value)
-
-    def test_get_text_success(self):
+    def test__get_text_success(self):
         # Arrange
         mock_groq = MagicMock(spec=Groq)
         mock_chat = MagicMock()
@@ -154,13 +100,11 @@ class TestGroqImageProcessor:
 
         processor = GroqImageProcessor(client=mock_groq)
 
-        base64_img = "fakebase64"
-
         # Act
-        result = processor.get_text(base64_img)
+        result = processor._get_text(input=ImageProcessorInput(base64_img="fakebase64"))
 
         # Assert
-        assert result == "HELLO123"
+        assert result.text == "HELLO123"
         mock_groq.chat.completions.create.assert_called_once()
 
             

@@ -1,14 +1,7 @@
-from automacao_certificados.selenium_automations.core.interfaces import (
-    ImageProcessorPort,
-)
-
-from groq import (
-    Groq,
-    AuthenticationError,
-    NotFoundError,
-)
-
+from automacao_certificados.selenium_automations.core.interfaces import *
 from automacao_certificados.selenium_automations.core.exceptions import *
+from automacao_certificados.selenium_automations.core.models import *
+from groq import Groq, AuthenticationError, NotFoundError
 
 SERVICE_NAME = "Groq"
 
@@ -33,24 +26,12 @@ class GroqImageProcessor(ImageProcessorPort):
         self.client = client
         self.model = model
     
-    def get_text(
+    def _get_text(
         self, 
-        base64_img: str
-    ) -> str:
-        """
-        Gets the text from the image using the Groq API.
-        Arguments:
-            base64_img: the encoded base64 image
-        Returns:
-            str: The text from the image.
-        Raises:
-            ValueError: If the image_base64 is not a string.
-            AuthenticationException: If the API key is invalid.
-            InvalidParametersException: If the model is invalid.
-            UnexpectedImageProcessingException: If an unexpected error occurs.
-        """
+        input: ImageProcessorInput
+    ) -> ImageProcessorOutput:
         try:
-
+            base64_img = input.base64_img
             chat = self.client.chat.completions.create(
                 messages=[{
                     "role": "user",
@@ -65,7 +46,7 @@ class GroqImageProcessor(ImageProcessorPort):
             )
 
             text = chat.choices[0].message.content.strip()
-            return text
+            return ImageProcessorOutput(text=text)
         except AuthenticationError as e: # API KEY is invalid
             raise AuthenticationException(
                 service_name=SERVICE_NAME,
@@ -87,12 +68,6 @@ class GroqImageProcessor(ImageProcessorPort):
                     service_name=SERVICE_NAME,
                     original_exception=e,
                 )
-
-        except Exception as e: # Unhandled errors
-            raise UnexpectedImageProcessingException(
-                service_name=SERVICE_NAME,
-                original_exception=e,
-            )
             
             
         
