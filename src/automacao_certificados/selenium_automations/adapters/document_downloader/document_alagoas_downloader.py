@@ -16,7 +16,10 @@ class DocumentAlagoasDownloader(DocumentDownloaderPort):
     def _get_document(
         self,
         input: DocumentDownloaderInput
-    ) -> Tuple[dto_document.DocumentExtracted, str]:
+    ) -> DocumentDownloaderOutput:
         base64_pdf = self.api_requester.get_certificado(cnpj=input.cnpj)
         document_extracted = CertificadoAlagoasExtractor(base64_pdf=base64_pdf).run()
-        return document_extracted, base64_pdf
+        return DocumentDownloaderOutput(
+            document_extracted=document_extracted,
+            base64_pdf=base64_pdf,
+        )
