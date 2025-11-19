@@ -2,8 +2,6 @@ from automacao_certificados.selenium_automations.core.interfaces.document_downlo
 from automacao_certificados.selenium_automations.adapters.selenium.certidao_fgts.pages import *
 from automacao_certificados.selenium_automations.core.models import *
 
-from typing import Tuple
-
 class DocumentFGTSDownloader(DocumentDownloaderPort):
     def __init__(
         self,
