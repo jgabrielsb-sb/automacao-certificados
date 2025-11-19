@@ -1,15 +1,11 @@
-from mailbox import Mailbox
-from automacao_certificados.selenium_automations.adapters.captcha_solver import ImageCaptchaSolver, image_captcha_solver
+
+from automacao_certificados.selenium_automations.adapters.captcha_solver import ImageCaptchaSolver
 from automacao_certificados.selenium_automations.core.interfaces import *
+from automacao_certificados.selenium_automations.core.models import *
 
 import pytest
-
 from unittest.mock import MagicMock, Mock
 from selenium.webdriver.remote.webelement import WebElement
-
-
-
-
 
 class TestInit:
     def test_if_raises_value_error_if_image_processor_is_not_a_image_processor_port(self):
@@ -51,7 +47,7 @@ class TestSolveCaptcha:
         text = ImageCaptchaSolver(
             image_processor,
             captcha_gateway
-        ).solve_captcha(input=CaptchaSolverInput(
+        )._solve_captcha(input=CaptchaSolverInput(
             input_webelement=MagicMock(spec=WebElement),
             img_webelement=MagicMock(spec=WebElement),
         ))
