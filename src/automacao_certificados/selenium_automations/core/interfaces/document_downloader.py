@@ -14,13 +14,13 @@ class DocumentDownloaderPort(ABC):
     base64 string and the extracted informations.
     """
     @abstractmethod
-    def _get_document(self, input: DocumentDownloaderInput) -> Tuple[dto_document.DocumentExtracted, str]:
+    def _get_document(self, input: DocumentDownloaderInput) -> DocumentDownloaderOutput:
         """
         Method to be implemented by child classes.
         Args:
             input: the input of the document downloader.
         Returns:
-            Tuple that contains the extracted document and a base64
+            DocumentDownloaderOutput that contains the extracted document and a base64
             string of the file.
         """
         pass
@@ -30,11 +30,8 @@ class DocumentDownloaderPort(ABC):
         validate_cnpj(input.cnpj)
         
         try:
-            document_extracted, base64_pdf = self._get_document(input)
-            return DocumentDownloaderOutput(
-                document_extracted=document_extracted,
-                base64_pdf=base64_pdf
-            )
+            output = self._get_document(input)
+            return output
         except Exception as e:
             raise DocumentDownloaderException(e)
 
