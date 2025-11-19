@@ -1,0 +1,1 @@
+from .certificado_api_persistance import CertificadoApiPersistence
