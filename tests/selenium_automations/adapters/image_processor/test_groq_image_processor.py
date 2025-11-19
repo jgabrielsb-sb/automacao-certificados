@@ -1,19 +1,11 @@
-from httpx._transports import base
 import pytest
+
 from unittest.mock import patch, MagicMock
 
-from groq import Groq
+from groq import Groq, NotFoundError
 
 from automacao_certificados.selenium_automations.adapters import GroqImageProcessor
-from automacao_certificados.selenium_automations.adapters.image_processor.exceptions import (
-    AuthenticationException,
-    InvalidParametersException,
-    UnexpectedImageProcessingException,
-)
-
-from groq import ( 
-    NotFoundError
-)
+from automacao_certificados.selenium_automations.core.exceptions import *
 
 class TestGroqImageProcessor:
     """

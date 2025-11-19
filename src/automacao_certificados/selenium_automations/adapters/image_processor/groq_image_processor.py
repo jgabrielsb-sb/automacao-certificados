@@ -8,11 +8,7 @@ from groq import (
     NotFoundError,
 )
 
-from automacao_certificados.selenium_automations.adapters.image_processor.exceptions import (
-    AuthenticationException,
-    InvalidParametersException,
-    UnexpectedImageProcessingException,
-)
+from automacao_certificados.selenium_automations.core.exceptions import *
 
 SERVICE_NAME = "Groq"
 
