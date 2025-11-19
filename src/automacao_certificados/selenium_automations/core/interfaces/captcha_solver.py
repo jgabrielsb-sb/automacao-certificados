@@ -1,14 +1,21 @@
-from pydantic import BaseModel, ConfigDict
+from abc import ABC, abstractmethod
 
-from typing import Protocol, Optional
+from automacao_certificados.selenium_automations.core.models import *
+from automacao_certificados.selenium_automations.core.exceptions import *
 
-from selenium.webdriver.remote.webelement import WebElement
+class CaptchaSolverPort(ABC):
+    """
+    Interface responsible for solving the captcha.
+    """
+    @abstractmethod
+    def _solve_captcha(self, input: CaptchaSolverInput) -> None:
+        """
+        Method to be implemented by child classes.
+        """
+        pass
 
-class CaptchaSolverInput(BaseModel):
-    img_webelement: Optional[WebElement]
-    input_webelement: Optional[WebElement]
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
-class CaptchaSolverPort(Protocol):
-    def solve_captcha(self, input: CaptchaSolverInput) -> None: ...
+    def run(self, input: CaptchaSolverInput) -> None:
+        try:
+            return self._solve_captcha(input)
+        except Exception as e:
+            raise CaptchaSolverException(e)
