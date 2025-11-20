@@ -1,24 +1,10 @@
-from automacao_certificados.selenium_automations.core.interfaces.base_api_requester import BaseAPIRequester
-from automacao_certificados.selenium_automations.core.interfaces.http_client import HttpClient
-from .exceptions import *
-
-from pydantic import BaseModel
+from automacao_certificados.selenium_automations.core.interfaces import *
+from automacao_certificados.selenium_automations.core.models import *
+from automacao_certificados.selenium_automations.core.exceptions import *
 
 from http import HTTPStatus
 
-from enum import Enum
-
 BASE_URL = 'https://ppe.hml.sebrae.al'
-
-class DocumentTypeEnum(Enum):
-    CERTIDAO_NEGATIVA_FGTS = 'Certidão Negativa FGTS'
-    CERTIDAO_NEGATIVA_FEDERAL = 'Certidão Negativa Federal'
-    CERTIDAO_NEGATIVA_MUNICIPAL = 'Certidão Negativa Municipal'
-    CERTIDAO_NEGATIVA_ESTADUAL = 'Certidão Negativa Estadual'
-
-class CertificateToDownload(BaseModel):
-    cnpj: str
-    certificates: list[DocumentTypeEnum]
 
 class PPEAPIRequester:
     def __init__(
@@ -30,15 +16,18 @@ class PPEAPIRequester:
         self.api_key = api_key
         self.base_url = base_url
         self.http = http
+    
+    def _get_headers(self):
+        return {
+            'X-Api-Key': self.api_key,
+        }
 
     def get_certificates_to_download(
         self,
-    ) -> list[CertificateToDownload]:
+    ) -> PPEGetCertificatesToDownloadResponse:
         url = f"{self.base_url}/api/company/certificate/"
         
-        response = self.http.get(url, headers={
-            'X-Api-Key': f'{self.api_key}'
-        })
+        response = self.http.get(url, headers=self._get_headers())
 
         if response.status_code == HTTPStatus.OK:
             response_data = response.json()
@@ -57,6 +46,32 @@ class PPEAPIRequester:
                 status_code=response.status_code
             )
 
+    def post_certificate(self, certificate: PPEPostCertificateRequest):
+        url = f"{self.base_url}/api/company/certificate/"
+        headers = self._get_headers()
+        headers.update({'Content-Type': 'application/json'})
         
+        response = self.http.post(url, headers=headers, json=certificate.model_dump(mode="json"))
 
+        if response.status_code == HTTPStatus.CREATED:
+            return response.json()
+        elif response.status_code == HTTPStatus.BAD_REQUEST:
+            raise BadRequestError(
+                route=url,
+                message=f"Bad request. The API Response down: {response.json()}",
+            )
+        elif response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR:
+            raise InternalServerError(
+                route=url,
+                message=f"Internal server error. The API Response down: {response.json()}",
+                status_code=response.status_code
+            )
+        else:
+            raise UnexpectedError(
+                route=url,
+                message=f"Unexpected error. The API Response down: {response.json()}",
+                status_code=response.status_code
+            )
+
+        
     

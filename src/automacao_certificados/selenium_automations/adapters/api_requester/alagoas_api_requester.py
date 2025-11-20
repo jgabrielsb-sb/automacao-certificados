@@ -1,7 +1,7 @@
 
 from automacao_certificados.selenium_automations.core.interfaces.base_api_requester import BaseAPIRequester
 from automacao_certificados.selenium_automations.core.interfaces.http_client import HttpClient
-from .exceptions import *
+from automacao_certificados.selenium_automations.core.exceptions import *
 
 from pydantic import BaseModel
 

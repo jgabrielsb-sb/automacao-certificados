@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from .exceptions import *
+from automacao_certificados.selenium_automations.core.exceptions import *
 
 def map_error_response(route: str, status: int, body: dict):
     if status in (HTTPStatus.OK, HTTPStatus.CREATED, HTTPStatus.ACCEPTED):

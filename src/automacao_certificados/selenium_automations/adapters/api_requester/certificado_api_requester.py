@@ -13,7 +13,7 @@ from automacao_certificados.selenium_automations.core.models import (
 
 from http import HTTPStatus
 
-from .exceptions import *
+from automacao_certificados.selenium_automations.core.exceptions import *
 from .error_mapping import map_error_response
 
 class CertificadoAPIRequester(BaseAPIRequester):
