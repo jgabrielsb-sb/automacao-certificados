@@ -132,7 +132,7 @@ class CertidaoArapiracaExtractor(DocumentExtractorPort):
         """
         Returns the document type.
         """
-        return "CERTIDAO MUNICIPAL ARAPIRACA"
+        return "Certidão Negativa Municipal"
 
     def get_identifier(self) -> str | None:
         """

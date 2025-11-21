@@ -98,7 +98,7 @@ class CertificadoMaceioExtractor(DocumentExtractorPort):
         )
 
     def get_document_type(self) -> str:
-        return "CERTIDAO MUNICIPAL MACEIO"
+        return "Certidão Negativa Municipal"
 
     def get_identifier(self) -> str:
         try:

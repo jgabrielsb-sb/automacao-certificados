@@ -70,7 +70,7 @@ class CertificadoCaixaExtractor(DocumentExtractorPort):
         """
         Gets the document type.
         """
-        return "CERTIFICADO CAIXA"
+        return "Certidão Negativa FGTS"
 
     def get_identifier(self) -> str:
         """

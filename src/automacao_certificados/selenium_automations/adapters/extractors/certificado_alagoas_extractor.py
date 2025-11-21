@@ -114,7 +114,7 @@ class CertificadoAlagoasExtractor(DocumentExtractorPort):
         """
         Returns the document type.
         """
-        return "CERTIDAO ESTADUAL ALAGOAS"
+        return "Certidão Negativa Estadual"
 
     def get_identifier(self) -> str:
         """
