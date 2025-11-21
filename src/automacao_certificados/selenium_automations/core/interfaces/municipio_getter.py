@@ -9,7 +9,7 @@ class MunicipioGetterPort(ABC):
     Interface responsible for getting the municipality by cnpj.
     """
     @abstractmethod
-    def _get_municipio_by_cnpj(self, cnpj: str) -> MunicipioEnum:
+    def _get_municipio_by_cnpj(self, cnpj: str) -> str:
         """
         Gets the municipality by cnpj.
         Args:
@@ -19,7 +19,7 @@ class MunicipioGetterPort(ABC):
         """
         pass
 
-    def run(self, cnpj: str) -> MunicipioEnum:
+    def run(self, cnpj: str) -> str:
         """
         Runs the municipality getter.
         Args:
@@ -30,9 +30,6 @@ class MunicipioGetterPort(ABC):
         validate_cnpj(cnpj)
         try:
             municipio = self._get_municipio_by_cnpj(cnpj)
-            if not isinstance(municipio, MunicipioEnum):
-                raise ValueError("the municipality is not a valid enum")
-            
             return municipio
         except Exception as e:
             raise MunicipioGetterException(e)

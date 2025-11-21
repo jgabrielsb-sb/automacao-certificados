@@ -38,25 +38,6 @@ class TestMunicipioGetter:
         with pytest.raises(MunicipioGetterException):
             municipio_getter_port.run("12345678912345")
 
-    def test_if_raises_value_error_if_municipio_is_not_a_valid_enum(
-        self,
-        monkeypatch,
-        municipio_getter_port: MunicipioGetterPort
-    ):
-        def fake_get_municipio_by_cnpj(cnpj: str):
-            return "test"
-
-        monkeypatch.setattr(
-            municipio_getter_port,
-            "_get_municipio_by_cnpj",
-            fake_get_municipio_by_cnpj
-        )
-
-        with pytest.raises(MunicipioGetterException) as e:
-            municipio_getter_port.run("12345678912345")
-
-        assert 'the municipality is not a valid enum' in str(e.value)
-
     def test_run(
         self,
         municipio_getter_port: MunicipioGetterPort
