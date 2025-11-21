@@ -9,3 +9,4 @@ from .captcha_gateway import SeleniumCaptchaGatewayPort
 from .pages import *
 from .captcha_solver import CaptchaSolverPort
 from .document_downloader import DocumentDownloaderPort
+from .municipio_getter import MunicipioGetterPort
