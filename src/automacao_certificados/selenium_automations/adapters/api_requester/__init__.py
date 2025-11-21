@@ -7,3 +7,4 @@ from .ppe_api_requester import (
     PPEAPIRequester, 
     CertificateToDownload
 )
+from .receita_api_requester import ReceitaAPIRequester
