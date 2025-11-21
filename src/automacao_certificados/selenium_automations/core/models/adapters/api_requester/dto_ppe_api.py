@@ -1,3 +1,4 @@
+from pydoc import Doc
 from pydantic import BaseModel, ConfigDict
 
 from enum import Enum
@@ -12,10 +13,7 @@ class DocumentTypeEnum(Enum):
 
 class CertificateToDownload(BaseModel):
     cnpj: str
-    certificates: list[DocumentTypeEnum]
-
-class PPEGetCertificatesToDownloadResponse(BaseModel):
-    certificates: list[CertificateToDownload]
+    document_type: DocumentTypeEnum
 
 class PPEPostCertificateRequest(BaseModel):
     document: str # cnpj (only numbers)
@@ -24,11 +22,7 @@ class PPEPostCertificateRequest(BaseModel):
     validity: date 
     pdf: str #base64 pdf string
 
-    # model_config = ConfigDict(
-    #     ser_json_timedelta = True,
-    #     ser_json_bytes = True,
-    #     ser_json = True
-    # )
+
 
 
 

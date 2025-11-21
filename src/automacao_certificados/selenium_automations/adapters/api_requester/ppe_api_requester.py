@@ -22,23 +22,29 @@ class PPEAPIRequester:
             'X-Api-Key': self.api_key,
         }
 
+    def _convert_response_to_certificates_to_download(self, response_data: list[dict]) -> list[CertificateToDownload]:
+        certificates_to_download = []
+        
+        for item in response_data:
+            for certificate in item['certificates']:
+                certificate_to_download = CertificateToDownload(
+                    cnpj=item['cnpj'],
+                    document_type=DocumentTypeEnum(certificate),
+                )
+                certificates_to_download.append(certificate_to_download)
+        
+        return certificates_to_download
+
     def get_certificates_to_download(
         self,
-    ) -> PPEGetCertificatesToDownloadResponse:
+    ) -> list[CertificateToDownload]:
         url = f"{self.base_url}/api/company/certificate/"
         
         response = self.http.get(url, headers=self._get_headers())
 
         if response.status_code == HTTPStatus.OK:
             response_data = response.json()
-            certificates_to_download = [
-                CertificateToDownload(
-                    cnpj=item['cnpj'], 
-                    certificates=[
-                        DocumentTypeEnum(certificate) for certificate in item['certificates']
-                    ]
-                ) for item in response_data]
-            return certificates_to_download
+            return self._convert_response_to_certificates_to_download(response_data)
         else:
             raise UnexpectedError(
                 route=url,
@@ -52,7 +58,7 @@ class PPEAPIRequester:
         headers.update({'Content-Type': 'application/json'})
         
         response = self.http.post(url, headers=headers, json=certificate.model_dump(mode="json"))
-        
+
         if response.status_code == HTTPStatus.OK:
             return response.json()
         elif response.status_code == HTTPStatus.BAD_REQUEST:
