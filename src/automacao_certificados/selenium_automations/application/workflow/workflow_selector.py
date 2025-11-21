@@ -4,6 +4,7 @@ from automacao_certificados.selenium_automations.application import *
 from automacao_certificados.selenium_automations.core.interfaces import *
 from automacao_certificados.selenium_automations.adapters import *
 from automacao_certificados.selenium_automations.utils import validate_cnpj
+from automacao_certificados.selenium_automations.core.exceptions import *
 
 class WorkflowSelector:
     def __init__(
@@ -15,32 +16,37 @@ class WorkflowSelector:
         
         self.municipio_api_requester = municipio_api_requester
     
-    def _get_municipio_by_cnpj(self, cnpj: str) -> MunicipioEnum:
+    def _get_municipio_by_cnpj(self, cnpj: str) -> str:
         municipio = self.municipio_api_requester.run(cnpj)
         return municipio
 
     def _handle_municipal_workflow(self, cnpj: str):
+
         municipio = self._get_municipio_by_cnpj(cnpj)
         
-        if municipio == MunicipioEnum.ARAPIRACA:
+        if municipio == "ARAPIRACA":
             return ArapiracaWorkflowFactory().get_workflow()
-        if municipio == MunicipioEnum.MACEIO:
+        if municipio == "MACEIO":
             return MaceioWorkflowFactory().get_workflow()
         else:
-            raise ValueError("there is no workflow to download the certificate for the given municipality: {}".format(municipio))
+            raise MunicipioNotSupportedException("there is no workflow to download the certificate for the given municipality: {}".format(municipio))
 
     def _handle_fgts_workflow(self):
         return FGTSWorkflowFactory().get_workflow()
 
     def get_workflow(self, cnpj: str, document_type: DocumentTypeEnum):
-        validate_cnpj(cnpj)
+        try:
+            validate_cnpj(cnpj)
+            
+            if not isinstance(document_type, DocumentTypeEnum):
+                raise ValueError("document_type must be a DocumentTypeEnum")
+            
+            if document_type == DocumentTypeEnum.CERTIDAO_NEGATIVA_MUNICIPAL:
+                return self._handle_municipal_workflow(cnpj)
+            if document_type == DocumentTypeEnum.CERTIDAO_NEGATIVA_FGTS :
+                return self._handle_fgts_workflow()
+            else:
+                raise DocumentTypeNotSupportedException("there is no workflow to download the certificate for the given document type: {}".format(document_type))
         
-        if not isinstance(document_type, DocumentTypeEnum):
-            raise ValueError("document_type must be a DocumentTypeEnum")
-
-        if document_type == DocumentTypeEnum.CERTIDAO_NEGATIVA_MUNICIPAL:
-            return self._handle_municipal_workflow(cnpj)
-        if document_type == DocumentTypeEnum.CERTIDAO_NEGATIVA_FGTS :
-            return self._handle_fgts_workflow()
-        else:
-            raise ValueError("there is no workflow to download the certificate for the given document type: {}".format(document_type))
+        except Exception as e:
+            raise WorkflowSelectorException(e)
