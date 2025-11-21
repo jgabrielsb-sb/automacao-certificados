@@ -37,13 +37,15 @@ class HttpxClient(HttpClient):
         params=None,
         headers=None,
         timeout=None,
-        json=None
+        json=None,
+        data=None
     ) -> HttpResponse:
         return self._client.post(
             url=url,
             params=params,
             headers=headers,
             timeout=timeout,
-            json=json
+            json=json,
+            data=data
         )
         
