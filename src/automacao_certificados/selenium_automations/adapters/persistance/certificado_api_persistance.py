@@ -6,7 +6,7 @@ from automacao_certificados.selenium_automations.core.models import *
 from automacao_certificados.selenium_automations.adapters.api_requester import CertificadoAPIRequester
 from automacao_certificados.selenium_automations.core.exceptions import *
 
-class CertificadoApiPersistence(DocumentPersistancePort):
+class CertificadoApiPersistance(DocumentPersistancePort):
     """
     Adapter for the Certificado API persistence.
     """

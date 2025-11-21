@@ -1,1 +1,2 @@
-from .certificado_api_persistance import CertificadoApiPersistence
+from .certificado_api_persistance import CertificadoApiPersistance
+from .ppe_persistance import PPEPersistance
