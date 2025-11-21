@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-from automacao_certificados.selenium_automations.core.models import MunicipioEnum
 from automacao_certificados.selenium_automations.utils import validate_cnpj
 from automacao_certificados.selenium_automations.core.exceptions import *
 
@@ -15,7 +14,7 @@ class MunicipioGetterPort(ABC):
         Args:
             cnpj: the cnpj of the supplier.
         Returns:
-            The municipality enum.
+            The municipality name.
         """
         pass
 
@@ -25,7 +24,7 @@ class MunicipioGetterPort(ABC):
         Args:
             cnpj: the cnpj of the supplier.
         Returns:
-            The municipality enum.
+            The municipality name.
         """
         validate_cnpj(cnpj)
         try:

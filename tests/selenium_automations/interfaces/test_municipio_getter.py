@@ -7,8 +7,8 @@ from automacao_certificados.selenium_automations.core.models import *
 @pytest.fixture
 def municipio_getter_port():
     class MunicipioGetterPortImpl(MunicipioGetterPort):
-        def _get_municipio_by_cnpj(self, cnpj: str) -> MunicipioEnum:
-            return MunicipioEnum.ARAPIRACA
+        def _get_municipio_by_cnpj(self, cnpj: str) -> str:
+            return "ARAPIRACA"
     
     return MunicipioGetterPortImpl()
 
@@ -19,14 +19,14 @@ class TestMunicipioGetter:
         municipio_getter_port: MunicipioGetterPort
     ):
         municipio = municipio_getter_port._get_municipio_by_cnpj("1234567890")
-        assert municipio == MunicipioEnum.ARAPIRACA
+        assert municipio == "ARAPIRACA"
 
     def test_if_run_is_being_wrapped_into_municipio_getter_exception(
         self,
         monkeypatch,
         municipio_getter_port: MunicipioGetterPort
     ):
-        def fake_get_municipio_by_cnpj(cnpj: str) -> MunicipioEnum:
+        def fake_get_municipio_by_cnpj(cnpj: str) -> str:
             raise Exception('test exception')
 
         monkeypatch.setattr(
@@ -43,4 +43,4 @@ class TestMunicipioGetter:
         municipio_getter_port: MunicipioGetterPort
     ):
         municipio = municipio_getter_port.run("12345678912345")
-        assert municipio == MunicipioEnum.ARAPIRACA
+        assert municipio == "ARAPIRACA"

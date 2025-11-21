@@ -32,7 +32,7 @@ class TestWorkflowSelector:
 
     def test_if_raises_value_error_when_not_valid_municipio(self):
         mock_municipio_api_requester = Mock(spec=MunicipioGetterPort)
-        mock_municipio_api_requester.run.return_value = MunicipioEnum.DELMIRO_GOUVEIA
+        mock_municipio_api_requester.run.return_value = "DELMIRO GOUVEIA"
         
         workflow_selector = WorkflowSelector(mock_municipio_api_requester)
 
@@ -41,11 +41,11 @@ class TestWorkflowSelector:
         with pytest.raises(WorkflowSelectorException) as e:
             workflow = workflow_selector.get_workflow(cnpj, document_type)
         
-        assert "there is no workflow to download the certificate for the given municipality: {}".format(MunicipioEnum.DELMIRO_GOUVEIA) in str(e.value)
+        assert "there is no workflow to download the certificate for the given municipality: {}".format("DELMIRO GOUVEIA") in str(e.value)
 
     def test_if_raises_value_error_when_document_type_is_not_a_document_type_enum(self):
         mock_municipio_api_requester = Mock(spec=MunicipioGetterPort)
-        mock_municipio_api_requester.run.return_value = MunicipioEnum.ARAPIRACA
+        mock_municipio_api_requester.run.return_value = "ARAPIRACA"
         
         workflow_selector = WorkflowSelector(mock_municipio_api_requester)
 
@@ -58,7 +58,7 @@ class TestWorkflowSelector:
 
     def test_if_raises_value_error_when_not_valid_document_type(self):
         mock_municipio_api_requester = Mock(spec=MunicipioGetterPort)
-        mock_municipio_api_requester.run.return_value = MunicipioEnum.ARAPIRACA
+        mock_municipio_api_requester.run.return_value = "ARAPIRACA"
         
         workflow_selector = WorkflowSelector(mock_municipio_api_requester)
 
