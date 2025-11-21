@@ -10,3 +10,4 @@ from .captcha_solver import *
 from .document_downloader import *
 from .selenium import *
 from .api_requester import *
+from .municipio_getter import *

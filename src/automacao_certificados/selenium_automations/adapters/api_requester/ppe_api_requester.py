@@ -52,8 +52,8 @@ class PPEAPIRequester:
         headers.update({'Content-Type': 'application/json'})
         
         response = self.http.post(url, headers=headers, json=certificate.model_dump(mode="json"))
-
-        if response.status_code == HTTPStatus.CREATED:
+        
+        if response.status_code == HTTPStatus.OK:
             return response.json()
         elif response.status_code == HTTPStatus.BAD_REQUEST:
             raise BadRequestError(

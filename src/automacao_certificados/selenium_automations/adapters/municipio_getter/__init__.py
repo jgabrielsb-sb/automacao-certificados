@@ -1,0 +1,1 @@
+from .receita_api_getter import ReceitaAPIMunicipioGetter
