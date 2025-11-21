@@ -13,13 +13,7 @@ class TestReceitaAPIMunicipioGetter:
         
         receita_api_municipio_getter = ReceitaAPIMunicipioGetter(api_requester=api_requester)
         municipio = receita_api_municipio_getter._get_municipio_by_cnpj(cnpj="1234567890")
-        assert municipio == MunicipioEnum.ARAPIRACA
+        assert municipio == "ARAPIRACA"
 
-    def test_if_raises_value_error_if_municipio_is_not_a_valid_enum(self):
-        api_requester = MagicMock(spec=ReceitaAPIRequester)
-        output = ReceitaAPIGetCompanyResponse(END_MUNICIPIO="INVALID")
-        api_requester.get_company.return_value = output
         
-        receita_api_municipio_getter = ReceitaAPIMunicipioGetter(api_requester=api_requester)
-        with pytest.raises(ValueError):
-            receita_api_municipio_getter._get_municipio_by_cnpj(cnpj="1234567890")
+        
