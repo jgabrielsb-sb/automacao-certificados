@@ -12,6 +12,10 @@ class Settings(BaseSettings):
     base_ppe_api_url: str
     ppe_api_key: str
 
+    # receita api
+    nota_facil_username: str
+    nota_facil_password: str
+
     # ✅ new way to define config
     model_config = SettingsConfigDict(
         env_file=".env",
