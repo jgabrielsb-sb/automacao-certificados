@@ -1,7 +1,7 @@
 import pytest
 
 from automacao_certificados.selenium_automations.adapters.api_requester.error_mapping import map_error_response
-from automacao_certificados.selenium_automations.adapters.api_requester.exceptions import *
+from automacao_certificados.selenium_automations.core.exceptions import *
 
 class TestNotFoundMapping:
     

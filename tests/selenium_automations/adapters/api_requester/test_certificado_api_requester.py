@@ -6,7 +6,7 @@ import respx
 from httpx import Response
 
 from automacao_certificados.selenium_automations.adapters.api_requester import CertificadoAPIRequester
-from automacao_certificados.selenium_automations.adapters.api_requester.exceptions import *
+from automacao_certificados.selenium_automations.core.exceptions import *
 from automacao_certificados.selenium_automations.core.models import (
     dto_supplier,
     dto_document,
