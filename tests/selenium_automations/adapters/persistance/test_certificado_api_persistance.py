@@ -1,7 +1,7 @@
 from automacao_certificados.selenium_automations.core.interfaces import *
 from automacao_certificados.selenium_automations.core.models import *
 from automacao_certificados.selenium_automations.core.exceptions import *
-from automacao_certificados.selenium_automations.adapters.persistance import CertificadoApiPersistence
+from automacao_certificados.selenium_automations.adapters import *
 
 from unittest.mock import Mock
 
@@ -21,7 +21,7 @@ class TestGetOrCreateSupplier:
             )
         ]
 
-        api_persistence = CertificadoApiPersistence(api_requester=api_mock)
+        api_persistence = CertificadoApiPersistance(api_requester=api_mock)
         supplier_response = api_persistence._get_or_create_supplier(
             dto_supplier.SupplierCreate(
                 cnpj="12345678912"
@@ -44,7 +44,7 @@ class TestGetOrCreateSupplier:
             cnpj="12345678912"
         )
 
-        api_persistence = CertificadoApiPersistence(api_requester=api_mock)
+        api_persistence = CertificadoApiPersistance(api_requester=api_mock)
         supplier_response = api_persistence._get_or_create_supplier(
             dto_supplier.SupplierCreate(
                 cnpj="12345678912"
@@ -100,7 +100,7 @@ class TestSave:
         monkeypatch.setattr(api_mock, "get_document_type", fake_api_get_document_type)
         monkeypatch.setattr(api_mock, "register_document", fake_api_register_document)
 
-        api_persistence = CertificadoApiPersistence(api_requester=api_mock)
+        api_persistence = CertificadoApiPersistance(api_requester=api_mock)
 
         def fake_get_or_create_supplier(supplier):
             return dto_supplier.SupplierResponse(
@@ -148,7 +148,7 @@ class TestSave:
         api_mock = Mock(spec=BaseAPIRequester)
         monkeypatch.setattr(api_mock, "get_document_type", fake_api_get_document_type)
 
-        api_persistence = CertificadoApiPersistence(api_requester=api_mock)
+        api_persistence = CertificadoApiPersistance(api_requester=api_mock)
 
         def fake_get_or_create_supplier(supplier):
             return dto_supplier.SupplierResponse(
