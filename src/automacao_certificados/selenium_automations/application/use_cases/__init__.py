@@ -1,4 +1,1 @@
-from .download_certidao_estadual_al import download_certidao_estadual_al
-from .download_certificado_maceio import download_certificado_maceio
-from .download_certificado_arapiraca import download_certificado_arapiraca
-from .download_certificado_al import download_certificado_alagoas
+from .download_certificates import DownloadCertificatesUseCase
