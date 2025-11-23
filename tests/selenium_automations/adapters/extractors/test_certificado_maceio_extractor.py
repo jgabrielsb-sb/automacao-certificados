@@ -36,7 +36,7 @@ class TestCertificadoMaceioExtractorWithRealPdf:
         base64_str = base64.b64encode(bytes.read()).decode("utf-8")
 
         extractor = CertificadoMaceioExtractor(base64_pdf=base64_str)
-        assert extractor.get_document_type() == "CERTIDAO MUNICIPAL MACEIO"
+        assert extractor.get_document_type() == "Certidão Negativa Municipal"
         assert extractor.get_identifier() == "0.998.062/25-12"
         assert extractor.get_expiration_date() == date(2026, 2, 1)
         assert extractor.get_supplier().cnpj == "60.604.235/0001-14"
@@ -48,7 +48,7 @@ class TestCertificadoMaceioExtractorWithRealPdf:
         base64_str = base64.b64encode(bytes.read()).decode("utf-8")
         
         extractor = CertificadoMaceioExtractor(base64_pdf=base64_str)
-        assert extractor.get_document_type() == "CERTIDAO MUNICIPAL MACEIO"
+        assert extractor.get_document_type() == "Certidão Negativa Municipal"
         assert extractor.get_identifier() == "0.998.126/25-01"
         assert extractor.get_expiration_date() == date(2026, 2, 1)
         assert extractor.get_supplier().cnpj == "22.935.016/0001-29"

@@ -110,7 +110,7 @@ class TestCertificadoCaixaExtractor:
 
     def test_if_get_document_type_returns_correct_document_type(self):
         extractor = CertificadoCaixaExtractor(driver=Mock(spec=WebDriver))
-        assert extractor.get_document_type() == "CERTIFICADO CAIXA"
+        assert extractor.get_document_type() == "Certidão Negativa FGTS"
 
 class TestCertificadoCaixaExtractorRun:
     """
@@ -485,7 +485,7 @@ class TestCertificadoCaixaExtractorRun:
             document = extractor.run()
             #assert document.supplier.name == "BUYERS CONSULTORIA ESTRATEGICA LTDA"
             assert document.supplier.cnpj == "60.604.235/0001-14"
-            assert document.document_type == "CERTIFICADO CAIXA"
+            assert document.document_type == "Certidão Negativa FGTS"
             assert document.identifier == "2025110205156413642881"
             assert document.expiration_date == date(2025, 12, 1)
     

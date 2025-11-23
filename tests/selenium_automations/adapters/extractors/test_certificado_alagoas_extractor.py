@@ -19,7 +19,7 @@ class TestCertificadoAlagoasExtractor:
         document_extracted = CertificadoAlagoasExtractor(
             base64_pdf=base64_pdf
         ).get_document_type()
-        assert document_extracted == "CERTIDAO ESTADUAL ALAGOAS"
+        assert document_extracted == "Certidão Negativa Estadual"
 
     def test_extractor_returns_correct_supplier(
         self,
@@ -59,7 +59,7 @@ class TestCertificadoAlagoasExtractor:
             supplier=dto_supplier.Supplier(
                 cnpj="32.652.832/0001-89"
             ),
-            document_type="CERTIDAO ESTADUAL ALAGOAS",
+            document_type="Certidão Negativa Estadual",
             expiration_date=date(2026, 1, 16),
             identifier="4DC3-FF14-988E-4361"
         )
@@ -79,7 +79,7 @@ class TestCertificadoAlagoasExtractor2:
         document_extracted = CertificadoAlagoasExtractor(
             base64_pdf=base64_pdf
         ).get_document_type()
-        assert document_extracted == "CERTIDAO ESTADUAL ALAGOAS"
+        assert document_extracted == "Certidão Negativa Estadual"
 
     def test_extractor_returns_correct_expiration_date(
         self,
@@ -118,7 +118,7 @@ class TestCertificadoAlagoasExtractor2:
             supplier=dto_supplier.Supplier(
                 cnpj="19.322.123/0001-77"
             ),
-            document_type="CERTIDAO ESTADUAL ALAGOAS",
+            document_type="Certidão Negativa Estadual",
             expiration_date=date(2026, 1, 16),
             identifier="F8F3-C99E-2C49-459D"
         )

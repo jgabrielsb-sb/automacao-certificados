@@ -21,7 +21,7 @@ class TestCertificadoArapiraca1Extractor:
         document_extracted = CertidaoArapiracaExtractor(
             html_content=html_content
         ).get_document_type()
-        assert document_extracted == "CERTIDAO MUNICIPAL ARAPIRACA"
+        assert document_extracted == "Certidão Negativa Municipal"
 
     def test_extractor_returns_correct_expiration_date(
         self,
@@ -56,7 +56,7 @@ class TestCertificadoArapiraca2Extractor:
         document_extracted = CertidaoArapiracaExtractor(
             html_content=html_content
         ).get_document_type()
-        assert document_extracted == "CERTIDAO MUNICIPAL ARAPIRACA"
+        assert document_extracted == "Certidão Negativa Municipal"
 
     def test_extractor_returns_correct_expiration_date(
         self,
