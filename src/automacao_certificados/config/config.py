@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     groq_api_key: Optional[str] = None
     base_certificado_api_url: Optional[str] = None
 
+    headless: bool
+    run_cron_time: str
     # ppe api
     base_ppe_api_url: str
     ppe_api_key: str
