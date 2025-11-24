@@ -3,7 +3,9 @@ from enum import Enum
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-HEADLESS = False
+from automacao_certificados.config import settings
+
+HEADLESS = settings.headless
 
 def get_options():
     options = webdriver.ChromeOptions()
