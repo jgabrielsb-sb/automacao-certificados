@@ -59,7 +59,7 @@ class TestDownloadCertificate:
         assert output == DownloadCertificatesUseCaseOutput(
             certificate=certificate,
             error_selection="test message",
-            workflow_output=None
+            workflow_output=WorkflowOutput()
         )
 
     def test_if_download_certificate_returns_correct_output_when_workflow_selector_selects_successfully(
