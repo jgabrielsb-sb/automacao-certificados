@@ -37,7 +37,7 @@ class DownloadCertificatesUseCase:
             return DownloadCertificatesUseCaseOutput(
                 certificate=certificate,
                 error_selection=str(e),
-                workflow_output=None
+                workflow_output=WorkflowOutput()
             )
         
         return DownloadCertificatesUseCaseOutput(
