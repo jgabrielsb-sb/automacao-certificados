@@ -2,10 +2,23 @@ from typing import Any, Sequence
 
 import pandas as pd
 import plotly.graph_objects as go
+import textwrap
+from pathlib import Path
+from datetime import datetime
 
 from automacao_certificados.selenium_automations.core.models import *
 
 class DownloadCertificatesReportGenerator():
+    
+    def __init__(
+        self,
+        save_path: Path = Path("data/certificates_report"),
+        MAX_ERROR_LINES: int = 20,
+        ERROR_LINE_WIDTH: int = 40,
+    ):
+        self.save_path = save_path
+        self.max_error_lines = MAX_ERROR_LINES
+        self.error_line_width = ERROR_LINE_WIDTH
 
     def _is_step_sucess(self, step_result: StepResult):
         return step_result.sucess if step_result is not None else False
@@ -35,6 +48,21 @@ class DownloadCertificatesReportGenerator():
     ) -> list[DownloadCertificatesRow]:
         return [self._convert_element_to_row(element) for element in elements]
 
+    def _format_error_for_cell(self, msg: str | None) -> str:
+        if not msg:
+            return ""
+
+        # Break message into multiple lines
+        wrapped = textwrap.wrap(msg, width=self.error_line_width)
+
+        # Limit number of lines
+        if len(wrapped) > self.max_error_lines:
+            wrapped = wrapped[:self.max_error_lines]
+            wrapped[-1] += "..."
+
+        # Convert to HTML with <br> so Plotly breaks lines
+        return "<br>".join(wrapped)
+
     def _build_row_display(
         self,
         rows: Sequence[DownloadCertificatesRow],
@@ -45,16 +73,16 @@ class DownloadCertificatesReportGenerator():
             def status_text(ok: bool, msg: str | None) -> str:
                 if ok:
                     return "✅ SUCCESS"
-                if msg:
-                    # second line with the error
-                    return f"❌ FAIL<br><span style='font-size:11px'>{msg}</span>"
+                formatted_error = self._format_error_for_cell(msg)
+                if formatted_error:
+                    return f"❌ FAIL<br><span style='font-size:11px'>{formatted_error}</span>"
                 return "❌ FAIL"
 
             display_rows.append(
                 {
                     "cnpj": r.cnpj,
                     "document_type": r.document_type,
-                    "error_selection": r.error_selection,
+                    "error_selection": self._format_error_for_cell(r.error_selection),
                     "download": status_text(r.download_step_is_sucess, r.download_step_error_message),
                     "persistance": status_text(r.persistance_step_is_sucess, r.persistance_step_error_message),
                     "ppe": status_text(r.ppe_step_is_sucess, r.ppe_step_error_message),
@@ -62,6 +90,7 @@ class DownloadCertificatesReportGenerator():
             )
 
         return display_rows
+
 
 
     def _build_hover_text(
@@ -74,7 +103,6 @@ class DownloadCertificatesReportGenerator():
         """
         cnpj_hover: list[str] = []
         doc_type_hover: list[str] = []
-        error_selection_hover: list[str] = []
         download_hover: list[str] = []
         persistance_hover: list[str] = []
         ppe_hover: list[str] = []
@@ -105,6 +133,7 @@ class DownloadCertificatesReportGenerator():
 
     def _make_plotly_table(
         self,
+        date: datetime,
         rows: list[DownloadCertificatesRow]
     ) -> go.Figure:
         display_rows = self._build_row_display(rows)
@@ -123,15 +152,18 @@ class DownloadCertificatesReportGenerator():
             ]
         )
 
+        fig.update_layout(
+            title=f"Relatório de Certificados - {date.strftime('%d/%m/%Y')}"
+        )
         return fig
-
-
 
     def run(
         self,
         certificates: list[DownloadCertificatesUseCaseOutput],
-    ) -> DownloadCertificatesTable:
+        date: datetime
+    ) -> Path:
         rows = self._convert_elements_to_rows(certificates)
-        table = self._make_plotly_table(rows)
-        table.show()
-        return table
+        table = self._make_plotly_table(date, rows)
+        file_path = self.save_path / f"certificates_report_{date.strftime('%d-%m-%Y-%H-%M-%S')}.html"
+        table.write_html(file_path)
+        return file_path
