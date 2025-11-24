@@ -16,6 +16,7 @@ from automacao_certificados.selenium_package_extension.executors import *
 
 from automacao_certificados.selenium_automations.core.models import StatesAcronym
 from automacao_certificados.selenium_automations.core.interfaces import *
+from automacao_certificados.selenium_automations.core.models import *
 
 class TipoInscricao(Enum):
     """
@@ -225,27 +226,25 @@ class ConsultaPage(ConsultaPagePort):
         except TimeoutException:
             return None
 
-    def solve_captcha(
-        self
-    ) -> str:
-        """
-        Solves the captcha by getting the captcha text from the image 
-        and inserting it on the input field.
-        """
-        input_webelement = WebDriverWait(self.driver, 3).until(
-            EC.presence_of_element_located(locators.CAPTCHA_INPUT_LOCATOR)
-        )
+    # def solve_captcha(
+    #     self
+    # ) -> str:
+    #     """
+    #     Solves the captcha by getting the captcha text from the image 
+    #     and inserting it on the input field.
+    #     """
+    #     input_webelement = WebDriverWait(self.driver, 3).until(
+    #         EC.presence_of_element_located(locators.CAPTCHA_INPUT_LOCATOR)
+    #     )
 
-        img_webelement = WebDriverWait(self.driver, 3).until(
-            EC.presence_of_element_located(locators.CAPTCHA_IMAGE_LOCATOR)
-        )
-
-        captcha_solver_input = CaptchaSolverInput(
-            input_webelement=input_webelement,
-            img_webelement=img_webelement
-        )
+    #     img_webelement = WebDriverWait(self.driver, 3).until(
+    #         EC.presence_of_element_located(locators.CAPTCHA_IMAGE_LOCATOR)
+    #     )
         
-        return self.captcha_solver.solve_captcha(captcha_solver_input)
+    #     return self.captcha_solver.run(input=CaptchaSolverInput(
+    #         input_webelement=input_webelement,
+    #         img_webelement=img_webelement
+    #     ))
 
     def handle_error_text(
         self,
@@ -310,7 +309,7 @@ class ConsultaPage(ConsultaPagePort):
             self.insert_tipo_inscricao_value_executor(tipo_inscricao_value).run()
             self.insert_inscricao_value_executor(inscricao_value).run()
             self.insert_estado_value_executor(state_value).run()
-            self.solve_captcha()
+            #self.solve_captcha()
             self.click_consultar_button_executor().run()
             error_text = self.get_error_text()
 
