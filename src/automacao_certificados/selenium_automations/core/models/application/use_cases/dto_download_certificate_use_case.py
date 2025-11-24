@@ -8,4 +8,4 @@ from automacao_certificados.selenium_automations.core.models import (
 class DownloadCertificatesUseCaseOutput(BaseModel):
     certificate: CertificateToDownload
     error_selection: str | None = None
-    workflow_output: WorkflowOutput | None = None
+    workflow_output: WorkflowOutput
