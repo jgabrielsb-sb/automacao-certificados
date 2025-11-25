@@ -4,8 +4,8 @@ from unittest.mock import MagicMock
 
 from selenium.webdriver.chrome.webdriver import WebDriver
 
-from automacao_certificados.selenium_automations.adapters.selenium.certidao_estadual_al.pages import DownloadPage
-from automacao_certificados.selenium_automations.adapters.selenium.certidao_estadual_al.exceptions import *
+from automacao_certificados.selenium_automations.adapters.selenium.certidao_fgts.pages import DownloadPage
+from automacao_certificados.selenium_automations.adapters.selenium.certidao_fgts.exceptions import *
 
 @pytest.fixture
 def png_file_path(tmp_path: Path) -> Path:

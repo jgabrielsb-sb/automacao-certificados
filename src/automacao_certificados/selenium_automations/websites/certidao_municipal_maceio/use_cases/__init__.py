@@ -1,1 +1,0 @@
-from .download_certificado import download_certificado

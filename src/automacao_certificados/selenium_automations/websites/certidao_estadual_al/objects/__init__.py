@@ -1,1 +1,0 @@
-from .certificado_table import CertificadoTable
