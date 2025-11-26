@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Introduction &#8212; Automação Certificados  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Quickstart" href="quickstart.html" />
+    <link rel="prev" title="Automação Certificados documentation" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h1>
+<section id="what-is-this-project-about">
+<span id="id1"></span><h2>What is this project about?<a class="headerlink" href="#what-is-this-project-about" title="Link to this heading">¶</a></h2>
+<p>This project is intended to be a system that automates the process of:</p>
+<ul class="simple">
+<li><p>downloading PDF certificate documents from several sources (Caixa website, Maceió Website, etc);</p></li>
+<li><p>extracting the relevant information of those documents;</p></li>
+<li><p>registering the relevant information of those documents on a database via external services;</p></li>
+<li><p>sending the document to PPE Sebrae service;</p></li>
+</ul>
+</section>
+<section id="how-is-this-project-structured">
+<span id="id2"></span><h2>How is this project structured?<a class="headerlink" href="#how-is-this-project-structured" title="Link to this heading">¶</a></h2>
+<p>This project follows a separation by layers:</p>
+<ul class="simple">
+<li><p>ports (interfaces): defines the general behavior of some object.</p></li>
+<li><p>adapters: defines the implementation of the interfaces.</p></li>
+<li><p>application: the orchestration layer where the objects are composed to create usable use cases;</p></li>
+</ul>
+</section>
+<section id="what-is-the-main-use-case">
+<span id="the-main-use-case"></span><h2>What is the main use case?<a class="headerlink" href="#what-is-the-main-use-case" title="Link to this heading">¶</a></h2>
+<p>The main use case of this system is to:</p>
+<ul class="simple">
+<li><p>receive a list of certificates that must be downloaded by some kind of external source (PPE API on this case);</p></li>
+<li><p>select the correct workflow to download and extract the document as data models;</p></li>
+<li><p>send the information to be registered to an API (on this case, Certificado API);</p></li>
+<li><p>send the information and the base file to PPE service (via PPE API);</p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Automação Certificados</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-is-this-project-about">What is this project about?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-is-this-project-structured">How is this project structured?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-is-the-main-use-case">What is the main use case?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Automação Certificados documentation</a></li>
+      <li>Next: <a href="quickstart.html" title="next chapter">Quickstart</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, João Gabriel Sampaio de Barros.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/introduction.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

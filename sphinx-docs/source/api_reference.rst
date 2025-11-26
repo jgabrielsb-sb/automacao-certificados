@@ -1,0 +1,17 @@
+API Reference
+=============
+
+This section contains the API reference for the project.
+
+.. _interfaces:
+
+Interfaces
+----------
+
+This section contains the interfaces for the project.
+
+.. _adapters:
+
+adapters
+-------
+
