@@ -9,11 +9,13 @@ import pytest
 
 from datetime import date
 
+from automacao_certificados.selenium_automations.infra.api_requester import CertificadoAPIRequester
+
 class TestGetOrCreateSupplier:
     def test_if_returns_existing_supplier_when_supplier_exists(
         self,
     ):
-        api_mock = Mock(spec=BaseAPIRequester)
+        api_mock = Mock(spec=CertificadoAPIRequester)
         api_mock.get_supplier.return_value = [
             dto_supplier.SupplierResponse(
                 id=1,
@@ -34,7 +36,7 @@ class TestGetOrCreateSupplier:
     def test_if_returns_created_supplier_when_supplier_does_not_exist(
         self,
     ):
-        api_mock = Mock(spec=BaseAPIRequester)
+        api_mock = Mock(spec=CertificadoAPIRequester)
         api_mock.get_supplier.side_effect = NotFoundError(
             route="test route",
             message="test message"
@@ -96,7 +98,7 @@ class TestSave:
                 base64_pdf="PDF",
             )
 
-        api_mock = Mock(spec=BaseAPIRequester)
+        api_mock = Mock(spec=CertificadoAPIRequester)
         monkeypatch.setattr(api_mock, "get_document_type", fake_api_get_document_type)
         monkeypatch.setattr(api_mock, "register_document", fake_api_register_document)
 
@@ -145,7 +147,7 @@ class TestSave:
 
         
 
-        api_mock = Mock(spec=BaseAPIRequester)
+        api_mock = Mock(spec=CertificadoAPIRequester)
         monkeypatch.setattr(api_mock, "get_document_type", fake_api_get_document_type)
 
         api_persistence = CertificadoApiPersistance(api_requester=api_mock)
