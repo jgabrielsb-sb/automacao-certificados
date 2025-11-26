@@ -1,4 +1,3 @@
-from automacao_certificados.selenium_automations.core.utils import *
 from automacao_certificados.selenium_automations.utils.utils import *
 
 import pytest

@@ -1,4 +1,0 @@
-class Locators:
-
-locators = Locators()
-
