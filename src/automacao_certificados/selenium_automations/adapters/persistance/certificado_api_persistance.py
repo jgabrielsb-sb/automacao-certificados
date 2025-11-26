@@ -17,16 +17,30 @@ from automacao_certificados.selenium_automations.core.exceptions import *
 from automacao_certificados.selenium_automations.infra.api_requester import CertificadoAPIRequester
 
 class CertificadoApiPersistance(DocumentPersistancePort):
-    """
-    Adapter for the Certificado API persistence.
-    """
     def __init__(self, api_requester: CertificadoAPIRequester):
+        """
+        The certificado api persistance is an implementation of the document persistance port 
+        that uses the certificado api to persist the document.
+        """
+        if not isinstance(api_requester, CertificadoAPIRequester):
+            raise ValueError("api_requester must be a CertificadoAPIRequester")
+
+        super().__init__()
+
         self.api_requester = api_requester
 
     def get_or_create_supplier(
         self,
         supplier: SupplierCreate
     ) -> SupplierResponse:
+        """
+        Gets the supplier by cnpj using the certificado api or creates a new one if it doesn't exist.
+
+        :param supplier: The supplier to get or create.
+        :type supplier: SupplierCreate
+        :return: The supplier response.
+        :rtype: SupplierResponse
+        """
         try:
             return self.api_requester.get_supplier(
                 SupplierFilter(cnpj=supplier.cnpj)
@@ -37,6 +51,15 @@ class CertificadoApiPersistance(DocumentPersistancePort):
             )
 
     def save(self, input: DocumentPersistanceInput):
+        """
+        Saves the document on database using the certificado api.
+
+        :param input: The input of the document persistance.
+        :type input: DocumentPersistanceInput
+        :return: The document persistance output.
+        :rtype: DocumentPersistanceOutput
+        :raises DocumentTypeNotFoundError: If the document type is not found.
+        """
         supplier_create = SupplierCreate(**input.document_extracted.supplier.model_dump())
         
         # 1) Supplier

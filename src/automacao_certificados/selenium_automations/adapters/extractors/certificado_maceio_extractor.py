@@ -17,8 +17,8 @@ class CertificadoMaceioExtractor(DocumentExtractorPort):
 
     def __init__(self, base64_pdf: str):
         """
-        Args:
-            base64_pdf (str): A BASE64 string that encodes a PDF file.
+        The certificado maceio extractor is an implementation of the document extractor port 
+        that uses a base64 pdf to extract the document.
         """
         if not isinstance(base64_pdf, str):
             raise ValueError("base64_pdf must be a string")
@@ -45,6 +45,9 @@ class CertificadoMaceioExtractor(DocumentExtractorPort):
     def _load_pdf_text(self) -> str:
         """
         Decode PDF bytes → extract text from ALL pages.
+
+        :return: The pdf text.
+        :rtype: str
         """
         if self._pdf_text is not None:
             return self._pdf_text
@@ -61,6 +64,12 @@ class CertificadoMaceioExtractor(DocumentExtractorPort):
     # ---------------------------------------------------------------------
 
     def _get_supplier_cnpj(self) -> str:
+        """
+        Extract the CNPJ from the PDF text.
+
+        :return: The cnpj.
+        :rtype: str
+        """
         try:
             text = self._load_pdf_text()
 
@@ -73,6 +82,12 @@ class CertificadoMaceioExtractor(DocumentExtractorPort):
             raise ErrorExtractingDataException("cnpj", exc)
 
     def _get_supplier_name(self) -> str:
+        """
+        Extract the supplier name from the PDF text.
+
+        :return: The supplier name.
+        :rtype: str
+        """
         try:
             text = self._load_pdf_text()
 
@@ -93,14 +108,32 @@ class CertificadoMaceioExtractor(DocumentExtractorPort):
             raise ErrorExtractingDataException("supplier_name", exc)
 
     def get_supplier(self) -> dto_supplier.Supplier:
+        """
+        Returns the supplier DTO.
+
+        :return: The supplier DTO.
+        :rtype: dto_supplier.Supplier
+        """
         return dto_supplier.Supplier(
             cnpj=self._get_supplier_cnpj(),
         )
 
     def get_document_type(self) -> str:
+        """
+        Returns the document type.
+
+        :return: The document type.
+        :rtype: str
+        """
         return "Certidão Negativa Municipal"
 
     def get_identifier(self) -> str:
+        """
+        Extract the document identifier/number.
+
+        :return: The document identifier.
+        :rtype: str
+        """
         try:
             text = self._load_pdf_text()
 
@@ -124,6 +157,12 @@ class CertificadoMaceioExtractor(DocumentExtractorPort):
             raise ErrorExtractingDataException("identifier", exc)
 
     def get_expiration_date(self) -> date:
+        """
+        Extract the expiration date of the certificate.
+
+        :return: The expiration date.
+        :rtype: date
+        """
         try:
             text = self._load_pdf_text()
 

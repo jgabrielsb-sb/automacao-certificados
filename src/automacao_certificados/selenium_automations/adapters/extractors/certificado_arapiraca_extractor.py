@@ -37,8 +37,8 @@ class CertidaoArapiracaExtractor(DocumentExtractorPort):
 
     def __init__(self, html_content: str):
         """
-        Args:
-            html_content (str): HTML content of the certificate page.
+        The certidao arapiraca extractor is an implementation of the document extractor port 
+        that uses a html content to extract the document.
         """
         if not isinstance(html_content, str):
             raise ValueError("html_content must be a string")
@@ -56,6 +56,9 @@ class CertidaoArapiracaExtractor(DocumentExtractorPort):
     def _get_text_from_html(self) -> str:
         """
         Extract text from HTML content.
+
+        :return: The html text.
+        :rtype: str
         """
         if self._html_text is not None:
             return self._html_text
@@ -73,6 +76,9 @@ class CertidaoArapiracaExtractor(DocumentExtractorPort):
     def _get_supplier_cnpj(self) -> str | None:
         """
         Extract the CNPJ from the HTML text.
+
+        :return: The cnpj.
+        :rtype: str | None
         """
         try:
             text = self._get_text_from_html()
@@ -97,6 +103,9 @@ class CertidaoArapiracaExtractor(DocumentExtractorPort):
     def _get_supplier_name(self) -> str | None:
         """
         Extract the supplier name from the HTML text.
+
+        :return: The supplier name.
+        :rtype: str | None
         """
         try:
             text = self._get_text_from_html()
@@ -123,6 +132,9 @@ class CertidaoArapiracaExtractor(DocumentExtractorPort):
     def get_supplier(self) -> dto_supplier.Supplier:
         """
         Returns the supplier DTO.
+
+        :return: The supplier DTO.
+        :rtype: dto_supplier.Supplier
         """
         return dto_supplier.Supplier(
             cnpj=self._get_supplier_cnpj(),
@@ -131,6 +143,9 @@ class CertidaoArapiracaExtractor(DocumentExtractorPort):
     def get_document_type(self) -> str:
         """
         Returns the document type.
+
+        :return: The document type.
+        :rtype: str
         """
         return "Certidão Negativa Municipal"
 
@@ -138,6 +153,9 @@ class CertidaoArapiracaExtractor(DocumentExtractorPort):
         """
         Extract the certificate identifier/number.
         The identifier is the "Identificação" or "Inscrição Geral" number (e.g., 491441535).
+
+        :return: The identifier.
+        :rtype: str | None
         """
         try:
             text = self._get_text_from_html()
@@ -177,8 +195,9 @@ class CertidaoArapiracaExtractor(DocumentExtractorPort):
     def get_expiration_date(self) -> date | None:
         """
         Extract the expiration date of the certificate.
-        The date appears as "Validade: 12/01/2026" in the HTML.
-        Works with both plain text and HTML with nested tags.
+
+        :return: The expiration date.
+        :rtype: date | None
         """
         try:
             # First, try to extract from raw HTML to handle nested spans

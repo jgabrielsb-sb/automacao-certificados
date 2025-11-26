@@ -13,13 +13,23 @@ class ReceitaAPIRequester:
         http: HttpClient,
         base_url: str = BASE_URL,
     ):
+        """
+        The receita api requester is responsible for making requests to the Receita API.
+        """
         if not isinstance(base_url, str):
             raise ValueError("base_url must be a string")
 
         self.base_url = base_url
         self.http = http
 
-    def _get_token(self):
+    def _get_token(self) -> str:
+        """
+        Gets the token for the Receita API requests.
+
+        :return: The token.
+        :rtype: str
+        :raises UnexpectedError: If an unexpected error occurs.
+        """
         headers = {'Content-Type': 'application/x-www-form-urlencoded',}
 
         data_to_send = {
@@ -43,6 +53,12 @@ class ReceitaAPIRequester:
             )
 
     def _get_headers(self) -> dict:
+        """
+        Gets the headers for the Receita API requests.
+
+        :return: The headers.
+        :rtype: dict
+        """
         token = self._get_token()
         headers = {
             'Authorization': f'Bearer {token}',
@@ -53,6 +69,17 @@ class ReceitaAPIRequester:
         self,
         cnpj: str
     ) -> ReceitaAPIGetCompanyResponse:
+        """
+        Gets the company by cnpj using the Receita API.
+
+        :param cnpj: The cnpj of the company.
+        :type cnpj: str
+        :return: The company.
+        :rtype: ReceitaAPIGetCompanyResponse
+        :raises RouteNotFoundError: If the route is not found.
+        :raises NotFoundError: If the company is not found.
+        :raises UnexpectedError: If an unexpected error occurs.
+        """
         url = f"{self.base_url}/empresa-receita/get-by-cnpj/{cnpj}"
         response = self.http.get(url, headers=self._get_headers())
     

@@ -16,14 +16,14 @@ from automacao_certificados.selenium_automations.core.exceptions import *
 from .error_mapping import map_error_response
 
 class CertificadoAPIRequester:
-    """
-    API requester for the Certificado.
-    """
     def __init__(
         self, 
         base_url: str,
         http: HttpClient
     ):
+        """
+        The certificado api requester is responsible for making requests to the Certificado API.
+        """
         if not isinstance(base_url, str):
             raise ValueError("base_url must be a string")
 
@@ -36,13 +36,13 @@ class CertificadoAPIRequester:
     ) -> dto_supplier.SupplierResponse:
         """
         Register a new supplier.
-        Arguments:
-            supplier
-        Returns:
-            The created supplier
-        Raises:
-            ConflictError: if a supplier with the same cnoj already exists.
-            UnexpectedError: if an uenxpected error occurs
+
+        :param supplier: The supplier to register.
+        :type supplier: dto_supplier.SupplierCreate
+        :return: The created supplier.
+        :rtype: dto_supplier.SupplierResponse
+        :raises ConflictError: If a supplier with the same cnpj already exists.
+        :raises UnexpectedError: If an unexpected error occurs.
         """
         
         route = f"{self.base_url}/api/v1/suppliers/"
@@ -67,13 +67,13 @@ class CertificadoAPIRequester:
     ) -> list[dto_supplier.SupplierResponse]:
         """
         Get a list of suppliers.
-        Arguments:
-            filter
-        Returns:
-            A list of suppliers
-        Raises:
-            NotFoundError: if no suppliers are found with the given filter.
-            UnexpectedError: if an unexpected error occurs
+
+        :param filter: The filter to get the suppliers.
+        :type filter: dto_supplier.SupplierFilter
+        :return: A list of suppliers.
+        :rtype: list[dto_supplier.SupplierResponse]
+        :raises NotFoundError: If no suppliers are found with the given filter.
+        :raises UnexpectedError: If an unexpected error occurs.
         """
         route = f"{self.base_url}/api/v1/suppliers/"
         
@@ -98,12 +98,12 @@ class CertificadoAPIRequester:
     ):
         """
         Register a new document.
-        Arguments:
-            document
-        Returns:
-            The created document
-        Raises:
-            UnexpectedError: if an unexpected error occurs
+
+        :param document: The document to register.
+        :type document: dto_document.DocumentCreate
+        :return: The created document.
+        :rtype: dto_document.DocumentResponse
+        :raises UnexpectedError: If an unexpected error occurs.
         """
         route = f"{self.base_url}/api/v1/documents/"
 
@@ -123,13 +123,13 @@ class CertificadoAPIRequester:
     ) -> list[dto_document.DocumentResponse]:
         """
         Get a list of documents.
-        Arguments:
-            filter
-        Returns:
-            A list of documents
-        Raises:
-            NotFoundError: if no documents are found with the given filter.
-            UnexpectedError: if an unexpected error occurs
+
+        :param filter: The filter to get the documents.
+        :type filter: dto_document.DocumentFilter
+        :return: A list of documents.
+        :rtype: list[dto_document.DocumentResponse]
+        :raises NotFoundError: If no documents are found with the given filter.
+        :raises UnexpectedError: If an unexpected error occurs.
         """
         route = f"{self.base_url}/api/v1/documents"
 
@@ -153,13 +153,13 @@ class CertificadoAPIRequester:
     ) -> list[dto_document_type.DocumentTypeResponse]:
         """
         Get a list of document types.
-        Arguments:
-            filter
-        Returns:
-            A list of document types
-        Raises:
-            NotFoundError: if no document types are found with the given filter.
-            UnexpectedError: if an unexpected error occurs
+
+        :param filter: The filter to get the document types.
+        :type filter: dto_document_type.DocumentTypeFilter
+        :return: A list of document types.
+        :rtype: list[dto_document_type.DocumentTypeResponse]
+        :raises NotFoundError: If no document types are found with the given filter.
+        :raises UnexpectedError: If an unexpected error occurs.
         """
         route = f"{self.base_url}/api/v1/document-types"
 

@@ -1,5 +1,4 @@
 from .captcha_gateway import *
-from .acquisition import *
 from .extractors import *
 from .http import *
 from .image_processor import *

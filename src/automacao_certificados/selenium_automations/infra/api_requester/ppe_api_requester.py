@@ -13,16 +13,37 @@ class PPEAPIRequester:
         api_key: str,
         base_url: str = BASE_URL,
     ):
+        """
+        The ppe api requester is responsible for making requests to the PPE API.
+        """
+
         self.api_key = api_key
         self.base_url = base_url
         self.http = http
     
-    def _get_headers(self):
+    def _get_headers(self) -> dict:
+        """
+        Gets the headers for the PPE API requests.
+
+        :return: The headers.
+        :rtype: dict
+        """
         return {
             'X-Api-Key': self.api_key,
         }
 
-    def _convert_response_to_certificates_to_download(self, response_data: list[dict]) -> list[CertificateToDownload]:
+    def _convert_response_to_certificates_to_download(
+        self, 
+        response_data: list[dict]
+    ) -> list[CertificateToDownload]:
+        """
+        Converts the response data to a list of CertificateToDownload objects.
+
+        :param response_data: The response data.
+        :type response_data: list[dict]
+        :return: The list of CertificateToDownload objects.
+        :rtype: list[CertificateToDownload]
+        """
         certificates_to_download = []
         
         for item in response_data:
@@ -38,6 +59,13 @@ class PPEAPIRequester:
     def get_certificates_to_download(
         self,
     ) -> list[CertificateToDownload]:
+        """
+        Gets the certificates to download from the PPE API.
+
+        :return: The list of CertificateToDownload objects.
+        :rtype: list[CertificateToDownload]
+        :raises UnexpectedError: If an unexpected error occurs.
+        """
         url = f"{self.base_url}/api/company/certificate/"
         
         response = self.http.get(url, headers=self._get_headers())
@@ -52,7 +80,21 @@ class PPEAPIRequester:
                 status_code=response.status_code
             )
 
-    def post_certificate(self, certificate: PPEPostCertificateRequest):
+    def post_certificate(
+        self, 
+        certificate: PPEPostCertificateRequest
+    ) -> dict:
+        """
+        Posts a certificate to the PPE API.
+
+        :param certificate: The certificate to post.
+        :type certificate: PPEPostCertificateRequest
+        :return: The response data.
+        :rtype: dict
+        :raises BadRequestError: If the request is bad.
+        :raises InternalServerError: If the server is not responding.
+        :raises UnexpectedError: If an unexpected error occurs.
+        """
         url = f"{self.base_url}/api/company/certificate/"
         headers = self._get_headers()
         headers.update({'Content-Type': 'application/json'})

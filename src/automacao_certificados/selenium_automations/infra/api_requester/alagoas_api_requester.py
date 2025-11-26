@@ -24,6 +24,10 @@ class AlagoasAPIRequester:
         http: HttpClient,
         base_url: str = DEFAULT_BASE_URL,
     ):
+        """
+        The alagoas api requester is responsible for making requests to the Alagoas Certidão API.
+        """
+
         self.base_url = base_url
         self.http = http
 
@@ -32,13 +36,14 @@ class AlagoasAPIRequester:
         cnpj: str
     ) -> str:
         """
-        Get the certificado from the Alagoas API.
-        Arguments:
-            certificado_post_request: The request to get the certificado.
-        Returns:
-            The PDF certificado in base64 format.
-        Raises:
-            UnexpectedError: If an unexpected error occurs.
+        Get the certificado from the Alagoas Certidão API.
+
+        :param cnpj: The cnpj of the company.
+        :type cnpj: str
+        :return: The PDF certificado in base64 format.
+        :rtype: str
+        :raises UnexpectedError: If an unexpected error occurs.
+        :raises InvalidCNPJException: If the cnpj is invalid or does not exist.
         """
         cnpj = validate_cnpj(cnpj=cnpj)
         
