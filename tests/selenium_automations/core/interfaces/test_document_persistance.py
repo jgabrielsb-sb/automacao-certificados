@@ -8,7 +8,7 @@ from automacao_certificados.selenium_automations.core.models import *
 @pytest.fixture
 def document_persistance_implementation():
     class DocumentPersistanceImplementation(DocumentPersistancePort):
-        def _save(self, input: DocumentPersistanceInput):
+        def save(self, input: DocumentPersistanceInput):
             return "test"
 
     return DocumentPersistanceImplementation()
@@ -24,7 +24,7 @@ class TestDocumentPersistance:
 
         monkeypatch.setattr(
             document_persistance_implementation,
-            "_save",
+            "save",
             fake_save
         )
 

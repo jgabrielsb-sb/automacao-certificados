@@ -9,7 +9,7 @@ from pathlib import Path
 import base64
 
 from automacao_certificados.selenium_automations.adapters.extractors import CertificadoMaceioExtractor
-from automacao_certificados.selenium_automations.adapters.selenium.exceptions import SeleniumAdapterException, IncorrectCNPJException
+from automacao_certificados.selenium_automations.adapters.selenium.exceptions import IncorrectCNPJException
 from automacao_certificados.selenium_automations.core.interfaces import *
 from automacao_certificados.selenium_automations.core.models import dto_document
 from automacao_certificados.selenium_automations.utils.utils import *

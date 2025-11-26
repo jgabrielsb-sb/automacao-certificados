@@ -1,6 +1,7 @@
 from automacao_certificados.selenium_automations.adapters import *
 from automacao_certificados.selenium_automations.core.exceptions import *
 from automacao_certificados.selenium_automations.core.models import *
+from automacao_certificados.selenium_automations.infra.api_requester import AlagoasAPIRequester
 
 import pytest
 
@@ -15,6 +16,7 @@ class TestDocumentAlagoasDownloader:
 
         assert "cnpj must be a number" in str(e.value)
     
+    @pytest.mark.selenium_workflow_tests
     def test_sucess_case(self):
         output = DocumentAlagoasDownloader(
             api_requester=AlagoasAPIRequester(

@@ -1,5 +1,4 @@
-
-from automacao_certificados.selenium_automations.adapters.api_requester.alagoas_api_requester import AlagoasAPIRequester
+from automacao_certificados.selenium_automations.infra.api_requester import AlagoasAPIRequester
 from automacao_certificados.selenium_automations.core.exceptions import *
 from automacao_certificados.selenium_automations.adapters.http import HttpxClient
 

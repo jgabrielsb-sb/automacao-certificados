@@ -6,15 +6,15 @@ from groq import Groq, AuthenticationError, NotFoundError
 SERVICE_NAME = "Groq"
 
 class GroqImageProcessor(ImageProcessorPort):
-    """
-    Image processor that uses the Groq API to get the text from the image.
-    It uses the meta-llama/llama-4-scout-17b-16e-instruct model by default.
-    """
     def __init__(
         self,
         client: Groq,
         model: str = "meta-llama/llama-4-scout-17b-16e-instruct",
     ):
+        """
+        The groq image processor is an implementation of the image processor port 
+        that uses the groq api to get the text from the image.
+        """
         if not isinstance(model, str):
             raise ValueError("model must be a string")
 
@@ -26,10 +26,21 @@ class GroqImageProcessor(ImageProcessorPort):
         self.client = client
         self.model = model
     
-    def _get_text(
+    def get_text(
         self, 
         input: ImageProcessorInput
     ) -> ImageProcessorOutput:
+        """
+        Gets the text from the image using the groq api.
+
+        :param input: The input of the image processor.
+        :type input: ImageProcessorInput
+        :return: The output of the image processor.
+        :rtype: ImageProcessorOutput
+        :raises AuthenticationException: If the API key is invalid.
+        :raises NotFoundError: If the model is not found.
+        :raises UnexpectedImageProcessingException: If an unexpected error occurs.
+        """
         try:
             base64_img = input.base64_img
             chat = self.client.chat.completions.create(

@@ -8,11 +8,17 @@ from automacao_certificados.selenium_automations.core.interfaces.http_client imp
 )
 
 class HttpxClient(HttpClient):
-    """
-    Low-level adapter implementation of HttpClient 
-    interface using httpx library.
-    """
     def __init__(self, base_timeout: float = 10.0):
+        """
+        The httpx client is an implementation of the http client port 
+        that uses the httpx library to make http requests.
+        """
+        if not isinstance(base_timeout, float):
+            raise ValueError("base_timeout must be a float")
+
+        if base_timeout <= 0:
+            raise ValueError("base_timeout must be greater than 0")
+
         self._client = httpx.Client(timeout=base_timeout)
 
     def get(
@@ -23,6 +29,20 @@ class HttpxClient(HttpClient):
         headers=None, 
         timeout=None
     ) -> HttpResponse:
+        """
+        Sends a GET request to the specified URL.
+
+        :param url: The URL to send the request to.
+        :type url: str
+        :param params: The query parameters to send with the request.
+        :type params: dict
+        :param headers: The headers to send with the request.
+        :type headers: dict
+        :param timeout: The timeout for the request.
+        :type timeout: float
+        :return: The response from the request.
+        :rtype: HttpResponse
+        """
         return self._client.get(
             url=url,
             params=params,
@@ -40,6 +60,24 @@ class HttpxClient(HttpClient):
         json=None,
         data=None
     ) -> HttpResponse:
+        """
+        Sends a POST request to the specified URL.
+
+        :param url: The URL to send the request to.
+        :type url: str
+        :param params: The query parameters to send with the request.
+        :type params: dict
+        :param headers: The headers to send with the request.
+        :type headers: dict
+        :param timeout: The timeout for the request.
+        :type timeout: float
+        :param json: The JSON data to send with the request.
+        :type json: dict
+        :param data: The data to send with the request.
+        :type data: dict
+        :return: The response from the request.
+        :rtype: HttpResponse
+        """
         return self._client.post(
             url=url,
             params=params,

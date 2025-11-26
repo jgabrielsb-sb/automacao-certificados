@@ -8,7 +8,7 @@ from datetime import datetime
 
 from automacao_certificados.selenium_automations.core.models import *
 
-class DownloadCertificatesReportGenerator():
+class DownloadCertificatesReportGenerator:
     
     def __init__(
         self,
@@ -16,20 +16,55 @@ class DownloadCertificatesReportGenerator():
         MAX_ERROR_LINES: int = 20,
         ERROR_LINE_WIDTH: int = 40,
     ):
+        """
+        The download certificates report generator is an implementation 
+        of the report generator port that uses the pandas and plotly libraries 
+        to generate a report of the certificates.
+        """
+        if not isinstance(save_path, Path):
+            raise ValueError("save_path must be a Path")
+
+        if not isinstance(MAX_ERROR_LINES, int):
+            raise ValueError("MAX_ERROR_LINES must be an integer")
+        
         self.save_path = save_path
         self.max_error_lines = MAX_ERROR_LINES
         self.error_line_width = ERROR_LINE_WIDTH
 
     def _is_step_sucess(self, step_result: StepResult):
+        """
+        Checking safely if the step is  succesfull by returning False if the step result is None.
+
+        :param step_result: The step result.
+        :type step_result: StepResult
+        :return: True if the step is successful, False otherwise.
+        :rtype: bool
+        """
         return step_result.sucess if step_result is not None else False
 
     def _get_error_message(self, step_result: StepResult):
+        """
+        Getting the error message from the step result by returning None if the step result is None.
+
+        :param step_result: The step result.
+        :type step_result: StepResult
+        :return: The error message.
+        :rtype: str | None
+        """
         return step_result.error_message if step_result is not None else None
 
     def _convert_element_to_row(
         self,
         certificate: DownloadCertificatesUseCaseOutput
     ) -> DownloadCertificatesRow:
+        """
+        Converting the certificate use case output to a row of the report.
+
+        :param certificate: The certificate use case output.
+        :type certificate: DownloadCertificatesUseCaseOutput
+        :return: The row.
+        :rtype: DownloadCertificatesRow
+        """
         return DownloadCertificatesRow(
             cnpj=certificate.certificate.cnpj,
             document_type=certificate.certificate.document_type,
@@ -46,9 +81,25 @@ class DownloadCertificatesReportGenerator():
         self, 
         elements: list[DownloadCertificatesUseCaseOutput]
     ) -> list[DownloadCertificatesRow]:
+        """
+        Converting the certificate use case outputs to rows of the report.
+
+        :param elements: The certificate use case outputs.
+        :type elements: list[DownloadCertificatesUseCaseOutput]
+        :return: The rows of the report.
+        :rtype: list[DownloadCertificatesRow]
+        """
         return [self._convert_element_to_row(element) for element in elements]
 
     def _format_error_for_cell(self, msg: str | None) -> str:
+        """
+        Formatting the error message for the cell
+
+        :param msg: The error message.
+        :type msg: str | None
+        :return: The formatted error message.
+        :rtype: str
+        """
         if not msg:
             return ""
 
@@ -67,6 +118,14 @@ class DownloadCertificatesReportGenerator():
         self,
         rows: Sequence[DownloadCertificatesRow],
     ) -> list[dict[str, Any]]:
+        """
+        Building the row display.
+
+        :param rows: The rows.
+        :type rows: Sequence[DownloadCertificatesRow]
+        :return: The row display.
+        :rtype: list[dict[str, Any]]
+        """
         display_rows: list[dict[str, Any]] = []
 
         for r in rows:
@@ -100,6 +159,11 @@ class DownloadCertificatesReportGenerator():
         """
         Returns a list-of-lists with hovertext for each column in the same
         order as the table columns: [cnpj, document_type, download, persistance, ppe]
+
+        :param rows: The rows.
+        :type rows: Sequence[DownloadCertificatesRow]
+        :return: The hover text.
+        :rtype: list[list[str]]
         """
         cnpj_hover: list[str] = []
         doc_type_hover: list[str] = []
@@ -136,6 +200,16 @@ class DownloadCertificatesReportGenerator():
         date: datetime,
         rows: list[DownloadCertificatesRow]
     ) -> go.Figure:
+        """
+        Getting the plotly figure of the table.
+
+        :param date: The date.
+        :type date: datetime
+        :param rows: The rows.
+        :type rows: list[DownloadCertificatesRow]
+        :return: The plotly figure.
+        :rtype: go.Figure
+        """
         display_rows = self._build_row_display(rows)
         df = pd.DataFrame(display_rows)
 
@@ -162,6 +236,16 @@ class DownloadCertificatesReportGenerator():
         certificates: list[DownloadCertificatesUseCaseOutput],
         date: datetime
     ) -> Path:
+        """
+        Running the report generator by converting the certificates to rows, making the plotly table and saving the file.
+
+        :param certificates: The certificates.
+        :type certificates: list[DownloadCertificatesUseCaseOutput]
+        :param date: The date.
+        :type date: datetime
+        :return: The file path.
+        :rtype: Path
+        """
         rows = self._convert_elements_to_rows(certificates)
         table = self._make_plotly_table(date, rows)
         file_path = self.save_path / f"certificates_report_{date.strftime('%d-%m-%Y-%H-%M-%S')}.html"

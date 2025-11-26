@@ -6,13 +6,14 @@ import pytest
 from unittest.mock import Mock, MagicMock
 
 from automacao_certificados.selenium_automations.core.models.interfaces.dto_workflow import StepResult
-
+from automacao_certificados.selenium_automations.adapters.persistance.certificado_api_persistance import CertificadoApiPersistance
+from automacao_certificados.selenium_automations.adapters.persistance.ppe_persistance import PPEPersistance
 @pytest.fixture
 def workflow():
     return Workflow(
         document_downloader=Mock(spec=DocumentDownloaderPort),
-        document_persistance=Mock(spec=DocumentPersistancePort),
-        ppe_api_persistance=Mock(spec=DocumentPersistancePort)
+        certificado_api_persistance=Mock(spec=CertificadoApiPersistance),
+        ppe_api_persistance=Mock(spec=PPEPersistance)
     )
 
 class TestWorkflow:
@@ -20,28 +21,28 @@ class TestWorkflow:
         with pytest.raises(ValueError) as e:
             Workflow(
                 document_downloader=None,
-                document_persistance=Mock(spec=DocumentPersistancePort),
-                ppe_api_persistance=Mock(spec=DocumentPersistancePort),
+                certificado_api_persistance=Mock(spec=CertificadoApiPersistance),
+                ppe_api_persistance=Mock(spec=PPEPersistance),
             )
         assert "document_downloader must be a DocumentDownloaderPort" in str(e.value)
 
-    def test_if_raises_value_error_if_document_persistance_is_not_a_document_persistance_port(self):
+    def test_if_raises_value_error_if_certificado_api_persistance_is_not_a_certificado_api_persistance_port(self):
         with pytest.raises(ValueError) as e:
             Workflow(
                 document_downloader=Mock(spec=DocumentDownloaderPort),
-                document_persistance=None,
-                ppe_api_persistance=Mock(spec=DocumentPersistancePort),
+                certificado_api_persistance=None,
+                ppe_api_persistance=Mock(spec=PPEPersistance),
             )
-        assert "document_persistance must be a DocumentPersistancePort" in str(e.value)
+        assert "certificado_api_persistance must be a CertificadoApiPersistance" in str(e.value)
 
-    def test_if_raises_value_error_if_ppe_api_persistance_is_not_a_document_persistance_port(self):
+    def test_if_raises_value_error_if_ppe_api_persistance_is_not_a_certificado_api_persistance_port(self):
         with pytest.raises(ValueError) as e:
             Workflow(
                 document_downloader=Mock(spec=DocumentDownloaderPort),
-                document_persistance=Mock(spec=DocumentPersistancePort),
+                certificado_api_persistance=Mock(spec=CertificadoApiPersistance),
                 ppe_api_persistance=None,
             )
-        assert "ppe_api_persistance must be a DocumentPersistancePort" in str(e.value)
+        assert "ppe_api_persistance must be a PPEPersistance" in str(e.value)
 
     def test_if_perform_download_returns_step_result_when_error(
         self, 
@@ -83,10 +84,10 @@ class TestWorkflow:
         workflow,
         monkeypatch
     ):
-        document_persistance = MagicMock(spec=DocumentPersistancePort)
-        document_persistance.run.side_effect = DocumentPersistanceException('test excep')
-        monkeypatch.setattr(workflow, "document_persistance", document_persistance)
-        step_result = workflow.persist_data("test")
+        certificado_api_persistance = MagicMock(spec=CertificadoApiPersistance)
+        certificado_api_persistance.run.side_effect = DocumentPersistanceException('test excep')
+        monkeypatch.setattr(workflow, "certificado_api_persistance", certificado_api_persistance)
+        step_result = workflow.persist_data_in_certificado_api("test")
 
         assert step_result == StepResult(
             sucess=False,
@@ -99,10 +100,10 @@ class TestWorkflow:
         workflow,
         monkeypatch
     ):
-        document_persistance = MagicMock(spec=DocumentPersistancePort)
-        document_persistance.run.return_value = "sucess"
-        monkeypatch.setattr(workflow, "document_persistance", document_persistance)
-        step_result = workflow.persist_data("test")
+        certificado_api_persistance = MagicMock(spec=CertificadoApiPersistance)
+        certificado_api_persistance.run.return_value = "sucess"
+        monkeypatch.setattr(workflow, "certificado_api_persistance", certificado_api_persistance)
+        step_result = workflow.persist_data_in_certificado_api("test")
 
         assert step_result == StepResult(
             sucess=True,
@@ -115,10 +116,10 @@ class TestWorkflow:
         workflow,
         monkeypatch
     ):
-        ppe_api_persistance = MagicMock(spec=DocumentPersistancePort)
+        ppe_api_persistance = MagicMock(spec=PPEPersistance)
         ppe_api_persistance.run.side_effect = DocumentPersistanceException('test excep')
         monkeypatch.setattr(workflow, "ppe_api_persistance", ppe_api_persistance)
-        step_result = workflow.persist_data_in_ppe("test")
+        step_result = workflow.persist_data_in_ppe_api("test")
 
         assert step_result == StepResult(
             sucess=False,
@@ -131,10 +132,10 @@ class TestWorkflow:
         workflow,
         monkeypatch
     ):
-        ppe_api_persistance = MagicMock(spec=DocumentPersistancePort)
+        ppe_api_persistance = MagicMock(spec=PPEPersistance)
         ppe_api_persistance.run.return_value = "sucess"
         monkeypatch.setattr(workflow, "ppe_api_persistance", ppe_api_persistance)
-        step_result = workflow.persist_data_in_ppe("test")
+        step_result = workflow.persist_data_in_ppe_api("test")
 
         assert step_result == StepResult(
             sucess=True,
@@ -175,20 +176,20 @@ class TestWorkflow:
             base64_pdf="test base64 pdf"
         )
 
-        document_persistance = MagicMock(spec=DocumentPersistancePort)
-        document_persistance.run.return_value = StepResult(sucess=True, error_message=None, output="sucess")
+        certificado_api_persistance = MagicMock(spec=CertificadoApiPersistance)
+        certificado_api_persistance.run.return_value = StepResult(sucess=True, error_message=None, output="sucess")
 
-        ppe_api_persistance = MagicMock(spec=DocumentPersistancePort)
+        ppe_api_persistance = MagicMock(spec=PPEPersistance)
         ppe_api_persistance.run.return_value = StepResult(sucess=True, error_message=None, output="sucess")
 
         monkeypatch.setattr(workflow, "document_downloader", document_downloader)
-        monkeypatch.setattr(workflow, "document_persistance", document_persistance)
+        monkeypatch.setattr(workflow, "certificado_api_persistance", certificado_api_persistance)
         monkeypatch.setattr(workflow, "ppe_api_persistance", ppe_api_persistance)
         
         workflow_output = workflow.run("test")
 
         assert workflow_output == WorkflowOutput(
             download_output_result=StepResult(sucess=True, error_message=None, output=document_downloader.run.return_value),
-            persistance_output_result=StepResult(sucess=True, error_message=None, output=document_persistance.run.return_value),
+            persistance_output_result=StepResult(sucess=True, error_message=None, output=certificado_api_persistance.run.return_value),
             ppe_output_result=StepResult(sucess=True, error_message=None, output=ppe_api_persistance.run.return_value),
         )

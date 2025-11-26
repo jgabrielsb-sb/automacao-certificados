@@ -5,17 +5,30 @@ from automacao_certificados.selenium_automations.core.exceptions import *
 
 class CaptchaSolverPort(ABC):
     """
-    Interface responsible for solving the captcha.
+    Interface responsible for defining the contract for captcha solvers.
     """
     @abstractmethod
-    def _solve_captcha(self, input: CaptchaSolverInput) -> None:
+    def solve_captcha(self, input: CaptchaSolverInput) -> None:
         """
-        Method to be implemented by child classes.
+        Solves the captcha.
+        
+        :param input: the input of the captcha solver.
+        :type input: CaptchaSolverInput
+        :return: None
+        :rtype: None
         """
         pass
 
     def run(self, input: CaptchaSolverInput) -> None:
+        """
+        Runs the captcha solver.
+        
+        :param input: the input of the captcha solver.
+        :type input: CaptchaSolverInput
+        :return: None
+        :rtype: None
+        """
         try:
-            return self._solve_captcha(input)
+            return self.solve_captcha(input)
         except Exception as e:
             raise CaptchaSolverException(e)

@@ -9,14 +9,6 @@ For guidance on writing docstrings, see the :ref:`docstring_guide`.
 Core Interfaces
 ----------------
 
-Base API Requester
-~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: automacao_certificados.selenium_automations.core.interfaces.base_api_requester.BaseAPIRequester
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Document Downloader Port
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -49,13 +41,46 @@ Municipio Getter Port
    :undoc-members:
    :show-inheritance:
 
-Workflow Port
-~~~~~~~~~~~~~
+Captcha Solver Port
+~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: automacao_certificados.selenium_automations.core.interfaces.workflow.WorkflowPort
+.. autoclass:: automacao_certificados.selenium_automations.core.interfaces.captcha_solver.CaptchaSolverPort
    :members:
    :undoc-members:
    :show-inheritance:
+
+Captcha Gateway Port
+~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: automacao_certificados.selenium_automations.core.interfaces.captcha_gateway.SeleniumCaptchaGatewayPort
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Base Page Port
+~~~~~~~~~~~~~~
+
+.. autoclass:: automacao_certificados.selenium_automations.core.interfaces.base_page.BasePage
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Image Processor Port
+~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: automacao_certificados.selenium_automations.core.interfaces.image_processor.ImageProcessorPort
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+HTTP Client Port
+~~~~~~~~~~~~~~~~
+
+.. autoclass:: automacao_certificados.selenium_automations.core.interfaces.http_client.HttpClient
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 
 Application Layer
 ----------------
@@ -192,7 +217,80 @@ Selenium Adapters
 Core Models
 -----------
 
-.. automodule:: automacao_certificados.selenium_automations.core.models
+Interface Models
+~~~~~~~~~~~~~~~~
+
+Document Downloader Models
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: automacao_certificados.selenium_automations.core.models.interfaces.dto_document_downloader.DocumentDownloaderInput
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: automacao_certificados.selenium_automations.core.models.interfaces.dto_document_downloader.DocumentDownloaderOutput
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Document Persistence Models
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: automacao_certificados.selenium_automations.core.models.interfaces.dto_document_persistance
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Workflow Models
+^^^^^^^^^^^^^^^
+
+.. automodule:: automacao_certificados.selenium_automations.core.models.interfaces.dto_workflow
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Application Models
+~~~~~~~~~~~~~~~~~~
+
+Use Case Models
+^^^^^^^^^^^^^^^
+
+.. automodule:: automacao_certificados.selenium_automations.core.models.application.use_cases.dto_download_certificate_use_case
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Workflow Selector Models
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: automacao_certificados.selenium_automations.core.models.application.dto_workflow_selector
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Data Transfer Objects
+~~~~~~~~~~~~~~~~~~~~~
+
+Document Models
+^^^^^^^^^^^^^^^
+
+.. automodule:: automacao_certificados.selenium_automations.core.models.dto_document
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Supplier Models
+^^^^^^^^^^^^^^^
+
+.. automodule:: automacao_certificados.selenium_automations.core.models.dto_supplier
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Document Type Models
+^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: automacao_certificados.selenium_automations.core.models.dto_document_type
    :members:
    :undoc-members:
    :show-inheritance:

@@ -12,7 +12,7 @@ from automacao_certificados.selenium_automations.core.models import *
 @pytest.fixture
 def captcha_solver_port():
     class CaptchaSolverPortImpl(CaptchaSolverPort):
-        def _solve_captcha(self, input: CaptchaSolverInput) -> None:
+        def solve_captcha(self, input: CaptchaSolverInput) -> None:
             raise CaptchaSolverException("Test error")
     return CaptchaSolverPortImpl()
 

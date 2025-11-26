@@ -24,7 +24,8 @@ class TestDocumentArapiracaDownloader:
         return DownloadPage(
             driver=driver,
         )
-
+    
+    @pytest.mark.selenium_workflow_tests
     def test_download_certificado_arapiraca(self, consulta_page, download_page):
         output = DocumentArapiracaDownloader(
             consulta_page=consulta_page,
@@ -34,6 +35,7 @@ class TestDocumentArapiracaDownloader:
         assert isinstance(output.document_extracted, dto_document.DocumentExtracted)
         assert isinstance(output.base64_pdf, str)
 
+    @pytest.mark.selenium_workflow_tests
     def test_download_certificado_arapiraca_2(self, consulta_page, download_page):
         output = DocumentArapiracaDownloader(
             consulta_page=consulta_page,

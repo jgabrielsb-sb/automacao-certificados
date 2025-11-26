@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 class BasePage(ABC):
     """
-    Base class for all page objects.
+    Interface responsible for defining the contract for base pages.
     """
     def __init__(self, driver: WebDriver):
         if not isinstance(driver, WebDriver):

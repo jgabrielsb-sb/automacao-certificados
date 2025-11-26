@@ -7,18 +7,18 @@ from automacao_certificados.selenium_automations.core.models import *
 @pytest.fixture
 def municipio_getter_port():
     class MunicipioGetterPortImpl(MunicipioGetterPort):
-        def _get_municipio_by_cnpj(self, cnpj: str) -> str:
+        def get_municipio_by_cnpj(self, cnpj: str) -> str:
             return "ARAPIRACA"
     
     return MunicipioGetterPortImpl()
 
 
 class TestMunicipioGetter:
-    def test_get_municipio_by_cnpj(
+    def testget_municipio_by_cnpj(
         self,
         municipio_getter_port: MunicipioGetterPort
     ):
-        municipio = municipio_getter_port._get_municipio_by_cnpj("1234567890")
+        municipio = municipio_getter_port.get_municipio_by_cnpj("1234567890")
         assert municipio == "ARAPIRACA"
 
     def test_if_run_is_being_wrapped_into_municipio_getter_exception(
@@ -26,13 +26,13 @@ class TestMunicipioGetter:
         monkeypatch,
         municipio_getter_port: MunicipioGetterPort
     ):
-        def fake_get_municipio_by_cnpj(cnpj: str) -> str:
+        def fakeget_municipio_by_cnpj(cnpj: str) -> str:
             raise Exception('test exception')
 
         monkeypatch.setattr(
             municipio_getter_port,
-            "_get_municipio_by_cnpj",
-            fake_get_municipio_by_cnpj
+            "get_municipio_by_cnpj",
+            fakeget_municipio_by_cnpj
         )
 
         with pytest.raises(MunicipioGetterException):

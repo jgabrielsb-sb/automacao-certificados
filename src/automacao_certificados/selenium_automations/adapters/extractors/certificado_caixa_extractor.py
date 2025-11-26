@@ -17,6 +17,10 @@ class CertificadoCaixaExtractor(DocumentExtractorPort):
         self, 
         driver: WebDriver,
     ):
+        """
+        The certificado caixa extractor is an implementation of the document extractor port 
+        that uses a web driver to extract the document.
+        """
         if not isinstance(driver, WebDriver):
             raise ValueError("driver must be a WebDriver")
 
@@ -25,6 +29,9 @@ class CertificadoCaixaExtractor(DocumentExtractorPort):
     def _get_supplier_name(self) -> str:
         """
         Gets the supplier name.
+
+        :return: The supplier name.
+        :rtype: str
         """
         try:
             razao_social = WebDriverWait(self.driver, 3).until(
@@ -41,6 +48,9 @@ class CertificadoCaixaExtractor(DocumentExtractorPort):
     def _get_supplier_cnpj(self) -> str:
         """
         Gets the supplier CNPJ.
+
+        :return: The supplier CNPJ.
+        :rtype: str
         """
         try:
             cnpj = WebDriverWait(self.driver, 3).until(
@@ -57,6 +67,9 @@ class CertificadoCaixaExtractor(DocumentExtractorPort):
     def get_supplier(self) -> dto_supplier.Supplier:
         """
         Gets the supplier.
+
+        :return: The supplier DTO.
+        :rtype: dto_supplier.Supplier
         """
         supplier_name = self._get_supplier_name()
         supplier_cnpj = self._get_supplier_cnpj()
@@ -69,12 +82,18 @@ class CertificadoCaixaExtractor(DocumentExtractorPort):
     def get_document_type(self) -> str:
         """
         Gets the document type.
+
+        :return: The document type.
+        :rtype: str
         """
         return "Certidão Negativa FGTS"
 
     def get_identifier(self) -> str:
         """
         Gets the document identifier (Certificação Número).
+
+        :return: The document identifier.
+        :rtype: str
         """
         try:
             identifier = WebDriverWait(self.driver, 3).until(
@@ -89,6 +108,9 @@ class CertificadoCaixaExtractor(DocumentExtractorPort):
     def get_expiration_date(self) -> date:
         """
         Gets the expiration date.
+
+        :return: The expiration date.
+        :rtype: date
         """
         import re
 

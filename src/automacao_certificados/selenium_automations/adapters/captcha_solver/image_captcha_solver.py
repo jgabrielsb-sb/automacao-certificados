@@ -12,6 +12,10 @@ class ImageCaptchaSolver(CaptchaSolverPort):
         image_processor: ImageProcessorPort,
         captcha_gateway: SeleniumCaptchaGatewayPort
     ):
+        """
+        The image captcha solver is an implementation of the captcha solver port 
+        that uses an image processor and a selenium captcha gateway to solve the captcha.
+        """
         if not isinstance(image_processor, ImageProcessorPort):
             raise ValueError("image_processor must be a ImageProcessorPort")
         
@@ -21,9 +25,22 @@ class ImageCaptchaSolver(CaptchaSolverPort):
         self.image_processor = image_processor
         self.captcha_gateway = captcha_gateway
 
-    def _solve_captcha(self, input: CaptchaSolverInput) -> None:
+    def solve_captcha(self, input: CaptchaSolverInput) -> None:
+        """
+        Solves the captcha by getting the captcha text from the image 
+        and inserting it on the input field.
+
+        :param input: The input of the captcha solver.
+        :type input: CaptchaSolverInput
+        :return: The captcha text.
+        :rtype: str
+        """
+        
+        if not isinstance(input, CaptchaSolverInput):
+            raise ValueError("input must be a CaptchaSolverInput")
+
         base64_img = self.captcha_gateway.get_captcha_base64_img(input.img_webelement)
-        text = self.image_processor._get_text(input=ImageProcessorInput(base64_img=base64_img))
+        text = self.image_processor.get_text(input=ImageProcessorInput(base64_img=base64_img))
         self.captcha_gateway.fill_captcha_text(input.input_webelement, text)
         return text
 

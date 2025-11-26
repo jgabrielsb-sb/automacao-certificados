@@ -46,6 +46,10 @@ autodoc_default_options = {
     'exclude-members': '__weakref__'
 }
 
+# Automatically create cross-references from type hints
+autodoc_typehints = 'description'  # Options: 'none', 'description', 'signature', 'both'
+autodoc_typehints_description_target = 'documented'  # Only link to documented objects
+
 # Path setup for autodoc
 import sys
 import os

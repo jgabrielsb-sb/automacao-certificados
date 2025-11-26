@@ -50,7 +50,7 @@ class TestGroqImageProcessor:
                     body='{"error":{"code":"invalid_api_key","message":"Invalid API key"}}',
                 )
             ):
-                processor._get_text(
+                processor.get_text(
                     input=ImageProcessorInput(base64_img="dhfjsdkfh")
                 )
 
@@ -78,7 +78,7 @@ class TestGroqImageProcessor:
                     body='{"error":{"code":"model_not_found","message":"Model not found"}}',
                 )
             ):
-                processor._get_text(
+                processor.get_text(
                     input=ImageProcessorInput(base64_img="dhfjsdkfh")
                 )
                     
@@ -101,7 +101,7 @@ class TestGroqImageProcessor:
         processor = GroqImageProcessor(client=mock_groq)
 
         # Act
-        result = processor._get_text(input=ImageProcessorInput(base64_img="fakebase64"))
+        result = processor.get_text(input=ImageProcessorInput(base64_img="fakebase64"))
 
         # Assert
         assert result.text == "HELLO123"

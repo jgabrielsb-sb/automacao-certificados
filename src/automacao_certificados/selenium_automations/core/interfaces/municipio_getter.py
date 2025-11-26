@@ -8,27 +8,30 @@ class MunicipioGetterPort(ABC):
     Interface responsible for getting the municipality by cnpj.
     """
     @abstractmethod
-    def _get_municipio_by_cnpj(self, cnpj: str) -> str:
+    def get_municipio_by_cnpj(self, cnpj: str) -> str:
         """
         Gets the municipality by cnpj.
-        Args:
-            cnpj: the cnpj of the supplier.
-        Returns:
-            The municipality name.
+
+        :param cnpj: the cnpj of the supplier.
+        :type cnpj: str
+
+        :return: the municipality name.
+        :rtype: str
         """
         pass
 
     def run(self, cnpj: str) -> str:
         """
         Runs the municipality getter.
-        Args:
-            cnpj: the cnpj of the supplier.
-        Returns:
-            The municipality name.
+
+        :param cnpj: the cnpj of the supplier.
+        :type cnpj: str
+        :return: the municipality name.
+        :rtype: str
         """
         validate_cnpj(cnpj)
         try:
-            municipio = self._get_municipio_by_cnpj(cnpj)
+            municipio = self.get_municipio_by_cnpj(cnpj)
             return municipio
         except Exception as e:
             raise MunicipioGetterException(e)
