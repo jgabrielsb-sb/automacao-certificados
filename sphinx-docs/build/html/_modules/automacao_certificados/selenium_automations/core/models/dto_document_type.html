@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
-        <title>automacao_certificados.selenium_automations.core.interfaces.municipio_getter - Automação Certificados</title>
+        <title>automacao_certificados.selenium_automations.core.models.dto_document_type - Automação Certificados</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -245,52 +245,33 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for automacao_certificados.selenium_automations.core.interfaces.municipio_getter</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+          <h1>Source code for automacao_certificados.selenium_automations.core.models.dto_document_type</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">automacao_certificados.selenium_automations.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_cnpj</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">automacao_certificados.selenium_automations.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
-<div class="viewcode-block" id="MunicipioGetterPort">
-<a class="viewcode-back" href="../../../../../api_reference.html#automacao_certificados.selenium_automations.core.interfaces.municipio_getter.MunicipioGetterPort">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">MunicipioGetterPort</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Interface responsible for getting the municipality by cnpj.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="MunicipioGetterPort.get_municipio_by_cnpj">
-<a class="viewcode-back" href="../../../../../api_reference.html#automacao_certificados.selenium_automations.core.interfaces.municipio_getter.MunicipioGetterPort.get_municipio_by_cnpj">[docs]</a>
-    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_municipio_by_cnpj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cnpj</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Gets the municipality by cnpj.</span>
-
-<span class="sd">        :param cnpj: the cnpj of the supplier.</span>
-<span class="sd">        :type cnpj: str</span>
-
-<span class="sd">        :return: the municipality name.</span>
-<span class="sd">        :rtype: str</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span></div>
+<div class="viewcode-block" id="DocumentType">
+<a class="viewcode-back" href="../../../../../api_reference.html#automacao_certificados.selenium_automations.core.models.dto_document_type.DocumentType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DocumentType</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span></div>
 
 
-<div class="viewcode-block" id="MunicipioGetterPort.run">
-<a class="viewcode-back" href="../../../../../api_reference.html#automacao_certificados.selenium_automations.core.interfaces.municipio_getter.MunicipioGetterPort.run">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cnpj</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Runs the municipality getter.</span>
+<div class="viewcode-block" id="DocumentTypeCreate">
+<a class="viewcode-back" href="../../../../../api_reference.html#automacao_certificados.selenium_automations.core.models.dto_document_type.DocumentTypeCreate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DocumentTypeCreate</span><span class="p">(</span><span class="n">DocumentType</span><span class="p">):</span>
+    <span class="k">pass</span></div>
 
-<span class="sd">        :param cnpj: the cnpj of the supplier.</span>
-<span class="sd">        :type cnpj: str</span>
-<span class="sd">        :return: the municipality name.</span>
-<span class="sd">        :rtype: str</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">validate_cnpj</span><span class="p">(</span><span class="n">cnpj</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">municipio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_municipio_by_cnpj</span><span class="p">(</span><span class="n">cnpj</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">municipio</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">MunicipioGetterException</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
-</div>
+
+<div class="viewcode-block" id="DocumentTypeResponse">
+<a class="viewcode-back" href="../../../../../api_reference.html#automacao_certificados.selenium_automations.core.models.dto_document_type.DocumentTypeResponse">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DocumentTypeResponse</span><span class="p">(</span><span class="n">DocumentType</span><span class="p">):</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span></div>
+
+
+<div class="viewcode-block" id="DocumentTypeFilter">
+<a class="viewcode-back" href="../../../../../api_reference.html#automacao_certificados.selenium_automations.core.models.dto_document_type.DocumentTypeFilter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DocumentTypeFilter</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 </pre></div>
         </article>

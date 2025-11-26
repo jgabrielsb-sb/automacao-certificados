@@ -265,6 +265,107 @@ Abstract Methods
        """
        pass
 
+Cross-References in Docstrings
+--------------------------------
+
+Sphinx can create clickable links to classes, functions, and modules using
+cross-reference roles. This makes documentation much more useful!
+
+Using Cross-Reference Roles
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Instead of plain text, use Sphinx roles to create links:
+
+.. code-block:: python
+
+   def process_document(
+       self, 
+       input: DocumentDownloaderInput
+   ) -> DocumentDownloaderOutput:
+       """
+       Process a document using the downloader.
+       
+       Args:
+           input: The input parameters. See :class:`DocumentDownloaderInput` 
+                  for details.
+       
+       Returns:
+           The processed output. See :class:`DocumentDownloaderOutput` 
+           for the structure.
+       
+       Raises:
+           :exc:`DocumentDownloaderException`: If processing fails.
+       """
+       pass
+
+Available Roles
+~~~~~~~~~~~~~~~
+
+* **`:class:`** - Link to a class
+  - Example: ``:class:`DocumentDownloaderOutput```
+  
+* **`:mod:`** - Link to a module
+  - Example: ``:mod:`automacao_certificados.selenium_automations.core.models```
+  
+* **`:func:`** - Link to a function
+  - Example: ``:func:`validate_cnpj```
+  
+* **`:exc:`** - Link to an exception class
+  - Example: ``:exc:`DocumentDownloaderException```
+  
+* **`:attr:`** - Link to an attribute
+  - Example: ``:attr:`DocumentDownloaderOutput.base64_pdf```
+  
+* **`:meth:`** - Link to a method
+  - Example: ``:meth:`DocumentDownloaderPort.run```
+
+Full vs Short Names
+~~~~~~~~~~~~~~~~~~~
+
+You can use full module paths or short names:
+
+.. code-block:: python
+
+   # Full path (always works)
+   :class:`automacao_certificados.selenium_automations.core.models.interfaces.dto_document_downloader.DocumentDownloaderOutput`
+   
+   # Short name (works if imported in the module)
+   :class:`DocumentDownloaderOutput`
+
+Best Practice: Use short names when the class is imported in the current
+module, as it's more readable.
+
+Example with Cross-References
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   class DocumentDownloaderPort(ABC):
+       """
+       Interface for downloading certificate documents.
+       
+       See :class:`DocumentDownloaderInput` for input structure and
+       :class:`DocumentDownloaderOutput` for output structure.
+       """
+       
+       def run(
+           self, 
+           input: DocumentDownloaderInput
+       ) -> DocumentDownloaderOutput:
+           """
+           Download a certificate document.
+           
+           Args:
+               input: See :class:`DocumentDownloaderInput` for details.
+           
+           Returns:
+               See :class:`DocumentDownloaderOutput` for the structure.
+           
+           Raises:
+               :exc:`DocumentDownloaderException`: If download fails.
+           """
+           pass
+
 What Gets Documented
 --------------------
 
@@ -276,7 +377,8 @@ Sphinx autodoc will automatically document:
 * **Properties** - With their getters and setters
 * **Exceptions** - Listed in Raises sections
 * **Type hints** - Automatically extracted from function signatures
+* **Cross-references** - Clickable links to related classes and functions
 
 The API Reference uses these docstrings to generate comprehensive documentation
-automatically, so writing good docstrings is essential!
+automatically, so writing good docstrings with cross-references is essential!
 

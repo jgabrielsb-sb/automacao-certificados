@@ -502,6 +502,96 @@ document them in the class docstring.</p></li>
 </div>
 </section>
 </section>
+<section id="cross-references-in-docstrings">
+<h2>Cross-References in Docstrings<a class="headerlink" href="#cross-references-in-docstrings" title="Link to this heading">¶</a></h2>
+<p>Sphinx can create clickable links to classes, functions, and modules using
+cross-reference roles. This makes documentation much more useful!</p>
+<section id="using-cross-reference-roles">
+<h3>Using Cross-Reference Roles<a class="headerlink" href="#using-cross-reference-roles" title="Link to this heading">¶</a></h3>
+<p>Instead of plain text, use Sphinx roles to create links:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">process_document</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">DocumentDownloaderInput</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DocumentDownloaderOutput</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process a document using the downloader.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input: The input parameters. See :class:`DocumentDownloaderInput`</span>
+<span class="sd">               for details.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The processed output. See :class:`DocumentDownloaderOutput`</span>
+<span class="sd">        for the structure.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        :exc:`DocumentDownloaderException`: If processing fails.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</section>
+<section id="available-roles">
+<h3>Available Roles<a class="headerlink" href="#available-roles" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>`:class:`</strong> - Link to a class
+- Example: <code class="docutils literal notranslate"><span class="pre">:class:`DocumentDownloaderOutput`</span></code></p></li>
+<li><p><strong>`:mod:`</strong> - Link to a module
+- Example: <code class="docutils literal notranslate"><span class="pre">:mod:`automacao_certificados.selenium_automations.core.models`</span></code></p></li>
+<li><p><strong>`:func:`</strong> - Link to a function
+- Example: <code class="docutils literal notranslate"><span class="pre">:func:`validate_cnpj`</span></code></p></li>
+<li><p><strong>`:exc:`</strong> - Link to an exception class
+- Example: <code class="docutils literal notranslate"><span class="pre">:exc:`DocumentDownloaderException`</span></code></p></li>
+<li><p><strong>`:attr:`</strong> - Link to an attribute
+- Example: <code class="docutils literal notranslate"><span class="pre">:attr:`DocumentDownloaderOutput.base64_pdf`</span></code></p></li>
+<li><p><strong>`:meth:`</strong> - Link to a method
+- Example: <code class="docutils literal notranslate"><span class="pre">:meth:`DocumentDownloaderPort.run`</span></code></p></li>
+</ul>
+</section>
+<section id="full-vs-short-names">
+<h3>Full vs Short Names<a class="headerlink" href="#full-vs-short-names" title="Link to this heading">¶</a></h3>
+<p>You can use full module paths or short names:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Full path (always works)</span>
+<span class="p">:</span><span class="n">class</span><span class="p">:</span><span class="err">`</span><span class="n">automacao_certificados</span><span class="o">.</span><span class="n">selenium_automations</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">interfaces</span><span class="o">.</span><span class="n">dto_document_downloader</span><span class="o">.</span><span class="n">DocumentDownloaderOutput</span><span class="err">`</span>
+
+<span class="c1"># Short name (works if imported in the module)</span>
+<span class="p">:</span><span class="n">class</span><span class="p">:</span><span class="err">`</span><span class="n">DocumentDownloaderOutput</span><span class="err">`</span>
+</pre></div>
+</div>
+<p>Best Practice: Use short names when the class is imported in the current
+module, as it’s more readable.</p>
+</section>
+<section id="example-with-cross-references">
+<h3>Example with Cross-References<a class="headerlink" href="#example-with-cross-references" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">DocumentDownloaderPort</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Interface for downloading certificate documents.</span>
+
+<span class="sd">    See :class:`DocumentDownloaderInput` for input structure and</span>
+<span class="sd">    :class:`DocumentDownloaderOutput` for output structure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">input</span><span class="p">:</span> <span class="n">DocumentDownloaderInput</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DocumentDownloaderOutput</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Download a certificate document.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            input: See :class:`DocumentDownloaderInput` for details.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            See :class:`DocumentDownloaderOutput` for the structure.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            :exc:`DocumentDownloaderException`: If download fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+</section>
+</section>
 <section id="what-gets-documented">
 <h2>What Gets Documented<a class="headerlink" href="#what-gets-documented" title="Link to this heading">¶</a></h2>
 <p>Sphinx autodoc will automatically document:</p>
@@ -512,9 +602,10 @@ document them in the class docstring.</p></li>
 <li><p><strong>Properties</strong> - With their getters and setters</p></li>
 <li><p><strong>Exceptions</strong> - Listed in Raises sections</p></li>
 <li><p><strong>Type hints</strong> - Automatically extracted from function signatures</p></li>
+<li><p><strong>Cross-references</strong> - Clickable links to related classes and functions</p></li>
 </ul>
 <p>The API Reference uses these docstrings to generate comprehensive documentation
-automatically, so writing good docstrings is essential!</p>
+automatically, so writing good docstrings with cross-references is essential!</p>
 </section>
 </section>
 
@@ -592,6 +683,13 @@ automatically, so writing good docstrings is essential!</p>
 <li><a class="reference internal" href="#async-functions">Async Functions</a></li>
 <li><a class="reference internal" href="#properties">Properties</a></li>
 <li><a class="reference internal" href="#abstract-methods">Abstract Methods</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cross-references-in-docstrings">Cross-References in Docstrings</a><ul>
+<li><a class="reference internal" href="#using-cross-reference-roles">Using Cross-Reference Roles</a></li>
+<li><a class="reference internal" href="#available-roles">Available Roles</a></li>
+<li><a class="reference internal" href="#full-vs-short-names">Full vs Short Names</a></li>
+<li><a class="reference internal" href="#example-with-cross-references">Example with Cross-References</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#what-gets-documented">What Gets Documented</a></li>
