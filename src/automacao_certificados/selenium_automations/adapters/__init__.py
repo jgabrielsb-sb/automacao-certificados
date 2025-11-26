@@ -1,4 +1,3 @@
-from .api_requester import *
 from .captcha_gateway import *
 from .acquisition import *
 from .extractors import *
@@ -9,6 +8,5 @@ from .ui import *
 from .captcha_solver import *
 from .document_downloader import *
 from .selenium import *
-from .api_requester import *
 from .municipio_getter import *
 from .report_generator import *
