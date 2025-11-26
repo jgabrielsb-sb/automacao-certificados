@@ -1,6 +1,7 @@
 from automacao_certificados.selenium_automations.core.interfaces import *
 from automacao_certificados.selenium_automations.adapters import *
 from automacao_certificados.selenium_automations.core.models import *
+from automacao_certificados.selenium_automations.infra.api_requester import ReceitaAPIRequester
 
 class ReceitaAPIMunicipioGetter(MunicipioGetterPort):
     def __init__(self, api_requester: ReceitaAPIRequester):

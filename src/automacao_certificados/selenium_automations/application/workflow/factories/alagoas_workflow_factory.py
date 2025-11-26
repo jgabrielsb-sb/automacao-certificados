@@ -5,6 +5,12 @@ from automacao_certificados.selenium_automations.adapters import *
 
 from automacao_certificados.config import settings
 
+from automacao_certificados.selenium_automations.infra.api_requester import (
+    AlagoasAPIRequester,
+    CertificadoAPIRequester,
+    PPEAPIRequester
+)
+
 
 class AlagoasWorkflowFactory(WorkflowFactory):
     def get_workflow(self) -> Workflow:
@@ -15,7 +21,7 @@ class AlagoasWorkflowFactory(WorkflowFactory):
                 http=http_client
             )
         )
-        document_persistance = CertificadoApiPersistance(
+        certificado_api_persistance = CertificadoApiPersistance(
             api_requester=CertificadoAPIRequester(
                 base_url=settings.base_certificado_api_url,
                 http=http_client
@@ -29,6 +35,6 @@ class AlagoasWorkflowFactory(WorkflowFactory):
         )
         return Workflow(
             document_downloader=document_downloader,
-            document_persistance=document_persistance,
+            certificado_api_persistance=certificado_api_persistance,
             ppe_api_persistance=ppe_api_persistance,
         )

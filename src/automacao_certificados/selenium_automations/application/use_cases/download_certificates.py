@@ -5,6 +5,7 @@ from automacao_certificados.selenium_automations.adapters import *
 from automacao_certificados.selenium_automations.application import *
 from automacao_certificados.selenium_automations.core.exceptions import *
 
+from automacao_certificados.selenium_automations.infra.api_requester import PPEAPIRequester
 
 class DownloadCertificatesUseCase:
     def __init__(

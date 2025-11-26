@@ -4,6 +4,11 @@ from automacao_certificados.selenium_automations.adapters.selenium.certidao_fgts
 from automacao_certificados.selenium_automations.application.workflow.workflow import Workflow
 from automacao_certificados.selenium_automations.infra.webdriver import get_global_webdriver
 from automacao_certificados.selenium_automations.adapters import *
+from automacao_certificados.selenium_automations.infra.api_requester import (
+    AlagoasAPIRequester,
+    CertificadoAPIRequester,
+    PPEAPIRequester
+)
 
 from automacao_certificados.config import settings
 
@@ -30,7 +35,7 @@ class FGTSWorkflowFactory(WorkflowFactory):
                 driver=driver
             )
         )
-        document_persistance = CertificadoApiPersistance(
+        certificado_api_persistance = CertificadoApiPersistance(
             api_requester=CertificadoAPIRequester(
                 base_url=settings.base_certificado_api_url,
                 http=http_client
@@ -46,7 +51,7 @@ class FGTSWorkflowFactory(WorkflowFactory):
 
         return Workflow(
             document_downloader=document_downloader,
-            document_persistance=document_persistance,
+            certificado_api_persistance=certificado_api_persistance,
             ppe_api_persistance=ppe_api_persistance,
         )
 
