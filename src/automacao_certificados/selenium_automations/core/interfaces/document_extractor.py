@@ -12,12 +12,15 @@ from automacao_certificados.selenium_automations.core.exceptions import *
 
 class DocumentExtractorPort(ABC):
     """
-    Base class for all extractors.
+    Interface responsible for defining the contract for document extractors.
     """
     @abstractmethod
     def get_supplier(self) -> dto_supplier.Supplier:
         """
         Gets the supplier.
+
+        :returns: the supplier DTO.
+        :rtype: dto_supplier.Supplier
         """
         pass
 
@@ -25,6 +28,9 @@ class DocumentExtractorPort(ABC):
     def get_document_type(self) -> str:
         """
         Gets the document type.
+
+        :returns: the document type.
+        :rtype: str
         """
         pass
 
@@ -32,6 +38,9 @@ class DocumentExtractorPort(ABC):
     def get_expiration_date(self) -> date:
         """
         Gets the expiration date.
+
+        :returns: the expiration date.
+        :rtype: date
         """
         pass
 
@@ -39,16 +48,20 @@ class DocumentExtractorPort(ABC):
     def get_identifier(self) -> str:
         """
         Gets the document identifier.
+
+        :returns: the document identifier.
+        :rtype: str
         """
         pass
 
     def run(self) -> dto_document.DocumentExtracted:
         """
         Runs the document extractor.
-        Args:
-            None
-        Returns:
-            The document extracted model.
+
+        :returns: the document extracted model.
+        :rtype: dto_document.DocumentExtracted
+
+        :raises DocumentExtractorException: Raised when any unexpected error occurs during the extraction process.
         """
         try:
             document = dto_document.DocumentExtracted(

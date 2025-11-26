@@ -5,14 +5,30 @@ from automacao_certificados.selenium_automations.core.exceptions import *
 
 class DocumentPersistancePort(ABC):
     """
-    Interface responsible for save the document.
+    Interface responsible for defining the contract for document persistances.
     """
     @abstractmethod
-    def _save(self, input: DocumentPersistanceInput) -> DocumentPersistanceOutput:
+    def save(self, input: DocumentPersistanceInput) -> DocumentPersistanceOutput:
+        """
+        Saves the document.
+
+        :param input: the input of the document persistance.
+        :type input: DocumentPersistanceInput
+        :return:result of the persistance.
+        :rtype: DocumentPersistanceOutput
+        """
         pass
 
     def run(self, input: DocumentPersistanceInput) -> DocumentPersistanceOutput:
+        """
+        Runs the document persistance.
+
+        :param input: the input of the document persistance.
+        :type input: DocumentPersistanceInput
+        :return: result of the persistance.
+        :rtype: DocumentPersistanceOutput
+        """
         try:
-            return self._save(input)
+            return self.save(input)
         except Exception as e:
             raise DocumentPersistanceException(e)

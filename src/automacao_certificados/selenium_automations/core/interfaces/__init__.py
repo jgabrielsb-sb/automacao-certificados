@@ -1,7 +1,6 @@
 from .base_page import BasePage
 from .document_extractor import DocumentExtractorPort
 from .http_client import HttpClient
-from .document_acquisition import DocumentAcquisitionPort
 from .document_persistance import DocumentPersistancePort
 from .image_processor import ImageProcessorPort
 from .captcha_gateway import SeleniumCaptchaGatewayPort
