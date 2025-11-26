@@ -26,7 +26,7 @@ class GroqImageProcessor(ImageProcessorPort):
         self.client = client
         self.model = model
     
-    def _get_text(
+    def get_text(
         self, 
         input: ImageProcessorInput
     ) -> ImageProcessorOutput:

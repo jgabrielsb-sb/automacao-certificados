@@ -23,7 +23,7 @@ class CertificadoApiPersistance(DocumentPersistancePort):
     def __init__(self, api_requester: CertificadoAPIRequester):
         self.api_requester = api_requester
 
-    def _get_or_create_supplier(
+    def get_or_create_supplier(
         self,
         supplier: SupplierCreate
     ) -> SupplierResponse:
@@ -36,11 +36,11 @@ class CertificadoApiPersistance(DocumentPersistancePort):
                 SupplierCreate(cnpj=supplier.cnpj)
             )
 
-    def _save(self, input: DocumentPersistanceInput):
+    def save(self, input: DocumentPersistanceInput):
         supplier_create = SupplierCreate(**input.document_extracted.supplier.model_dump())
         
         # 1) Supplier
-        supplier_resp = self._get_or_create_supplier(supplier_create)
+        supplier_resp = self.get_or_create_supplier(supplier_create)
 
         # 2) Doc type
         try:

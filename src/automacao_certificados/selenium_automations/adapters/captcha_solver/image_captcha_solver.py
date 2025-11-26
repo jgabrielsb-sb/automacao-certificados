@@ -21,9 +21,9 @@ class ImageCaptchaSolver(CaptchaSolverPort):
         self.image_processor = image_processor
         self.captcha_gateway = captcha_gateway
 
-    def _solve_captcha(self, input: CaptchaSolverInput) -> None:
+    def solve_captcha(self, input: CaptchaSolverInput) -> None:
         base64_img = self.captcha_gateway.get_captcha_base64_img(input.img_webelement)
-        text = self.image_processor._get_text(input=ImageProcessorInput(base64_img=base64_img))
+        text = self.image_processor.get_text(input=ImageProcessorInput(base64_img=base64_img))
         self.captcha_gateway.fill_captcha_text(input.input_webelement, text)
         return text
 

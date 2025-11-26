@@ -13,7 +13,7 @@ class DocumentAlagoasDownloader(DocumentDownloaderPort):
     ):
         self.api_requester = api_requester
 
-    def _get_document(
+    def get_document(
         self,
         input: DocumentDownloaderInput
     ) -> DocumentDownloaderOutput:

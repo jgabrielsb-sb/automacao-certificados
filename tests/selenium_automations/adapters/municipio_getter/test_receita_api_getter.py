@@ -12,7 +12,7 @@ class TestReceitaAPIMunicipioGetter:
         api_requester.get_company.return_value = output
         
         receita_api_municipio_getter = ReceitaAPIMunicipioGetter(api_requester=api_requester)
-        municipio = receita_api_municipio_getter._get_municipio_by_cnpj(cnpj="1234567890")
+        municipio = receita_api_municipio_getter.get_municipio_by_cnpj(cnpj="1234567890")
         assert municipio == "ARAPIRACA"
 
         

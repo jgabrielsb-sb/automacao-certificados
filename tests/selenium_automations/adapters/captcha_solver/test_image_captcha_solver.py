@@ -38,7 +38,7 @@ class TestSolveCaptcha:
         monkeypatch
     ):
         image_processor = MagicMock(spec=ImageProcessorPort)
-        image_processor._get_text.return_value = ImageProcessorOutput(text="test text")
+        image_processor.get_text.return_value = ImageProcessorOutput(text="test text")
 
         captcha_gateway = MagicMock(spec=SeleniumCaptchaGatewayPort)
         captcha_gateway.get_captcha_base64_img.return_value = "test img"
@@ -47,7 +47,7 @@ class TestSolveCaptcha:
         output = ImageCaptchaSolver(
             image_processor,
             captcha_gateway
-        )._solve_captcha(input=CaptchaSolverInput(
+        ).solve_captcha(input=CaptchaSolverInput(
             input_webelement=MagicMock(spec=WebElement),
             img_webelement=MagicMock(spec=WebElement),
         ))

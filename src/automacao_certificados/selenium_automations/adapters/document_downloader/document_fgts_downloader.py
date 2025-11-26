@@ -11,7 +11,7 @@ class DocumentFGTSDownloader(DocumentDownloaderPort):
         self.consulta_page = consulta_page
         self.download_page = download_page
 
-    def _get_document(self, input: DocumentDownloaderInput) -> DocumentDownloaderOutput:
+    def get_document(self, input: DocumentDownloaderInput) -> DocumentDownloaderOutput:
         self.consulta_page.run(state_value="AL", tipo_inscricao_value="CNPJ", inscricao_value=input.cnpj)
         document_extracted, base64_pdf = self.download_page.run()
         return DocumentDownloaderOutput(

@@ -13,7 +13,7 @@ class DocumentMaceioDownloader(DocumentDownloaderPort):
     ):
         self.download_page = download_page
 
-    def _get_document(self, input: DocumentDownloaderInput) -> DocumentDownloaderOutput:
+    def get_document(self, input: DocumentDownloaderInput) -> DocumentDownloaderOutput:
         document_extracted, base64_pdf = self.download_page.run(cnpj=input.cnpj)
         return DocumentDownloaderOutput(
             document_extracted=document_extracted,

@@ -7,7 +7,7 @@ import pytest
 @pytest.fixture
 def image_processor_port():
     class ImageProcessorPortImpl(ImageProcessorPort):
-        def _get_text(self, input: ImageProcessorInput) -> ImageProcessorOutput:
+        def get_text(self, input: ImageProcessorInput) -> ImageProcessorOutput:
             raise ImageProcessorException("Test error")
     return ImageProcessorPortImpl()
 

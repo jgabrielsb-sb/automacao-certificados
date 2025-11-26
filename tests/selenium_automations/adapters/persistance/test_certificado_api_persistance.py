@@ -24,7 +24,7 @@ class TestGetOrCreateSupplier:
         ]
 
         api_persistence = CertificadoApiPersistance(api_requester=api_mock)
-        supplier_response = api_persistence._get_or_create_supplier(
+        supplier_response = api_persistence.get_or_create_supplier(
             dto_supplier.SupplierCreate(
                 cnpj="12345678912"
             )
@@ -47,7 +47,7 @@ class TestGetOrCreateSupplier:
         )
 
         api_persistence = CertificadoApiPersistance(api_requester=api_mock)
-        supplier_response = api_persistence._get_or_create_supplier(
+        supplier_response = api_persistence.get_or_create_supplier(
             dto_supplier.SupplierCreate(
                 cnpj="12345678912"
             )
@@ -104,14 +104,14 @@ class TestSave:
 
         api_persistence = CertificadoApiPersistance(api_requester=api_mock)
 
-        def fake_get_or_create_supplier(supplier):
+        def fakeget_or_create_supplier(supplier):
             return dto_supplier.SupplierResponse(
                 id=1,
                 cnpj="12345678912"
             )
         
-        monkeypatch.setattr(api_persistence, "_get_or_create_supplier", fake_get_or_create_supplier)
-        api_persistence_result = api_persistence._save(input=document_persist)
+        monkeypatch.setattr(api_persistence, "get_or_create_supplier", fakeget_or_create_supplier)
+        api_persistence_result = api_persistence.save(input=document_persist)
 
         assert isinstance(api_persistence_result, DocumentPersistanceOutput)
         assert api_persistence_result.result == dto_document.DocumentResponse(
@@ -152,15 +152,15 @@ class TestSave:
 
         api_persistence = CertificadoApiPersistance(api_requester=api_mock)
 
-        def fake_get_or_create_supplier(supplier):
+        def fakeget_or_create_supplier(supplier):
             return dto_supplier.SupplierResponse(
                 id=1,
                 cnpj="12345678912"
             )
-        monkeypatch.setattr(api_persistence, "_get_or_create_supplier", fake_get_or_create_supplier)
+        monkeypatch.setattr(api_persistence, "get_or_create_supplier", fakeget_or_create_supplier)
         
         with pytest.raises(DocumentTypeNotFoundError) as e:
-            api_persistence._save(document_persist)
+            api_persistence.save(document_persist)
 
         assert "Document Type not found" in str(e.value)
 

@@ -8,7 +8,7 @@ from automacao_certificados.selenium_automations.core.models import *
 @pytest.fixture
 def document_downloader_implementation():
     class DocumentDownloaderImplementation(DocumentDownloaderPort):
-        def _get_document(self, input: DocumentDownloaderInput):
+        def get_document(self, input: DocumentDownloaderInput):
             return "test"
 
     return DocumentDownloaderImplementation()
@@ -24,7 +24,7 @@ class TestDocumentDownloader:
 
         monkeypatch.setattr(
             document_downloader_implementation,
-            "_get_document",
+            "get_document",
             fake_get_document
         )
 
