@@ -4,8 +4,9 @@ Use case factory for creating use case instances.
 This module creates use cases and wires them with their dependencies.
 """
 
-from automacao_certificados.selenium_automations.application.use_cases.download_certificates import (
-    DownloadCertificatesUseCase
+from automacao_certificados.selenium_automations.application.use_cases import (
+    DownloadCertificatesUseCase,
+    SendDownloadCertificatesReportViaEmailUseCase
 )
 from automacao_certificados.selenium_automations.application.workflow.workflow_selector import (
     WorkflowSelector
@@ -42,5 +43,16 @@ class UseCaseFactory:
             workflow_selector=WorkflowSelector(
                 municipio_api_requester=self.adapter_factory.create_receita_api_municipio_getter()
             )
+        )
+    
+    def create_send_download_certificates_report_via_email_use_case(self) -> SendDownloadCertificatesReportViaEmailUseCase:
+        """
+        Create send download certificates report via email use case.
+        
+        Returns:
+            Configured SendDownloadCertificatesReportViaEmailUseCase instance with all dependencies.
+        """
+        return SendDownloadCertificatesReportViaEmailUseCase(
+            email_sender=self.adapter_factory.create_smtp_email_sender()
         )
 
