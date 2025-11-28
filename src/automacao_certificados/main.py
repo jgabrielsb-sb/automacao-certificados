@@ -23,7 +23,8 @@ def run():
 
 schedule.every().day.at(settings.run_cron_time).do(run)
 
-RUN_WITH_CRON = False
+RUN_WITH_CRON = True
+
 if __name__ == "__main__":
     if RUN_WITH_CRON:
         while True:

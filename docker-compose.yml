@@ -1,0 +1,12 @@
+services:
+  automacao-certificados:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: automacao-certificados
+
+    #restart: unless-stopped
+    env_file:
+      - .env
+
+      
