@@ -8,6 +8,7 @@ It provides a single entry point for getting configured application components.
 from .infrastructure import InfrastructureProvider
 from .adapters import AdapterFactory
 from .use_cases import UseCaseFactory
+from .workflow import WorkflowFactory
 
 
 class Container:
@@ -27,6 +28,7 @@ class Container:
         self.infrastructure = InfrastructureProvider()
         self.adapter_factory = AdapterFactory(self.infrastructure)
         self.use_case_factory = UseCaseFactory(self.adapter_factory)
+        self.workflow_factory = WorkflowFactory(self.adapter_factory)
     
     def get_download_certificates_use_case(self):
         """

@@ -8,6 +8,8 @@ defined in the core layer.
 from automacao_certificados.selenium_automations.adapters import (
     ReceitaAPIMunicipioGetter,
 )
+from automacao_certificados.selenium_automations.adapters.email import SMTPEmailSender
+from automacao_certificados.selenium_automations.core.models.infra.dto_email import EmailConfig
 from automacao_certificados.selenium_automations.infra.api_requester import (
     PPEAPIRequester,
     CertificadoAPIRequester,
@@ -78,5 +80,21 @@ class AdapterFactory:
         """
         return ReceitaAPIMunicipioGetter(
             api_requester=self.create_receita_api_requester()
+        )
+
+    def create_smtp_email_sender(self) -> SMTPEmailSender:
+        """
+        Create a SMTPEmailSender adapter
+
+        :rtype: None
+        """
+        return SMTPEmailSender(
+            email_config=EmailConfig(
+                email_host=settings.email_host,
+                email_port=settings.email_port,
+                is_tls=settings.is_tls,
+                email_host_user=settings.email_host_user,
+                email_host_password=settings.email_host_password,
+            )
         )
 

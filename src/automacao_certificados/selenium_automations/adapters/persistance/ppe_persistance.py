@@ -17,16 +17,16 @@ class PPEPersistance(DocumentPersistancePort):
         super().__init__()
         self.api_requester = api_requester
 
-    def save(self, input: DocumentPersistanceInput) -> DocumentPersistanceOutput:
+    def save(self, input: PPEPostCertificateRequest) -> DocumentPersistanceOutput:
         """
         Saves the document on database using the ppe api.
 
         :param input: The input of the document persistance.
-        :type input: DocumentPersistanceInput
+        :type input: PPEPostCertificateRequest
         :return: The document persistance output.
         :rtype: DocumentPersistanceOutput
         """
-        if not isinstance(input, DocumentPersistanceInput):
-            raise ValueError("input must be a DocumentPersistanceInput")
+        if not isinstance(input, PPEPostCertificateRequest):
+            raise ValueError("input must be a PPEPostCertificateRequest")
 
         return DocumentPersistanceOutput(result=self.api_requester.post_certificate(input))

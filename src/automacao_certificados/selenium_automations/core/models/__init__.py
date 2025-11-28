@@ -5,3 +5,4 @@ from .dto_supplier import *
 from .dto_document_type import *
 from .adapters import *
 from .application import *
+from .infra import *

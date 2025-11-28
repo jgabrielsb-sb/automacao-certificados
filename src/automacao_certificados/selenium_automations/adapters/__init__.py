@@ -9,3 +9,4 @@ from .document_downloader import *
 from .selenium import *
 from .municipio_getter import *
 from .report_generator import *
+from .email import *

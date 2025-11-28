@@ -1,5 +1,6 @@
 from typing import Any, Sequence
 
+from numpy.char import str_len
 import pandas as pd
 import plotly.graph_objects as go
 import textwrap
@@ -12,7 +13,6 @@ class DownloadCertificatesReportGenerator:
     
     def __init__(
         self,
-        save_path: Path = Path("data/certificates_report"),
         MAX_ERROR_LINES: int = 20,
         ERROR_LINE_WIDTH: int = 40,
     ):
@@ -21,13 +21,9 @@ class DownloadCertificatesReportGenerator:
         of the report generator port that uses the pandas and plotly libraries 
         to generate a report of the certificates.
         """
-        if not isinstance(save_path, Path):
-            raise ValueError("save_path must be a Path")
-
         if not isinstance(MAX_ERROR_LINES, int):
             raise ValueError("MAX_ERROR_LINES must be an integer")
         
-        self.save_path = save_path
         self.max_error_lines = MAX_ERROR_LINES
         self.error_line_width = ERROR_LINE_WIDTH
 
@@ -55,26 +51,26 @@ class DownloadCertificatesReportGenerator:
 
     def _convert_element_to_row(
         self,
-        certificate: DownloadCertificatesUseCaseOutput
+        download_certificate_result: DownloadCertificateResult
     ) -> DownloadCertificatesRow:
         """
         Converting the certificate use case output to a row of the report.
 
-        :param certificate: The certificate use case output.
-        :type certificate: DownloadCertificatesUseCaseOutput
+        :param download_certificate_result: The download certificate result.
+        :type certificate: DownloadCertificateResult
         :return: The row.
         :rtype: DownloadCertificatesRow
         """
         return DownloadCertificatesRow(
-            cnpj=certificate.certificate.cnpj,
-            document_type=certificate.certificate.document_type,
-            error_selection=certificate.error_selection,
-            download_step_is_sucess=self._is_step_sucess(certificate.workflow_output.download_output_result),
-            download_step_error_message=self._get_error_message(certificate.workflow_output.download_output_result),
-            persistance_step_is_sucess=self._is_step_sucess(certificate.workflow_output.persistance_output_result),
-            persistance_step_error_message=self._get_error_message(certificate.workflow_output.persistance_output_result),
-            ppe_step_is_sucess=self._is_step_sucess(certificate.workflow_output.ppe_output_result),
-            ppe_step_error_message=self._get_error_message(certificate.workflow_output.ppe_output_result),
+            cnpj=download_certificate_result.certificate.cnpj,
+            document_type=download_certificate_result.certificate.document_type,
+            error_selection=download_certificate_result.error_selection,
+            download_step_is_sucess=self._is_step_sucess(download_certificate_result.workflow_output.download_output_result),
+            download_step_error_message=self._get_error_message(download_certificate_result.workflow_output.download_output_result),
+            persistance_step_is_sucess=self._is_step_sucess(download_certificate_result.workflow_output.persistance_output_result),
+            persistance_step_error_message=self._get_error_message(download_certificate_result.workflow_output.persistance_output_result),
+            ppe_step_is_sucess=self._is_step_sucess(download_certificate_result.workflow_output.ppe_output_result),
+            ppe_step_error_message=self._get_error_message(download_certificate_result.workflow_output.ppe_output_result),
         )
 
     def _convert_elements_to_rows(
@@ -231,23 +227,21 @@ class DownloadCertificatesReportGenerator:
         )
         return fig
 
-    def run(
+    def generate_report(
         self,
-        certificates: list[DownloadCertificatesUseCaseOutput],
-        date: datetime
-    ) -> Path:
+        input: DownloadCertificatesUseCaseOutput,
+    ) -> str:
         """
-        Running the report generator by converting the certificates to rows, making the plotly table and saving the file.
+        Running the report generator by converting the input to rows, making the plotly table and saving the file.
 
-        :param certificates: The certificates.
-        :type certificates: list[DownloadCertificatesUseCaseOutput]
-        :param date: The date.
-        :type date: datetime
-        :return: The file path.
-        :rtype: Path
+        :param input: The input.
+        :type input: DownloadCertificatesUseCaseOutput
+        :return: The HTML content of the report.
+        :rtype: str
         """
-        rows = self._convert_elements_to_rows(certificates)
+        rows = self._convert_elements_to_rows(input.output)
+        date = datetime.now()
         table = self._make_plotly_table(date, rows)
-        file_path = self.save_path / f"certificates_report_{date.strftime('%d-%m-%Y-%H-%M-%S')}.html"
-        table.write_html(file_path)
-        return file_path
+        html_content = table.to_html(full_html=True, include_plotlyjs="cdn")
+        return html_content
+

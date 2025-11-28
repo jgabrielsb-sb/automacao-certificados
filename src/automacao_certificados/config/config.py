@@ -18,6 +18,13 @@ class Settings(BaseSettings):
     nota_facil_username: str
     nota_facil_password: str
 
+    ##### EMAIL SETTINGS #####
+    email_host: str
+    email_port: int
+    is_tls: bool
+    email_host_user: str
+    email_host_password: str
+
     # ✅ new way to define config
     model_config = SettingsConfigDict(
         env_file=".env",

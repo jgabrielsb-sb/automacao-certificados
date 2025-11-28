@@ -8,3 +8,4 @@ from .pages import *
 from .captcha_solver import CaptchaSolverPort
 from .document_downloader import DocumentDownloaderPort
 from .municipio_getter import MunicipioGetterPort
+from .email_sender import EmailSenderPort
