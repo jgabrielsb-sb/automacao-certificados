@@ -86,7 +86,9 @@ class DownloadCertificatesUseCase:
             result = self._download_certificate(certificate)
             download_certificates_output.append(result)
 
-        return download_certificates_output
+        return DownloadCertificatesUseCaseOutput(
+            output=download_certificates_output
+        )
             
 
     def run(self) -> DownloadCertificatesUseCaseOutput:
