@@ -2,3 +2,4 @@ from .certificado_caixa_extractor import CertificadoCaixaExtractor
 from .certificado_maceio_extractor import CertificadoMaceioExtractor
 from .certificado_arapiraca_extractor import CertidaoArapiracaExtractor
 from .certificado_alagoas_extractor import CertificadoAlagoasExtractor
+from .certificado_federal_extractor import CertificadoFederalExtractor
