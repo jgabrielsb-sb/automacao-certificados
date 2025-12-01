@@ -7,6 +7,11 @@ from automacao_certificados.selenium_automations.core.interfaces.http_client imp
     HttpResponse
 )
 
+from automacao_certificados.selenium_automations.core.exceptions import (
+    HttpClientException, 
+    HttpClientSSLException
+)
+
 class HttpxClient(HttpClient):
     def __init__(self, base_timeout: float = 10.0):
         """
@@ -43,12 +48,22 @@ class HttpxClient(HttpClient):
         :return: The response from the request.
         :rtype: HttpResponse
         """
-        return self._client.get(
-            url=url,
-            params=params,
-            headers=headers,
-            timeout=timeout
-        )
+        try:
+            return self._client.get(
+                url=url,
+                params=params,
+                headers=headers,
+                timeout=timeout
+            )
+        except httpx.ConnectError as e:
+            if "CERTIFICATE_VERIFY_FAILED" in str(e):
+                raise HttpClientSSLException(
+                    f"SSL verification failed when calling {url}. Original exception:{str(e)}"
+                ) from e
+            
+            raise HttpClientException(
+                f"Error when calling {url}. Original exception: {str(e)}"
+            )
         
     def post(
         self,
@@ -78,12 +93,22 @@ class HttpxClient(HttpClient):
         :return: The response from the request.
         :rtype: HttpResponse
         """
-        return self._client.post(
-            url=url,
-            params=params,
-            headers=headers,
-            timeout=timeout,
-            json=json,
-            data=data
-        )
+        try:
+            return self._client.post(
+                url=url,
+                params=params,
+                headers=headers,
+                timeout=timeout,
+                json=json,
+                data=data
+            )
+        except httpx.ConnectError as e:
+            if "CERTIFICATE_VERIFY_FAILED" in str(e):
+                raise HttpClientSSLException(
+                    f"SSL verification failed when calling {url}. Original exception:{str(e)}"
+                ) from e
+            
+            raise HttpClientException(
+                f"Error when calling {url}. Original exception: {str(e)}"
+            )
         
