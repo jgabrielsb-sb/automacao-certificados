@@ -10,6 +10,8 @@ class Settings(BaseSettings):
 
     headless: bool
     run_cron_time: str
+    run_with_cron: bool
+    
     # ppe api
     base_ppe_api_url: str
     ppe_api_key: str
