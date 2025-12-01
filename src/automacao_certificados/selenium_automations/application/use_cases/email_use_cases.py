@@ -1,5 +1,5 @@
 from automacao_certificados.selenium_automations.core.interfaces import EmailSenderPort
-from automacao_certificados.selenium_automations.core.models.application.use_cases import SendDownloadCertificatesReportViaEmailUseCaseInput
+from automacao_certificados.selenium_automations.core.models.application.use_cases import *
 from automacao_certificados.selenium_automations.adapters.report_generator import DownloadCertificatesReportGenerator
 from automacao_certificados.selenium_automations.core.models.infra.dto_email import EmailToSend, EmailHeader, EmailContent
 
@@ -20,8 +20,28 @@ class SendDownloadCertificatesReportViaEmailUseCase:
                 sender_email=input.sender_email
             ),
             email_content=EmailContent(
-                subject=f"Relatório de Certificados {input.date.strftime('%d/%m/%Y')}",
+                subject=f"[Certificados Automação] Relatório de Certificados {input.date.strftime('%d/%m/%Y')}",
                 is_html=True,
                 body=download_certificates_report
+            )
+        ))
+
+class SendApplicationBrokeReportViaEmailUseCase:
+    def __init__(self, email_sender: EmailSenderPort):
+        if not isinstance(email_sender, EmailSenderPort):
+            raise ValueError('email_sender must be EmailSenderPort')
+
+        self.email_sender = email_sender
+
+    def run(self, input: SendApplicationBrokeReportViaEmailUseCaseInput):
+        self.email_sender.send_email(email=EmailToSend(
+            email_header=EmailHeader(
+                recipient_email=input.send_to_emails,
+                sender_email=input.sender_email
+            ),
+            email_content=EmailContent(
+                subject=f"[Certificados Automação] Aplicação Quebrou",
+                is_html=False,
+                body=input.error_details
             )
         ))

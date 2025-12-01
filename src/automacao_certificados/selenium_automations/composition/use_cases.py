@@ -8,6 +8,7 @@ from automacao_certificados.selenium_automations.application.use_cases import (
     DownloadCertificatesUseCase,
     SendDownloadCertificatesReportViaEmailUseCase
 )
+from automacao_certificados.selenium_automations.application.use_cases.email_use_cases import SendApplicationBrokeReportViaEmailUseCase
 from automacao_certificados.selenium_automations.application.workflow.workflow_selector import (
     WorkflowSelector
 )
@@ -53,6 +54,17 @@ class UseCaseFactory:
             Configured SendDownloadCertificatesReportViaEmailUseCase instance with all dependencies.
         """
         return SendDownloadCertificatesReportViaEmailUseCase(
+            email_sender=self.adapter_factory.create_smtp_email_sender()
+        )
+
+    def create_send_application_broke_report_via_email_use_case(self) -> SendApplicationBrokeReportViaEmailUseCase:
+        """
+        Create send application broke report via email use case.
+
+        :return: the use case itself
+        :rtype: SendApplicationBrokeReportViaEmailUseCase
+        """
+        return SendApplicationBrokeReportViaEmailUseCase(
             email_sender=self.adapter_factory.create_smtp_email_sender()
         )
 
