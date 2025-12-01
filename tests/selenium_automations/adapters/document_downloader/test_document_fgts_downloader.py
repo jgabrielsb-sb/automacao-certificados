@@ -8,12 +8,13 @@ from groq import Groq
 
 import pytest
 
-from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 class TestDocumentFGTSDownloader:
     @pytest.fixture
     def driver(self):
-        return WebDriver()
+        return webdriver.Chrome()
 
     @pytest.fixture
     def consulta_page(self, driver):
@@ -44,6 +45,34 @@ class TestDocumentFGTSDownloader:
 
         assert "cnpj must be a number" in str(e.value)
 
+
+class TestHeadlessFalseCases:
+    @pytest.fixture
+    def driver(self):
+        # options = webdriver.ChromeOptions()
+        # options.add_argument('--headless=false')
+        return webdriver.Chrome()
+
+    @pytest.fixture
+    def consulta_page(self, driver):
+        return ConsultaPage(
+            driver=driver,
+            captcha_solver=ImageCaptchaSolver(
+                image_processor=GroqImageProcessor(
+                    client=Groq(api_key=settings.groq_api_key),
+                ),
+                captcha_gateway=SeleniumCaptchaGateway(
+                    webdriver=driver,
+                ),
+            ),
+        )
+
+    @pytest.fixture
+    def download_page(self, driver):
+        return DownloadPage(
+            driver=driver,
+        )
+
     @pytest.mark.selenium_workflow_tests
     def test_sucess_case(self, consulta_page, download_page):
         output = DocumentFGTSDownloader(
@@ -53,3 +82,40 @@ class TestDocumentFGTSDownloader:
 
         assert isinstance(output.document_extracted, DocumentExtracted)
         assert isinstance(output.base64_pdf, str)
+
+# class TestHeadlessTrueCases:
+#     @pytest.fixture
+#     def driver(self):
+#         options = webdriver.ChromeOptions()
+#         options.add_argument('--headless=true')
+#         return webdriver.Chrome(options=options)
+
+#     @pytest.fixture
+#     def consulta_page(self, driver):
+#         return ConsultaPage(
+#             driver=driver,
+#             captcha_solver=ImageCaptchaSolver(
+#                 image_processor=GroqImageProcessor(
+#                     client=Groq(api_key=settings.groq_api_key),
+#                 ),
+#                 captcha_gateway=SeleniumCaptchaGateway(
+#                     webdriver=driver,
+#                 ),
+#             ),
+#         )
+
+#     @pytest.fixture
+#     def download_page(self, driver):
+#         return DownloadPage(
+#             driver=driver,
+#         )
+
+#     @pytest.mark.selenium_workflow_tests
+#     def test_sucess_case(self, consulta_page, download_page):
+#         output = DocumentFGTSDownloader(
+#             consulta_page=consulta_page,
+#             download_page=download_page,
+#         ).run(input=DocumentDownloaderInput(cnpj="15401595000164"))
+
+#         assert isinstance(output.document_extracted, DocumentExtracted)
+#         assert isinstance(output.base64_pdf, str)

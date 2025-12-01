@@ -15,7 +15,7 @@ class TestDocumentAlagoasDownloader:
             ).run(input=DocumentDownloaderInput(cnpj="wrong_cnpj"))
 
         assert "cnpj must be a number" in str(e.value)
-    
+
     @pytest.mark.selenium_workflow_tests
     def test_sucess_case(self):
         output = DocumentAlagoasDownloader(
