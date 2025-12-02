@@ -8,3 +8,4 @@ from .ppe_api_requester import (
     CertificateToDownload
 )
 from .receita_api_requester import ReceitaAPIRequester
+from .direct_data_api_requester import DirectDataAPIRequester
