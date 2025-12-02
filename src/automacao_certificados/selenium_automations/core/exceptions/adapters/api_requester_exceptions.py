@@ -81,3 +81,11 @@ class InternalServerError(APIRequesterException):
 
     def __str__(self):
         return f"Internal Server Error: {self.message} - Route: {self.route} - Status Code: {self.status_code}"
+
+class CouldNotGeneratePDF(APIRequesterException):
+    def __init__(
+        self,
+        message
+    ):
+        super().__init__(message)
+        self.message = message
