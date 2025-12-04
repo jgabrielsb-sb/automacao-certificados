@@ -2,3 +2,4 @@ from .document_maceio_downloader import DocumentMaceioDownloader
 from .document_fgts_downloader import DocumentFGTSDownloader
 from .document_alagoas_downloader import DocumentAlagoasDownloader
 from .document_arapiraca_downloader import DocumentArapiracaDownloader
+from .document_federal_downloader import DocumentFederalDownloader
