@@ -8,7 +8,7 @@ from automacao_certificados.selenium_automations.core.exceptions import (
 )
 
 from automacao_certificados.selenium_automations.core.interfaces import (
-    LoggingRegister
+    LoggingRegisterPort
 )
 
 from automacao_certificados.selenium_automations.core.models import (
@@ -17,14 +17,14 @@ from automacao_certificados.selenium_automations.core.models import (
 
 @pytest.fixture
 def mock_logging_register():
-    class MockLoggingRegister(LoggingRegister):
+    class MockLoggingRegister(LoggingRegisterPort):
         def register(self, input: LoggingRegisterInput):
             return None
 
     return MockLoggingRegister()
 
 
-class TestLoggingRegister:
+class TestLoggingRegisterPort:
     def test_if_run_raises_value_error_if_input_is_not_logging_register_input(
         self,
         mock_logging_register

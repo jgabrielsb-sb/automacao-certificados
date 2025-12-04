@@ -10,7 +10,7 @@ from automacao_certificados.selenium_automations.core.exceptions import (
     LoggingRegisterException
 )
 
-class LoggingRegister(ABC):
+class LoggingRegisterPort(ABC):
     """
     The base interface for registering logs of the system.
     """
@@ -31,7 +31,7 @@ class LoggingRegister(ABC):
     def run(self, input: LoggingRegisterInput):
         if not isinstance(input, LoggingRegisterInput):
             raise ValueError("input must be a LoggingRegisterInput")
-            
+
         try:
             self.register(input)
         except Exception as e:
