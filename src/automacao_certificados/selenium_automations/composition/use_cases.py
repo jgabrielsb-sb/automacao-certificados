@@ -42,7 +42,8 @@ class UseCaseFactory:
         return DownloadCertificatesUseCase(
             ppe_api_requester=self.adapter_factory.create_ppe_api_requester(),
             workflow_selector=WorkflowSelector(
-                municipio_api_requester=self.adapter_factory.create_receita_api_municipio_getter()
+                municipio_getter_port=self.adapter_factory.create_receita_api_municipio_getter(),
+                estado_getter_port=self.adapter_factory.create_receita_api_estado_getter(),
             )
         )
     

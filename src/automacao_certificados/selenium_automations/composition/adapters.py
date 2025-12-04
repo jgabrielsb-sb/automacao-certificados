@@ -9,6 +9,7 @@ from automacao_certificados.selenium_automations.adapters import (
     ReceitaAPIMunicipioGetter,
 )
 from automacao_certificados.selenium_automations.adapters.email import SMTPEmailSender
+from automacao_certificados.selenium_automations.adapters.estado_getter.receita_api_getter import ReceitaAPIEstadoGetter
 from automacao_certificados.selenium_automations.core.models.infra.dto_email import EmailConfig
 from automacao_certificados.selenium_automations.infra.api_requester import (
     PPEAPIRequester,
@@ -16,6 +17,7 @@ from automacao_certificados.selenium_automations.infra.api_requester import (
     ReceitaAPIRequester,
 )
 from automacao_certificados.config import settings
+from automacao_certificados.selenium_automations.infra.api_requester.direct_data_api_requester import DirectDataAPIRequester
 from .infrastructure import InfrastructureProvider
 
 
@@ -71,6 +73,12 @@ class AdapterFactory:
             http=self.infrastructure.http_client
         )
     
+    def create_direct_data_api_requester(self) -> DirectDataAPIRequester:
+        return DirectDataAPIRequester(
+            http=self.infrastructure.http_client,
+            token=settings.direct_data_api_key
+        )
+    
     def create_receita_api_municipio_getter(self) -> ReceitaAPIMunicipioGetter:
         """
         Create Receita API municipio getter adapter.
@@ -81,6 +89,18 @@ class AdapterFactory:
         return ReceitaAPIMunicipioGetter(
             api_requester=self.create_receita_api_requester()
         )
+
+    def create_receita_api_estado_getter(self) -> ReceitaAPIEstadoGetter:
+        """
+        Create Receita API estado getter adapter
+
+        Returns:
+            Configured ReceitaAPIEstadoGetter instance
+        """
+        return ReceitaAPIEstadoGetter(
+            api_requester=self.create_receita_api_requester()
+        )
+
 
     def create_smtp_email_sender(self) -> SMTPEmailSender:
         """
