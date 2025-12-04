@@ -1,4 +1,5 @@
 from automacao_certificados.selenium_automations.application.workflow.factories import *
+from automacao_certificados.selenium_automations.application.workflow.factories.federal_workflow_factory import FederalWorkflowFactory
 from automacao_certificados.selenium_automations.core.models import *
 from automacao_certificados.selenium_automations.application import *
 from automacao_certificados.selenium_automations.core.interfaces import *
@@ -9,16 +10,22 @@ from automacao_certificados.selenium_automations.core.exceptions import *
 class WorkflowSelector:
     def __init__(
         self,
-        municipio_api_requester: MunicipioGetterPort
+        municipio_getter_port: MunicipioGetterPort,
+        estado_getter_port: EstadoGetterPort,
     ):
         """
         The workflow selector is responsible for selecting the correct workflow based on the cnpj and document type.
 
         """
-        if not isinstance(municipio_api_requester, MunicipioGetterPort):
-            raise ValueError("municipio_api_requester must be a MunicipioGetterPort")
+        if not isinstance(municipio_getter_port, MunicipioGetterPort):
+            raise ValueError("municipio_getter_port must be a MunicipioGetterPort")
         
-        self.municipio_api_requester = municipio_api_requester
+        if not isinstance(estado_getter_port, EstadoGetterPort):
+            raise ValueError("estado_getter_port must be a EstadoGetterPort")
+
+        self.municipio_getter_port = municipio_getter_port
+        self.estado_getter_port = estado_getter_port
+        
     
     def _get_municipio_by_cnpj(self, cnpj: str) -> str:
         """
@@ -29,8 +36,12 @@ class WorkflowSelector:
         :return: The municipality name.
         :rtype: str
         """
-        municipio = self.municipio_api_requester.run(cnpj)
+        municipio = self.municipio_getter_port.run(cnpj)
         return municipio
+
+    def _get_estado_by_cnpj(self, cnpj: str) -> str:
+        estado = self.estado_getter_port.run(cnpj)
+        return estado
 
     def _handle_municipal_workflow(self, cnpj: str):
         """
@@ -60,6 +71,18 @@ class WorkflowSelector:
         :rtype: Workflow
         """
         return FGTSWorkflowFactory().get_workflow()
+    
+    def _handle_federal_workflow(self):
+        raise NotImplementedError("not implemented to save tokens. remove the comment to reactivate this workflow")
+        #return FederalWorkflowFactory().get_workflow()
+
+    def _handle_estadual_workflow(self, cnpj):
+        estado = self._get_estado_by_cnpj(cnpj)
+
+        if estado == 'AL':
+            return AlagoasWorkflowFactory().get_workflow()
+        else:
+            raise EstadoNotSupportedException("there is no workflow to download the certificate for the given state: {}".format(estado))
 
     def get_workflow(self, cnpj: str, document_type: DocumentTypeEnum):
         """
@@ -84,8 +107,12 @@ class WorkflowSelector:
             
             if document_type == DocumentTypeEnum.CERTIDAO_NEGATIVA_MUNICIPAL:
                 return self._handle_municipal_workflow(cnpj)
-            if document_type == DocumentTypeEnum.CERTIDAO_NEGATIVA_FGTS :
+            elif document_type == DocumentTypeEnum.CERTIDAO_NEGATIVA_ESTADUAL:
+                return self._handle_estadual_workflow(cnpj)
+            elif document_type == DocumentTypeEnum.CERTIDAO_NEGATIVA_FGTS:
                 return self._handle_fgts_workflow()
+            elif document_type == DocumentTypeEnum.CERTIDAO_NEGATIVA_FEDERAL:
+                return self._handle_federal_workflow()
             else:
                 raise DocumentTypeNotSupportedException("there is no workflow to download the certificate for the given document type: {}".format(document_type))
         
