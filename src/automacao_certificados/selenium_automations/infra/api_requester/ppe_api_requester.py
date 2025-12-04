@@ -71,12 +71,11 @@ class PPEAPIRequester:
         response = self.http.get(url, headers=self._get_headers())
 
         if response.status_code == HTTPStatus.OK:
-            response_data = response.json()
-            return self._convert_response_to_certificates_to_download(response_data)
+            return self._convert_response_to_certificates_to_download(response.json())
         else:
             raise UnexpectedError(
                 route=url,
-                message=f"Unexpected error. The API Response down: {response_data}",
+                message=f"Unexpected error. The API Response down: {response.content}",
                 status_code=response.status_code
             )
 
