@@ -10,3 +10,4 @@ from .document_downloader import DocumentDownloaderPort
 from .municipio_getter import MunicipioGetterPort
 from .email_sender import EmailSenderPort
 from .estado_getter import EstadoGetterPort
+from .logging_register import LoggingRegister
