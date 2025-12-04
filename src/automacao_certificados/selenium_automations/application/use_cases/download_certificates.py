@@ -84,6 +84,7 @@ class DownloadCertificatesUseCase:
         
         for certificate in certificates_to_download:
             result = self._download_certificate(certificate)
+            print(result)
             download_certificates_output.append(result)
 
         return DownloadCertificatesUseCaseOutput(
@@ -99,6 +100,7 @@ class DownloadCertificatesUseCase:
         :return: the list of outputs of the download certificate use case.
         :rtype: list[DownloadCertificateResult]
         """
+        print('ta aqui!')
         try:
             certificates_to_download = self._get_certificates_to_download()
             output = self._download_certificates(certificates_to_download)

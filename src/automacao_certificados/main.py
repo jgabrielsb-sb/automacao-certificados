@@ -42,6 +42,7 @@ if __name__ == "__main__":
             time.sleep(1)
     
     else:
+        print('entrou')
         try:
             run()
         except DownloadCertificatesUseCaseException as e:
