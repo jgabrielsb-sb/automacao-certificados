@@ -8,6 +8,11 @@ class MunicipioNotSupportedException(WorkflowSelectorException):
         super().__init__(message)
         self.message = message
 
+class EstadoNotSupportedException(WorkflowSelectorException):
+    def __init__(self, message):
+        super().__init__(message)
+        self.message = message
+
 class DocumentTypeNotSupportedException(WorkflowSelectorException):
     def __init__(self, message):
         super().__init__(message)
