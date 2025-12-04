@@ -9,6 +9,7 @@ from .infrastructure import InfrastructureProvider
 from .adapters import AdapterFactory
 from .use_cases import UseCaseFactory
 from .workflow import WorkflowFactory
+from .services import ServiceFactory
 
 
 class Container:
@@ -29,6 +30,7 @@ class Container:
         self.adapter_factory = AdapterFactory(self.infrastructure)
         self.use_case_factory = UseCaseFactory(self.adapter_factory)
         self.workflow_factory = WorkflowFactory(self.adapter_factory)
+        self.service_factory = ServiceFactory(self.adapter_factory)
     
     def get_download_certificates_use_case(self):
         """
