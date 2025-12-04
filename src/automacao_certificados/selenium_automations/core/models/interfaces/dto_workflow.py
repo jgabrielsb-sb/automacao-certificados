@@ -2,6 +2,8 @@ from pydantic import BaseModel
 
 from typing import Any
 
+from automacao_certificados.selenium_automations.core.models.enum_status import Status
+
 class StepResult(BaseModel):
     sucess: bool
     error_message: str | None = None
@@ -14,5 +16,10 @@ class WorkflowOutput(BaseModel):
     ppe_output_result: StepResult | None = None
 
     @property
-    def sucess(self) ->  bool:
-        return all(step.sucess for step in [self.download_output_result, self.persistance_output_result, self.ppe_output_result] if step is not None)
+    def sucess(self):
+        if not self.download_output_result.sucess:
+            return Status.FAILURE
+        elif (not self.persistance_output_result.sucess) or (not self.ppe_output_result.sucess):
+            return Status.PARTIAL
+        else:
+            return Status.SUCCESS

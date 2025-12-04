@@ -4,12 +4,17 @@ from pydantic import BaseModel
 
 from datetime import datetime
 
+from automacao_certificados.selenium_automations.core.models import (
+    Status,
+    Level
+)
+
 from typing import Optional, Any
 
-from automacao_certificados.selenium_automations.core.models.enum_level import Level
-from automacao_certificados.selenium_automations.core.models.enum_status import Status
-
-class LoggingRegisterInput(BaseModel):
+class LogCreate(BaseModel):
+    """
+    The base model for all logs.
+    """
     timestamp: datetime # the timestamp of the log
 
     facility: str # the name of the facility that generated the log
@@ -25,3 +30,6 @@ class LoggingRegisterInput(BaseModel):
     model_config = {
         "use_enum_values": True,
     }
+
+class LogResponse(LogCreate):
+    id: int
