@@ -1,3 +1,4 @@
+from http import HTTPStatus
 import pytest
 
 from datetime import date
@@ -10,9 +11,10 @@ from automacao_certificados.selenium_automations.core.exceptions import *
 from automacao_certificados.selenium_automations.core.models import (
     dto_supplier,
     dto_document,
-    dto_document_type
+    dto_document_type,
+    dto_log
 )
-from automacao_certificados.selenium_automations.adapters.http import HttpxClient
+from automacao_certificados.selenium_automations.adapters.http import HttpxClient, httpx_client
 
 BASE_URL = "https://api.certificado.com"
 
@@ -505,5 +507,91 @@ class TestGetDocumentType:
         assert e.value.route == f"{BASE_URL}/api/v1/document-types"
         assert "unexpected test message" in e.value.message
         assert e.value.status_code == 500
+
+class TestRegisterLog:
+    @respx.mock
+    def test_sucess_response(self):
+        json = {
+                "timestamp": "2025-12-04T14:32:09.540Z",
+                "facility": "string",
+                "event_name": "string",
+                "level": "DEBUG",
+                "message": "string",
+                "status": "SUCCESS",
+                "request_id": "string",
+                "details": {
+                    "additionalProp1": {}
+                },
+                "result": "string",
+                "id": 0
+            }
+        response_model = dto_log.LogResponse(**json)
+        create_model = dto_log.LogCreate(**json)
+
+        route = respx.post(
+            url=f"{BASE_URL}/api/v1/logs/",
+        ).mock(
+            return_value=Response(
+                status_code=HTTPStatus.CREATED, 
+                json=response_model.model_dump(mode='json')
+            )
+        )
+
+        httpx_client = HttpxClient()
+        api_requester = CertificadoAPIRequester(
+            base_url=BASE_URL,
+            http=httpx_client
+        )
+
+        response = api_requester.register_log(create_model)
+        assert isinstance(response, dto_log.LogCreate)
+    
+    @respx.mock
+    def test_another_response(self):
+        json = {
+                "timestamp": "2025-12-04T14:32:09.540Z",
+                "facility": "string",
+                "event_name": "string",
+                "level": "DEBUG",
+                "message": "string",
+                "status": "SUCCESS",
+                "request_id": "string",
+                "details": {
+                    "additionalProp1": {}
+                },
+                "result": "string",
+                "id": 0
+            }
+        
+        create_model = dto_log.LogCreate(**json)
+
+        route = respx.post(
+            url=f"{BASE_URL}/api/v1/logs/",
+        ).mock(
+            return_value=Response(
+                status_code=HTTPStatus.INTERNAL_SERVER_ERROR, 
+                json={"message": "internal server error"}
+            )
+        )
+
+        httpx_client = HttpxClient()
+        api_requester = CertificadoAPIRequester(
+            base_url=BASE_URL,
+            http=httpx_client
+        )
+
+
+        with pytest.raises(APIRequesterException) as e:
+            response = api_requester.register_log(create_model)
+
+
+
+
+
+
+
+
+
+    
 
         

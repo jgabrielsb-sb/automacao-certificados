@@ -10,6 +10,7 @@ class DocumentTypeEnum(Enum):
     CERTIDAO_NEGATIVA_FEDERAL = 'Certidão Negativa Federal'
     CERTIDAO_NEGATIVA_MUNICIPAL = 'Certidão Negativa Municipal'
     CERTIDAO_NEGATIVA_ESTADUAL = 'Certidão Negativa Estadual'
+    TEST_DOCUMENT = "just for test purpusoses. don´t use it"
 
 class CertificateToDownload(BaseModel):
     cnpj: str

@@ -6,7 +6,8 @@ from automacao_certificados.selenium_automations.core.interfaces.http_client imp
 from automacao_certificados.selenium_automations.core.models import (
     dto_supplier,
     dto_document,
-    dto_document_type
+    dto_document_type,
+    dto_log
 )
 
 
@@ -94,7 +95,7 @@ class CertificadoAPIRequester:
 
     def register_document(
         self, 
-        document=dto_document.DocumentCreate
+        document: dto_document.DocumentCreate
     ):
         """
         Register a new document.
@@ -113,6 +114,20 @@ class CertificadoAPIRequester:
 
         if response.status_code == HTTPStatus.CREATED:
             return dto_document.DocumentResponse(**response.json())
+        else:
+            map_error_response(route, status_code, body=response.json())
+
+    def register_log(
+        self,
+        log: dto_log.LogCreate
+    ) -> dto_log.LogResponse:
+        route = f"{self.base_url}/api/v1/logs/"
+
+        response = self.http.post(route, json=log.model_dump(mode="json"))
+        status_code = response.status_code
+        
+        if response.status_code == HTTPStatus.CREATED:
+            return dto_log.LogResponse(**response.json())
         else:
             map_error_response(route, status_code, body=response.json())
         

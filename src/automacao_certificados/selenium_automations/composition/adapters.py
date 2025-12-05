@@ -10,6 +10,7 @@ from automacao_certificados.selenium_automations.adapters import (
 )
 from automacao_certificados.selenium_automations.adapters.email import SMTPEmailSender
 from automacao_certificados.selenium_automations.adapters.estado_getter.receita_api_getter import ReceitaAPIEstadoGetter
+from automacao_certificados.selenium_automations.adapters.logging_register.certificado_api import CertificadoAPILoggingRegister
 from automacao_certificados.selenium_automations.core.models.infra.dto_email import EmailConfig
 from automacao_certificados.selenium_automations.infra.api_requester import (
     PPEAPIRequester,
@@ -117,4 +118,13 @@ class AdapterFactory:
                 email_host_password=settings.email_host_password,
             )
         )
+    
+    def create_certificado_api_logging_register(self) -> CertificadoAPILoggingRegister:
+        """
+        Create Certificado API Logging Register
 
+        rtype: CertificadoAPILoggingRegister
+        """
+        return CertificadoAPILoggingRegister(
+            api_requester=self.create_certificado_api_requester()
+        )
