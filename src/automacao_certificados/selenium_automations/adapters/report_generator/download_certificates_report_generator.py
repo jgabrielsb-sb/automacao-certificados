@@ -1,8 +1,5 @@
 from typing import Any, Sequence
 import html
-
-import pandas as pd
-import plotly.graph_objects as go
 import textwrap
 from datetime import datetime
 
@@ -17,8 +14,8 @@ class DownloadCertificatesReportGenerator:
     ):
         """
         The download certificates report generator is an implementation 
-        of the report generator port that uses the pandas and plotly libraries 
-        to generate a report of the certificates.
+        of the report generator port that uses HTML/CSS to generate a report 
+        of the certificates.
         """
         if not isinstance(MAX_ERROR_LINES, int):
             raise ValueError("MAX_ERROR_LINES must be an integer")
@@ -92,7 +89,7 @@ class DownloadCertificatesReportGenerator:
 
         :param msg: The error message.
         :type msg: str | None
-        :return: The formatted error message.
+        :return: The formatted error message as HTML.
         :rtype: str
         """
         if not msg:
@@ -109,161 +106,93 @@ class DownloadCertificatesReportGenerator:
             wrapped = wrapped[:self.max_error_lines]
             wrapped[-1] += "..."
 
-        # Convert to HTML with <br> so Plotly breaks lines
+        # Convert to HTML with <br> tags for line breaks
         return "<br>".join(wrapped)
 
-    def _build_row_display(
-        self,
-        rows: Sequence[DownloadCertificatesRow],
-    ) -> list[dict[str, Any]]:
+    def _format_status_cell(self, ok: bool, msg: str | None) -> str:
         """
-        Building the row display.
+        Formatting the status cell with success/failure indicator and error message.
 
-        :param rows: The rows.
-        :type rows: Sequence[DownloadCertificatesRow]
-        :return: The row display.
-        :rtype: list[dict[str, Any]]
+        :param ok: Whether the step was successful.
+        :type ok: bool
+        :param msg: The error message if any.
+        :type msg: str | None
+        :return: HTML formatted status cell.
+        :rtype: str
         """
-        display_rows: list[dict[str, Any]] = []
+        if ok:
+            return '<span class="status-success">✅ SUCCESS</span>'
+        
+        formatted_error = self._format_error_for_cell(msg)
+        if formatted_error:
+            return f'<span class="status-fail">❌ FAIL</span><div class="error-details">{formatted_error}</div>'
+        return '<span class="status-fail">❌ FAIL</span>'
 
-        for r in rows:
-            def status_text(ok: bool, msg: str | None) -> str:
-                if ok:
-                    return "✅ SUCCESS"
-                formatted_error = self._format_error_for_cell(msg)
-                if formatted_error:
-                    return f"❌ FAIL<br><span style='font-size:11px'>{formatted_error}</span>"
-                return "❌ FAIL"
-
-            display_rows.append(
-                {
-                    "cnpj": r.cnpj,
-                    "document_type": r.document_type,
-                    "error_selection": self._format_error_for_cell(r.error_selection),
-                    "download": status_text(r.download_step_is_sucess, r.download_step_error_message),
-                    "persistance": status_text(r.persistance_step_is_sucess, r.persistance_step_error_message),
-                    "ppe": status_text(r.ppe_step_is_sucess, r.ppe_step_error_message),
-                }
-            )
-
-        return display_rows
-
-
-
-    def _build_hover_text(
-        self,
-        rows: Sequence[DownloadCertificatesRow],
-    ) -> list[list[str]]:
-        """
-        Returns a list-of-lists with hovertext for each column in the same
-        order as the table columns: [cnpj, document_type, download, persistance, ppe]
-
-        :param rows: The rows.
-        :type rows: Sequence[DownloadCertificatesRow]
-        :return: The hover text.
-        :rtype: list[list[str]]
-        """
-        cnpj_hover: list[str] = []
-        doc_type_hover: list[str] = []
-        download_hover: list[str] = []
-        persistance_hover: list[str] = []
-        ppe_hover: list[str] = []
-
-        for r in rows:
-            # For these columns, hover = same as cell text
-            cnpj_hover.append(r.cnpj)
-            doc_type_hover.append(r.document_type)
-
-            # For step columns:
-            def step_hover(ok: bool, msg: str | None) -> str:
-                if ok:
-                    return "SUCCESS"
-                # Tooltip will show the error message if exists, otherwise just 'FAIL'
-                return msg or "FAIL"
-
-            download_hover.append(
-                step_hover(r.download_step_is_sucess, r.download_step_error_message)
-            )
-            persistance_hover.append(
-                step_hover(r.persistance_step_is_sucess, r.persistance_step_error_message)
-            )
-            ppe_hover.append(
-                step_hover(r.ppe_step_is_sucess, r.ppe_step_error_message)
-            )
-
-        return [cnpj_hover, doc_type_hover, download_hover, persistance_hover, ppe_hover]
-
-    def _make_plotly_table(
+    def _generate_html_table(
         self,
         date: datetime,
         rows: list[DownloadCertificatesRow]
-    ) -> go.Figure:
+    ) -> str:
         """
-        Getting the plotly figure of the table.
+        Generating an HTML table from the rows.
 
-        :param date: The date.
+        :param date: The date for the report.
         :type date: datetime
-        :param rows: The rows.
+        :param rows: The rows to display.
         :type rows: list[DownloadCertificatesRow]
-        :return: The plotly figure.
-        :rtype: go.Figure
+        :return: HTML table string.
+        :rtype: str
         """
-        display_rows = self._build_row_display(rows)
-        df = pd.DataFrame(display_rows)
-
-        # Define column widths to prevent overlapping
-        # Adjust widths based on content type
-        column_widths = {
-            "cnpj": 120,
-            "document_type": 200,
-            "error_selection": 250,
-            "download": 300,
-            "persistance": 300,
-            "ppe": 300
-        }
+        table_html = ['<table class="certificates-table">']
         
-        # Get widths in the same order as columns
-        widths = [column_widths.get(col, 200) for col in df.columns]
-
-        fig = go.Figure(
-            data=[
-                go.Table(
-                    columnwidth=widths,
-                    header=dict(
-                        values=list(df.columns),
-                        align="left",
-                        fill_color="paleturquoise",
-                        font=dict(size=12, color="black"),
-                        height=40
-                    ),
-                    cells=dict(
-                        values=[df[col] for col in df.columns],
-                        align="left",
-                        fill_color="white",
-                        font=dict(size=11, color="black"),
-                        # Remove fixed height to allow cells to expand based on content
-                        line=dict(width=1, color="gray")
-                    ),
-                )
-            ]
-        )
-
-        fig.update_layout(
-            title=dict(
-                text=f"Relatório de Certificados - {date.strftime('%d/%m/%Y')}",
-                font=dict(size=16)
-            ),
-            autosize=True,
-            margin=dict(l=20, r=20, t=60, b=20)
-        )
-        return fig
+        # Header
+        table_html.append('<thead>')
+        table_html.append('<tr>')
+        table_html.append('<th>CNPJ</th>')
+        table_html.append('<th>Tipo de Documento</th>')
+        table_html.append('<th>Erro de Seleção</th>')
+        table_html.append('<th>Download</th>')
+        table_html.append('<th>Persistência</th>')
+        table_html.append('<th>PPE</th>')
+        table_html.append('</tr>')
+        table_html.append('</thead>')
+        
+        # Body
+        table_html.append('<tbody>')
+        for r in rows:
+            table_html.append('<tr>')
+            
+            # CNPJ
+            table_html.append(f'<td class="cell-cnpj">{html.escape(r.cnpj)}</td>')
+            
+            # Document Type
+            table_html.append(f'<td class="cell-doc-type">{html.escape(str(r.document_type))}</td>')
+            
+            # Error Selection
+            error_selection_html = self._format_error_for_cell(r.error_selection)
+            table_html.append(f'<td class="cell-error-selection">{error_selection_html if error_selection_html else "—"}</td>')
+            
+            # Download
+            table_html.append(f'<td class="cell-download">{self._format_status_cell(r.download_step_is_sucess, r.download_step_error_message)}</td>')
+            
+            # Persistance
+            table_html.append(f'<td class="cell-persistance">{self._format_status_cell(r.persistance_step_is_sucess, r.persistance_step_error_message)}</td>')
+            
+            # PPE
+            table_html.append(f'<td class="cell-ppe">{self._format_status_cell(r.ppe_step_is_sucess, r.ppe_step_error_message)}</td>')
+            
+            table_html.append('</tr>')
+        table_html.append('</tbody>')
+        table_html.append('</table>')
+        
+        return '\n'.join(table_html)
 
     def generate_report(
         self,
         input: DownloadCertificatesUseCaseOutput,
     ) -> str:
         """
-        Running the report generator by converting the input to rows, making the plotly table and saving the file.
+        Running the report generator by converting the input to rows and generating an HTML report.
 
         :param input: The input.
         :type input: DownloadCertificatesUseCaseOutput
@@ -272,54 +201,133 @@ class DownloadCertificatesReportGenerator:
         """
         rows = self._convert_elements_to_rows(input.output)
         date = datetime.now()
-        table = self._make_plotly_table(date, rows)
-        html_content = table.to_html(full_html=True, include_plotlyjs="cdn")
+        table_html = self._generate_html_table(date, rows)
         
-        # Add CSS to ensure proper text wrapping and prevent overlapping
-        css_style = """
-        <style>
-            .js-plotly-plot .plotly .modebar {
-                display: none;
-            }
-            .js-plotly-plot .plotly table {
-                table-layout: fixed;
-                width: 100%;
-                border-collapse: collapse;
-            }
-            .js-plotly-plot .plotly table td {
-                white-space: normal !important;
-                word-wrap: break-word !important;
-                overflow-wrap: break-word !important;
-                padding: 8px !important;
-                vertical-align: top !important;
-                position: relative !important;
-                display: table-cell !important;
-            }
-            .js-plotly-plot .plotly table th {
-                white-space: normal !important;
-                word-wrap: break-word !important;
-                padding: 8px !important;
-                position: relative !important;
-                display: table-cell !important;
-            }
-            .js-plotly-plot .plotly table tbody tr:last-child td {
-                position: relative !important;
-                display: table-cell !important;
-                white-space: normal !important;
-                word-wrap: break-word !important;
-                overflow-wrap: break-word !important;
-            }
-        </style>
-        """
+        # Generate complete HTML document
+        html_content = f"""<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Certificados - {date.strftime('%d/%m/%Y')}</title>
+    <style>
+        * {{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }}
         
-        # Insert CSS before closing head tag or after opening body tag
-        if "</head>" in html_content:
-            html_content = html_content.replace("</head>", css_style + "</head>")
-        elif "<body>" in html_content:
-            html_content = html_content.replace("<body>", "<body>" + css_style)
-        else:
-            # If no head/body tags, prepend to html content
-            html_content = css_style + html_content
+        body {{
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }}
+        
+        .report-container {{
+            max-width: 100%;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }}
+        
+        h1 {{
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 24px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }}
+        
+        .certificates-table {{
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            table-layout: fixed;
+        }}
+        
+        .certificates-table thead {{
+            background-color: #3498db;
+            color: white;
+        }}
+        
+        .certificates-table th {{
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #2980b9;
+            word-wrap: break-word;
+        }}
+        
+        .certificates-table td {{
+            padding: 10px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+        }}
+        
+        .certificates-table tbody tr:nth-child(even) {{
+            background-color: #f9f9f9;
+        }}
+        
+        .certificates-table tbody tr:hover {{
+            background-color: #f0f0f0;
+        }}
+        
+        .cell-cnpj {{
+            width: 12%;
+        }}
+        
+        .cell-doc-type {{
+            width: 18%;
+        }}
+        
+        .cell-error-selection {{
+            width: 20%;
+        }}
+        
+        .cell-download,
+        .cell-persistance,
+        .cell-ppe {{
+            width: 16.67%;
+        }}
+        
+        .status-success {{
+            color: #27ae60;
+            font-weight: bold;
+        }}
+        
+        .status-fail {{
+            color: #e74c3c;
+            font-weight: bold;
+        }}
+        
+        .error-details {{
+            margin-top: 5px;
+            font-size: 11px;
+            color: #7f8c8d;
+            line-height: 1.4;
+        }}
+        
+        .error-details br {{
+            display: block;
+            margin: 2px 0;
+        }}
+    </style>
+</head>
+<body>
+    <div class="report-container">
+        <h1>Relatório de Certificados - {date.strftime('%d/%m/%Y')}</h1>
+        {table_html}
+    </div>
+</body>
+</html>"""
         
         return html_content
 
