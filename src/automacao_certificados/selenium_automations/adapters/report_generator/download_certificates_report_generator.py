@@ -1,4 +1,5 @@
 from typing import Any, Sequence
+import html
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -97,8 +98,11 @@ class DownloadCertificatesReportGenerator:
         if not msg:
             return ""
 
+        # Escape HTML entities to prevent breaking HTML structure
+        escaped_msg = html.escape(msg)
+
         # Break message into multiple lines
-        wrapped = textwrap.wrap(msg, width=self.error_line_width)
+        wrapped = textwrap.wrap(escaped_msg, width=self.error_line_width)
 
         # Limit number of lines
         if len(wrapped) > self.max_error_lines:
@@ -278,21 +282,32 @@ class DownloadCertificatesReportGenerator:
                 display: none;
             }
             .js-plotly-plot .plotly table {
-                table-layout: auto;
+                table-layout: fixed;
                 width: 100%;
+                border-collapse: collapse;
             }
             .js-plotly-plot .plotly table td {
                 white-space: normal !important;
                 word-wrap: break-word !important;
                 overflow-wrap: break-word !important;
-                max-width: 0;
                 padding: 8px !important;
                 vertical-align: top !important;
+                position: relative !important;
+                display: table-cell !important;
             }
             .js-plotly-plot .plotly table th {
                 white-space: normal !important;
                 word-wrap: break-word !important;
                 padding: 8px !important;
+                position: relative !important;
+                display: table-cell !important;
+            }
+            .js-plotly-plot .plotly table tbody tr:last-child td {
+                position: relative !important;
+                display: table-cell !important;
+                white-space: normal !important;
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
             }
         </style>
         """
