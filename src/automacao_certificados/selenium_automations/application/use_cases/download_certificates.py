@@ -6,12 +6,14 @@ from automacao_certificados.selenium_automations.application import *
 from automacao_certificados.selenium_automations.core.exceptions import *
 
 from automacao_certificados.selenium_automations.infra.api_requester import PPEAPIRequester
+from automacao_certificados.selenium_automations.application.services import LoggingRegisterService
 
 class DownloadCertificatesUseCase:
     def __init__(
         self, 
         ppe_api_requester: PPEAPIRequester,
-        workflow_selector: WorkflowSelector
+        workflow_selector: WorkflowSelector,
+        logging_register_service: LoggingRegisterService
     ):
         """
         This use case is responsible for getting:
@@ -27,8 +29,54 @@ class DownloadCertificatesUseCase:
         if not isinstance(workflow_selector, WorkflowSelector):
             raise ValueError('workflow_selector must be a WorkflowSelector')
 
+        if not isinstance(logging_register_service, LoggingRegisterService):
+            raise ValueError('logging_register_service must be a LoggingRegisterService')
+
         self.ppe_api_requester = ppe_api_requester
         self.workflow_selector = workflow_selector
+        self.logging_register_service = logging_register_service
+
+    def _register_download_certificates_cron_execution(
+        self, 
+        certificates_to_download: list[CertificateToDownload]
+    ) -> None:
+        """
+        Registers the execution of the download certificates cron.
+        """
+        if not isinstance(certificates_to_download, list):
+            raise ValueError('certificates_to_download must be a list')
+
+        if not all(isinstance(certificate, CertificateToDownload) for certificate in certificates_to_download):
+            raise ValueError('all elements of certificates_to_download must be CertificateToDownload')
+
+        try:
+            self.logging_register_service.register_download_certificates_cron_execution(
+                input=RegisterDownloadCertificatesCronExecution(
+                    certificates_to_download=certificates_to_download,
+                    cron_datetime=datetime.now()
+                )
+            )
+        except LoggingRegisterServiceException as e:
+            print(f"Error registering download certificates cron execution: {e}")
+
+    def _register_download_certificate_result(
+        self, 
+        certificate_to_download: CertificateToDownload,
+        download_certificate_result: DownloadCertificateResult
+    ) -> None:
+        """
+        Registers the result of the download certificate.
+        """
+        try:
+            self.logging_register_service.register_download_certificate_result(
+                input=RegisterDownloadCertificateResult(
+                    certificate_to_download=certificate_to_download,
+                    download_certificate_result=download_certificate_result,
+                    download_datetime=datetime.now()
+                )
+            )
+        except LoggingRegisterServiceException as e:
+            print(f"Error registering download certificate result: {e}")
 
     def _get_certificates_to_download(self) -> list[CertificateToDownload]:
         """
@@ -50,6 +98,9 @@ class DownloadCertificatesUseCase:
         :return: the output of the download certificate use case.
         :rtype: DownloadCertificateResult
         """
+        if not isinstance(certificate, CertificateToDownload):
+            raise ValueError('certificate must be a CertificateToDownload')
+        
         try:
             workflow_output = self.workflow_selector.get_workflow(
                 certificate.cnpj, 
@@ -80,11 +131,17 @@ class DownloadCertificatesUseCase:
         :return: the list of outputs of the download certificate use case.
         :rtype: list[DownloadCertificateResult]
         """
+        if not isinstance(certificates_to_download, list):
+            raise ValueError('certificates_to_download must be a list')
+
+        if not all(isinstance(certificate, CertificateToDownload) for certificate in certificates_to_download):
+            raise ValueError('all elements of certificates_to_download must be CertificateToDownload')
+
         download_certificates_output = []
         
         for certificate in certificates_to_download:
             result = self._download_certificate(certificate)
-            print(result)
+            self._register_download_certificate_result(certificate, result)
             download_certificates_output.append(result)
 
         return DownloadCertificatesUseCaseOutput(
@@ -100,9 +157,9 @@ class DownloadCertificatesUseCase:
         :return: the list of outputs of the download certificate use case.
         :rtype: list[DownloadCertificateResult]
         """
-        print('ta aqui!')
         try:
             certificates_to_download = self._get_certificates_to_download()
+            self._register_download_certificates_cron_execution(certificates_to_download)
             output = self._download_certificates(certificates_to_download)
             return output
         except Exception as e:
