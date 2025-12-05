@@ -12,6 +12,7 @@ from automacao_certificados.selenium_automations.application.use_cases.email_use
 from automacao_certificados.selenium_automations.application.workflow.workflow_selector import (
     WorkflowSelector
 )
+from .services import ServiceFactory
 from .adapters import AdapterFactory
 
 
@@ -23,7 +24,7 @@ class UseCaseFactory:
     different adapters and workflows.
     """
     
-    def __init__(self, adapter_factory: AdapterFactory):
+    def __init__(self, adapter_factory: AdapterFactory, service_factory: ServiceFactory):
         """
         Initialize use case factory.
         
@@ -31,6 +32,7 @@ class UseCaseFactory:
             adapter_factory: Factory for creating adapters.
         """
         self.adapter_factory = adapter_factory
+        self.service_factory = service_factory
     
     def create_download_certificates_use_case(self) -> DownloadCertificatesUseCase:
         """
@@ -44,7 +46,8 @@ class UseCaseFactory:
             workflow_selector=WorkflowSelector(
                 municipio_getter_port=self.adapter_factory.create_receita_api_municipio_getter(),
                 estado_getter_port=self.adapter_factory.create_receita_api_estado_getter(),
-            )
+            ),
+            logging_register_service=self.service_factory.create_certificado_logging_register_service()
         )
     
     def create_send_download_certificates_report_via_email_use_case(self) -> SendDownloadCertificatesReportViaEmailUseCase:
