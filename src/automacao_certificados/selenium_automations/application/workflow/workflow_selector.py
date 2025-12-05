@@ -73,8 +73,8 @@ class WorkflowSelector:
         return FGTSWorkflowFactory().get_workflow()
     
     def _handle_federal_workflow(self):
-        raise NotImplementedError("not implemented to save tokens. remove the comment to reactivate this workflow")
-        #return FederalWorkflowFactory().get_workflow()
+        #raise NotImplementedError("not implemented to save tokens. remove the comment to reactivate this workflow")
+        return FederalWorkflowFactory().get_workflow()
 
     def _handle_estadual_workflow(self, cnpj):
         estado = self._get_estado_by_cnpj(cnpj)
