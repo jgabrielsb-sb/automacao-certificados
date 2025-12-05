@@ -3,7 +3,6 @@ from typing import Any, Sequence
 import pandas as pd
 import plotly.graph_objects as go
 import textwrap
-from pathlib import Path
 from datetime import datetime
 
 from automacao_certificados.selenium_automations.core.models import *
