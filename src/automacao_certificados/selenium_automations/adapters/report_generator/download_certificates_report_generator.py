@@ -1,6 +1,5 @@
 from typing import Any, Sequence
 
-from numpy.char import str_len
 import pandas as pd
 import plotly.graph_objects as go
 import textwrap
@@ -209,21 +208,50 @@ class DownloadCertificatesReportGenerator:
         display_rows = self._build_row_display(rows)
         df = pd.DataFrame(display_rows)
 
+        # Define column widths to prevent overlapping
+        # Adjust widths based on content type
+        column_widths = {
+            "cnpj": 120,
+            "document_type": 200,
+            "error_selection": 250,
+            "download": 300,
+            "persistance": 300,
+            "ppe": 300
+        }
+        
+        # Get widths in the same order as columns
+        widths = [column_widths.get(col, 200) for col in df.columns]
+
         fig = go.Figure(
             data=[
                 go.Table(
-                    header=dict(values=list(df.columns), align="left"),
+                    columnwidth=widths,
+                    header=dict(
+                        values=list(df.columns),
+                        align="left",
+                        fill_color="paleturquoise",
+                        font=dict(size=12, color="black"),
+                        height=40
+                    ),
                     cells=dict(
                         values=[df[col] for col in df.columns],
                         align="left",
-                        # no hoverinfo/hovertext here – Table cells don't support it
+                        fill_color="white",
+                        font=dict(size=11, color="black"),
+                        # Remove fixed height to allow cells to expand based on content
+                        line=dict(width=1, color="gray")
                     ),
                 )
             ]
         )
 
         fig.update_layout(
-            title=f"Relatório de Certificados - {date.strftime('%d/%m/%Y')}"
+            title=dict(
+                text=f"Relatório de Certificados - {date.strftime('%d/%m/%Y')}",
+                font=dict(size=16)
+            ),
+            autosize=True,
+            margin=dict(l=20, r=20, t=60, b=20)
         )
         return fig
 
@@ -243,5 +271,41 @@ class DownloadCertificatesReportGenerator:
         date = datetime.now()
         table = self._make_plotly_table(date, rows)
         html_content = table.to_html(full_html=True, include_plotlyjs="cdn")
+        
+        # Add CSS to ensure proper text wrapping and prevent overlapping
+        css_style = """
+        <style>
+            .js-plotly-plot .plotly .modebar {
+                display: none;
+            }
+            .js-plotly-plot .plotly table {
+                table-layout: auto;
+                width: 100%;
+            }
+            .js-plotly-plot .plotly table td {
+                white-space: normal !important;
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+                max-width: 0;
+                padding: 8px !important;
+                vertical-align: top !important;
+            }
+            .js-plotly-plot .plotly table th {
+                white-space: normal !important;
+                word-wrap: break-word !important;
+                padding: 8px !important;
+            }
+        </style>
+        """
+        
+        # Insert CSS before closing head tag or after opening body tag
+        if "</head>" in html_content:
+            html_content = html_content.replace("</head>", css_style + "</head>")
+        elif "<body>" in html_content:
+            html_content = html_content.replace("<body>", "<body>" + css_style)
+        else:
+            # If no head/body tags, prepend to html content
+            html_content = css_style + html_content
+        
         return html_content
 
