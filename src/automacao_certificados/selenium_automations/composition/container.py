@@ -28,9 +28,9 @@ class Container:
         """Initialize the container and wire all dependencies."""
         self.infrastructure = InfrastructureProvider()
         self.adapter_factory = AdapterFactory(self.infrastructure)
-        self.use_case_factory = UseCaseFactory(self.adapter_factory, self.service_factory)
         self.workflow_factory = WorkflowFactory(self.adapter_factory)
         self.service_factory = ServiceFactory(self.adapter_factory)
+        self.use_case_factory = UseCaseFactory(self.adapter_factory, self.service_factory)
     
     def get_download_certificates_use_case(self):
         """
