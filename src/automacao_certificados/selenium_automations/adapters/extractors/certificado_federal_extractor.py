@@ -190,15 +190,23 @@ class CertificadoFederalExtractor(DocumentExtractorPort):
             text = self._load_pdf_text()
 
             # Patterns to find identifier in federal certificates
+            # Order matters: more specific patterns first
             patterns = [
-                # Pattern 1: Protocol number format (common in Brazilian certificates)
+                # Pattern 1: "Código de controle da certidão:" followed by hexadecimal format
+                # This is the primary pattern for federal certificates (e.g., "18A8.FC3F.99B3.6D28")
+                r"Código\s+de\s+controle\s+da\s+certidão[:\s]*([A-F0-9]{4}\.[A-F0-9]{4}\.[A-F0-9]{4}\.[A-F0-9]{4})",
+                # Pattern 2: Hexadecimal format (4 groups of 4 hex chars separated by dots)
+                # This is the standard format for federal certificate identifiers
+                r"\b([A-F0-9]{4}\.[A-F0-9]{4}\.[A-F0-9]{4}\.[A-F0-9]{4})\b",
+                # Pattern 3: Protocol number format (common in Brazilian certificates)
                 r"(?:Protocolo|Protocolo\s+Número|Número\s+do\s+Protocolo)[:\s]*([A-Z0-9\./\-]+)",
-                # Pattern 2: Certificate number
-                r"(?:Certificado\s+Número|Número\s+da\s+Certidão|Código)[:\s]*([A-Z0-9\./\-]+)",
-                # Pattern 3: Standard protocol format: X.XXX.XXX/XXXX-XX
+                # Pattern 4: Certificate number with specific labels
+                r"(?:Certificado\s+Número|Número\s+da\s+Certidão)[:\s]*([A-Z0-9\./\-]+)",
+                # Pattern 5: Standard protocol format: X.XXX.XXX/XXXX-XX
                 r"\b(\d+\.\d+\.\d+/\d{4}-\d{2})\b",
-                # Pattern 4: Look for "Número" or "Código" followed by alphanumeric
-                r"(?:Número|Nº|Numero|Código)[\s:]*([A-Z0-9\./\-]+)",
+                # Pattern 6: "Código" followed by alphanumeric (but not "Código Tributário" or similar)
+                # Use word boundary to avoid matching partial words
+                r"\bCódigo\s+(?:de\s+)?(?:controle|da\s+certidão|certificado)[:\s]*([A-Z0-9\./\-]+)",
             ]
 
             for pattern in patterns:
