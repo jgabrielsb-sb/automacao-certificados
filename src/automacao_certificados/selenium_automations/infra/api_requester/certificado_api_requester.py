@@ -147,8 +147,9 @@ class CertificadoAPIRequester:
         :raises UnexpectedError: If an unexpected error occurs.
         """
         route = f"{self.base_url}/api/v1/documents"
-
-        response = self.http.get(url=route, params=filter.model_dump(mode="json"))
+        params = {k: v for k, v in filter.model_dump(mode="json").items() if v is not None}
+        
+        response = self.http.get(url=route, params=params)
         status_code = response.status_code
 
         if status_code == HTTPStatus.OK:

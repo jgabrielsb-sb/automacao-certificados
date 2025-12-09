@@ -34,7 +34,8 @@ def map_error_response(route: str, status: int, body: dict):
     if status == HTTPStatus.CONFLICT:
         raise ConflictError(route=route, message=body.get("message") or f"Conflict error. body response: {body}")
 
-    raise UnexpectedError(route=route, message=body.get("message") or f"Unexpected error. body response: {body}", status_code=status)
+    message=(body.get("message") or f"Unexpected error. body response: {body}") + f"Status code: {status}, Route: {route}"
+    raise UnexpectedError(route=route, message=message, status_code=status)
 
 
 
