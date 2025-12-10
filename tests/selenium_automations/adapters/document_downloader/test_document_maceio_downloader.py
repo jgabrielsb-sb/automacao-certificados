@@ -68,6 +68,10 @@ class TestHeadlessTrueCases:
     def driver(self):
         options = webdriver.ChromeOptions()
         options.add_argument('--headless=true')
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage") # important in Docker
+        options.add_argument("--disable-gpu")
+        options.add_argument("--window-size=1920,1080")
         return webdriver.Chrome(options=options)
 
     @pytest.fixture
