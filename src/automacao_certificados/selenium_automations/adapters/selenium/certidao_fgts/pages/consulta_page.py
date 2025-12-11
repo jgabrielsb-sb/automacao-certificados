@@ -305,8 +305,11 @@ class ConsultaPage(ConsultaPagePort):
         passed_captcha = False
 
         while not passed_captcha:
+            print("Redirecting to the page")
             self.redirect_to_page_executor().run()
+            print("Inserting the type of subscription value")
             self.insert_tipo_inscricao_value_executor(tipo_inscricao_value).run()
+            print("Inserting the subscription value")
             self.insert_inscricao_value_executor(inscricao_value).run()
             self.insert_estado_value_executor(state_value).run()
             #self.solve_captcha()
