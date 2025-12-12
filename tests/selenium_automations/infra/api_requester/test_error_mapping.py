@@ -38,7 +38,7 @@ class TestNotFoundMapping:
                 body={}
             )
 
-class TestBadrRequestMapping:
+class TestBadRequestMapping:
     def test_if_raises_bad_request_error_with_message(
         self,
     ):
@@ -94,7 +94,10 @@ class TestUnexpectedMapping:
                 status=500,
                 body={"message": "unexpected error message"}
             )
-        assert e.value.message == "unexpected error message"
+
+        assert "unexpected error message" in e.value.message
+        assert "test route" in e.value.route
+        assert 500 == e.value.status_code
 
     def test_if_raises_unexpected_error_without_message(
         self,
@@ -105,7 +108,11 @@ class TestUnexpectedMapping:
                 status=500,
                 body={}
             )
-        assert e.value.message == "Unexpected error. body response: {}"
+
+        assert "test route" in e.value.route
+        assert 500 == e.value.status_code
+        assert "Unexpected error" in e.value.message
+        assert "body response: {}" in e.value.message
 
     def test_if_raises_unexpected_error_with_status_code(
         self,
