@@ -111,4 +111,33 @@ class HttpxClient(HttpClient):
             raise HttpClientException(
                 f"Error when calling {url}. Original exception: {str(e)}"
             )
-        
+
+    def patch(
+        self,
+        url: str,
+        *,
+        params=None,
+        headers=None,
+        timeout=None,
+        json=None
+    ) -> HttpResponse:
+        """
+        Sends a PATCH request to the specified URL.
+        """
+        try:
+            return self._client.patch(
+                url=url,
+                params=params,
+                headers=headers,
+                timeout=timeout,
+                json=json
+            )
+        except httpx.ConnectError as e:
+            if "CERTIFICATE_VERIFY_FAILED" in str(e):
+                raise HttpClientSSLException(
+                    f"SSL verification failed when calling {url}. Original exception:{str(e)}"
+                ) from e
+            
+            raise HttpClientException(
+                f"Error when calling {url}. Original exception: {str(e)}"
+            )
