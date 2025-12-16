@@ -120,5 +120,35 @@ class PPEAPIRequester:
                 status_code=response.status_code
             )
 
+    def block_certificate(self, cnpj: str, document_type: DocumentTypeEnum) -> dict:
+        """
+        Blocks a certificate from the PPE API.
+
+        :param cnpj: The cnpj of the company.
+        :type cnpj: str
+        :param document_type: The document type.
+        :type document_type: DocumentTypeEnum
+        :return: The response data.
+        :rtype: dict
+        """
+        url = f"{self.base_url}/api/company/certificate/{cnpj}/pending/"
+        json = {'certificate': document_type.value}
         
-    
+        response = self.http.patch(url, json=json, headers=self._get_headers())
+
+        if response.status_code == HTTPStatus.OK:
+            return response.json()
+        elif response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR:
+            raise InternalServerError(
+                route=url,
+                message=f"Internal server error. The API Response down: {response.json()}",
+                status_code=response.status_code
+            )
+        else:
+            raise UnexpectedError(
+                route=url,
+                message=f"Unexpected error. The API Response down: {response.json()}",
+                status_code=response.status_code
+            )
+
+        
