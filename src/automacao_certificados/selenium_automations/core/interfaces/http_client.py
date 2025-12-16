@@ -67,4 +67,32 @@ class HttpClient(Protocol):
         :rtype: HttpResponse
         """
         pass
-    
+
+
+    def patch(
+        self,
+        url: str,
+        *,
+        params=None,
+        headers=None,
+        timeout=None,
+        json=None
+    ) -> HttpResponse:
+        """
+        Sends a PATCH request to the specified URL.
+
+        :param url: The URL to send the request to.
+        :type url: str
+        :param params: The query parameters to send with the request.
+        :type params: dict
+        :param headers: The headers to send with the request.
+        :type headers: dict
+        :param timeout: The timeout for the request.
+        :type timeout: float
+        :param json: The JSON data to send with the request.
+        :type json: dict
+        :return: The response from the request.
+        :rtype: HttpResponse
+        """
+        pass
+        
