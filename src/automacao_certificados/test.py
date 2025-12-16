@@ -11,20 +11,13 @@ from automacao_certificados.selenium_automations.core.models import Level, Statu
 from automacao_certificados.selenium_automations.core.models.interfaces.dto_workflow import StepResult, WorkflowOutput
 
 container = Container()
-api_requester = container.adapter_factory.create_direct_data_api_requester()
-httpx_client = container.infrastructure.http_client
+ppe_api_requester = container.adapter_factory.create_ppe_api_requester()
+direct_data_api_requester = container.adapter_factory.create_direct_data_api_requester()
 
 if __name__ == "__main__":
-    certificado_api_requester = container.adapter_factory.create_certificado_api_requester()
-    documents = certificado_api_requester.get_document(
-        DocumentFilter(
-            identifier="Tribut",
-        )
-    )
-    base64_pdf = base64.b64decode(documents[0].base64_pdf.encode("utf-8"))
-    with open("document.pdf", "wb") as f:
-        f.write(base64_pdf)
-
+    #response = ppe_api_requester.block_certificate(cnpj="57142978000105", document_type=DocumentTypeEnum.CERTIDAO_NEGATIVA_FEDERAL)
+    response = direct_data_api_requester.get_certificado_url(cnpj="21798960000119")
+    print(response)
 
 
     
