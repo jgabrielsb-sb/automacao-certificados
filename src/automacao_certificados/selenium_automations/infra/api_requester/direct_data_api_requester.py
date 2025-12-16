@@ -3,7 +3,11 @@
 
 import base64
 from http import HTTPStatus
-from automacao_certificados.selenium_automations.core.exceptions.adapters.api_requester_exceptions import CouldNotGeneratePDF, UnexpectedError
+from automacao_certificados.selenium_automations.core.exceptions.adapters.api_requester_exceptions import (
+    CouldNotGeneratePDF, 
+    UnexpectedError, 
+    SucessoComRessalvasException
+)
 from automacao_certificados.selenium_automations.core.interfaces.http_client import HttpClient
 from automacao_certificados.selenium_automations.utils.utils import validate_cnpj
 
@@ -37,14 +41,19 @@ class DirectDataAPIRequester:
 
         if response.status_code == HTTPStatus.OK:
             message = response.json()["metaDados"]["mensagem"]
-            if not message == 'Sucesso':
-                raise CouldNotGeneratePDF(
+            if message == 'Sucesso':   
+                url = response.json()["metaDados"]["urlComprovante"]           
+                return url
+            elif 'Sucesso Com Ressalvas' in message:
+                raise SucessoComRessalvasException(
                     message=f"The api call on {url} could not generate PDF. The response message: {message}"
                 )
-            
-            url = response.json()["metaDados"]["urlComprovante"]
-            return url
-
+            else:
+                raise UnexpectedError(
+                    route=url,
+                    message=f"Unexpected Error on route {url}.Status code: {response.status_code}. API Response: {response.json()}",
+                    status_code=response.status_code
+                )
         else:
             raise UnexpectedError(
                 route=url,
