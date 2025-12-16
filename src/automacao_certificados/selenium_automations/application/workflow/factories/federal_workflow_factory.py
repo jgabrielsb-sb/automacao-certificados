@@ -21,8 +21,13 @@ class FederalWorkflowFactory(WorkflowFactory):
             api_requester=DirectDataAPIRequester(
                 http=http_client,
                 token=settings.direct_data_api_key
+            ),
+            ppe_api_requester=PPEAPIRequester(
+                http=http_client,
+                api_key=settings.ppe_api_key
             )
         )
+        
         certificado_api_persistance = CertificadoApiPersistance(
             api_requester=CertificadoAPIRequester(
                 base_url=settings.base_certificado_api_url,
