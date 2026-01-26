@@ -1,5 +1,7 @@
 from automacao_certificados.selenium_automations.application.workflow.factories import *
 from automacao_certificados.selenium_automations.application.workflow.factories.federal_workflow_factory import FederalWorkflowFactory
+from automacao_certificados.selenium_automations.application.workflow.factories.delmiro_workflow_factory import DelmiroWorkflowFactory
+
 from automacao_certificados.selenium_automations.core.models import *
 from automacao_certificados.selenium_automations.application import *
 from automacao_certificados.selenium_automations.core.interfaces import *
@@ -60,6 +62,8 @@ class WorkflowSelector:
             return ArapiracaWorkflowFactory().get_workflow()
         if municipio == "MACEIO":
             return MaceioWorkflowFactory().get_workflow()
+        if municipio == "DELMIRO GOUVEIA":
+            return DelmiroWorkflowFactory().get_workflow()
         else:
             raise MunicipioNotSupportedException("there is no workflow to download the certificate for the given municipality: {}".format(municipio))
 
