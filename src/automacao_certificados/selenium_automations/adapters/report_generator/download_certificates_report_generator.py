@@ -45,6 +45,25 @@ class DownloadCertificatesReportGenerator:
         """
         return step_result.error_message if step_result is not None else None
 
+    def _format_document_type_with_municipio(
+        self,
+        document_type: str,
+        municipio: str | None
+    ) -> str:
+        """
+        Formats the document type with municipality information for municipal certificates.
+
+        :param document_type: The document type.
+        :type document_type: str
+        :param municipio: The municipality name if it's a municipal certificate.
+        :type municipio: str | None
+        :return: The formatted document type.
+        :rtype: str
+        """
+        if municipio:
+            return f"{document_type} - {municipio}"
+        return document_type
+
     def _convert_element_to_row(
         self,
         download_certificate_result: DownloadCertificateResult
@@ -57,9 +76,16 @@ class DownloadCertificatesReportGenerator:
         :return: The row.
         :rtype: DownloadCertificatesRow
         """
+        # Format document type with municipality if available
+        document_type_str = str(download_certificate_result.certificate.document_type.value)
+        formatted_document_type = self._format_document_type_with_municipio(
+            document_type_str,
+            download_certificate_result.municipio
+        )
+        
         return DownloadCertificatesRow(
             cnpj=download_certificate_result.certificate.cnpj,
-            document_type=download_certificate_result.certificate.document_type,
+            document_type=formatted_document_type,
             error_selection=download_certificate_result.error_selection,
             download_step_is_sucess=self._is_step_sucess(download_certificate_result.workflow_output.download_output_result),
             download_step_error_message=self._get_error_message(download_certificate_result.workflow_output.download_output_result),

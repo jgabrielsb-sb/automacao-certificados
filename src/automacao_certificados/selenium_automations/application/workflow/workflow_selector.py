@@ -88,6 +88,24 @@ class WorkflowSelector:
         else:
             raise EstadoNotSupportedException("there is no workflow to download the certificate for the given state: {}".format(estado))
 
+    def get_municipio_for_certificate(self, cnpj: str, document_type: DocumentTypeEnum) -> str | None:
+        """
+        Gets the municipality name for a certificate if it's a municipal certificate.
+
+        :param cnpj: The cnpj of the company.
+        :type cnpj: str
+        :param document_type: The document type.
+        :type document_type: DocumentTypeEnum
+        :return: The municipality name if it's a municipal certificate, None otherwise.
+        :rtype: str | None
+        """
+        if document_type == DocumentTypeEnum.CERTIDAO_NEGATIVA_MUNICIPAL:
+            try:
+                return self._get_municipio_by_cnpj(cnpj)
+            except Exception:
+                return None
+        return None
+
     def get_workflow(self, cnpj: str, document_type: DocumentTypeEnum):
         """
         Selects the correct workflow based on the cnpj and document type.

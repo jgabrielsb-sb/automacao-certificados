@@ -101,6 +101,17 @@ class DownloadCertificatesUseCase:
         if not isinstance(certificate, CertificateToDownload):
             raise ValueError('certificate must be a CertificateToDownload')
         
+        # Get municipality for municipal certificates
+        municipio = None
+        try:
+            municipio = self.workflow_selector.get_municipio_for_certificate(
+                certificate.cnpj,
+                certificate.document_type
+            )
+        except Exception:
+            # If we can't get municipality, continue without it
+            pass
+        
         try:
             workflow_output = self.workflow_selector.get_workflow(
                 certificate.cnpj, 
@@ -110,13 +121,15 @@ class DownloadCertificatesUseCase:
             return DownloadCertificateResult(
                 certificate=certificate,
                 error_selection=str(e),
-                workflow_output=WorkflowOutput()
+                workflow_output=WorkflowOutput(),
+                municipio=municipio
             )
         
         return DownloadCertificateResult(
             certificate=certificate,
             error_selection=None,
-            workflow_output=workflow_output
+            workflow_output=workflow_output,
+            municipio=municipio
         )
 
     def _download_certificates(

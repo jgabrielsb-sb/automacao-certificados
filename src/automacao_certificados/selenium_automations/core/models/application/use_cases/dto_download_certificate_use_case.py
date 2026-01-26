@@ -10,6 +10,7 @@ class DownloadCertificateResult(BaseModel):
     certificate: CertificateToDownload
     error_selection: str | None = None
     workflow_output: WorkflowOutput
+    municipio: str | None = None  # Municipality name for municipal certificates
 
 class DownloadCertificatesUseCaseOutput(BaseModel):
     output: list[DownloadCertificateResult]
