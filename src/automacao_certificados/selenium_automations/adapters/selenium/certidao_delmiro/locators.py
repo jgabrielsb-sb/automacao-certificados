@@ -42,4 +42,9 @@ class Locators:
         '//*[@id="MvcViewerReportPanel"]/div'
     )
 
+    DIV_ERRO = (
+        By.XPATH,
+        '//*[@id="alertMensagemErro"]'
+    )
+
 locators = Locators()

@@ -231,6 +231,18 @@ class ConsultaPage(ConsultaPagePort):
 
         return executor
 
+    def get_error_text(
+        self
+    ) -> str:
+        """
+        Get the error text.
+        To execute an executor the method 'run()' must be called.
+        """
+        error_text_element = WebDriverWait(self.driver, 3).until(
+            EC.presence_of_element_located(locators.DIV_ERRO)
+        )
+        return error_text_element.text
+
     def run(
         self,
         cnpj: str,
@@ -240,26 +252,21 @@ class ConsultaPage(ConsultaPagePort):
         Args:
             cnpj: the CNPJ value as a str
         """
-        print("Redirecting to the page")
+        import time
         self.redirect_to_page_executor().run()
-        
-        print("Selecting tipo consulta")
         self.select_tipo_consulta_executor().run()
-        
-        print("Clicking tipo consulta economico")
         self.click_tipo_consulta_economico_executor().run()
-        
-        print("Inserting CNPJ")
         self.insert_cnpj_executor(cnpj).run()
-        
-        print("Selecting tipo certidao")
         self.select_tipo_certidao_executor().run()
-        
-        print("Clicking imprimir button")
         self.click_imprimir_button_executor().run()
-        
-        print("Clicking radio nova certidao")
         self.click_radio_nova_certidao_executor().run()
-        
-        print("Clicking continuar button")
         self.click_continuar_button_executor().run()
+        time.sleep(2)
+
+        error_text = self.get_error_text()
+        if error_text == '':
+            pass
+        elif 'Não existe uma entidade' in error_text:
+            raise CNPJNotFoundException(
+                cnpj_value=cnpj
+            )

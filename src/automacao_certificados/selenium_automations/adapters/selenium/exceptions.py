@@ -105,3 +105,18 @@ class NotFoundOnUFException(SeleniumAdapterException):
         super().__init__(
             f"Not found on UF error: the cnpj {cnpj_value} is not found on the state {state_value}."
         )
+
+class CNPJNotFoundException(SeleniumAdapterException):
+    """
+    Exception for the CNPJ not found.
+    """
+    def __init__(
+        self,
+        cnpj_value: str,
+    ):
+        if not isinstance(cnpj_value, str):
+            raise ValueError("cnpj_value must be a string")
+        
+        super().__init__(
+            f"CNPJ not found error: the CNPJ {cnpj_value} is not found."
+        )
