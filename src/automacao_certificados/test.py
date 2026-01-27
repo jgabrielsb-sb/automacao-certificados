@@ -1,10 +1,22 @@
 from automacao_certificados.selenium_automations.composition.container import Container
+from automacao_certificados.selenium_automations.infra.api_requester import AlagoasAPIRequester, PPEAPIRequester
+from automacao_certificados.selenium_automations.adapters.document_downloader import DocumentAlagoasDownloader
+from automacao_certificados.selenium_automations.core.models import DocumentDownloaderInput
+from automacao_certificados.config import settings
 
 container = Container()
 
+certidao_alagoas_downloader = DocumentAlagoasDownloader(
+    api_requester=AlagoasAPIRequester(
+        http=container.infrastructure.http_client
+    ),
+    ppe_api_requester=PPEAPIRequester(
+        http=container.infrastructure.http_client,
+        api_key=settings.ppe_api_key
+    )
+)
+cnpj = '12450268000104'
 
-municipio_getter_port = container.adapter_factory.create_receita_api_municipio_getter()
-cnpj = '17503314000100'
 if __name__ == "__main__":
-    municipio = municipio_getter_port.run(cnpj=cnpj)
-    print(municipio)
+    output = certidao_alagoas_downloader.run(input=DocumentDownloaderInput(cnpj=cnpj))
+    print(output)
