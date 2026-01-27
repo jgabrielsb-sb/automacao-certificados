@@ -74,7 +74,7 @@ class AlagoasAPIRequester:
                     custom_message=custom_message
                 )
             elif description and 'Não foi possível emitir' in description:
-                raise CouldNotGeneratePDF(
+                raise SucessoComRessalvasException(
                     message=f"Could not generate PDF caused by CNPJ issues: API Response: {response.json()}"
                 )
             else:

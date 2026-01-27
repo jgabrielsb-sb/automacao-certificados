@@ -117,7 +117,7 @@ class TestAlagoasAPIRequester:
             http=HttpxClient()
         )
 
-        with pytest.raises(CouldNotGeneratePDF) as e:
+        with pytest.raises(SucessoComRessalvasException) as e:
             api_requester.get_certificado(cnpj="32652732000189")
 
         assert route.called
