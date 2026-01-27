@@ -62,9 +62,8 @@ class DocumentAlagoasDownloader(DocumentDownloaderPort):
         try:
             return self.api_requester.get_certificado(cnpj=cnpj)
         except SucessoComRessalvasException as e:
-            # note = self._block_on_ppe(cnpj=cnpj)
-            # raise SucessoComRessalvasException(message=f"{e.message}. {note}") from e
-            raise SucessoComRessalvasException(message=e.message)  ## don't need to block on ppe anymore; just raise the exception
+            note = self._block_on_ppe(cnpj=cnpj)
+            raise SucessoComRessalvasException(message=f"{e.message}. {note}") from e
 
     def get_certificado_base64(self, cnpj: str) -> str:
         if not isinstance(cnpj, str):
