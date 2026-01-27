@@ -67,13 +67,22 @@ class AlagoasAPIRequester:
         elif response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR:
             description = response.json().get('description')
             
-            if 'CNPJ inválido' in description:
+            if description and'CNPJ inválido' in description:
                 custom_message = f"CNPJ is invalid or does not exist: {cnpj}. API Response: {response.json()}"
                 raise InvalidCNPJException(
                     cnpj=cnpj,
                     custom_message=custom_message
                 )
-
+            elif description and 'Não foi possível emitir' in description:
+                raise CouldNotGeneratePDF(
+                    message=f"Could not generate PDF caused by CNPJ issues: API Response: {response.json()}"
+                )
+            else:
+                raise UnexpectedError(
+                    route=url,
+                    message=f"Unexpected error. API Response: {response.json()}",
+                    status_code=response.status_code
+                )
         else:
             raise UnexpectedError(
                 route=url,

@@ -96,3 +96,51 @@ class TestAlagoasAPIRequester:
 
         assert route.called
         assert e.value.message == "Unexpected error: API Response: {'message': 'unexpected error'}"
+
+    @respx.mock
+    def test_500_response_with_could_not_generate_pdf(self):
+        json_response = {
+            'message': 'error.validation', 
+            'description': 'Não foi possível emitir a Certidão Positiva com Efeito Negativo para esse CNPJ conforme Art. 258 do Decreto 25.370 de 19 de março de 2013!', 
+            'status': 0, 
+            'fieldErrors': None
+        }
+        route = respx.post(f"{BASE_URL}/certidao/sfz-certidao-api/api/public/emitirCertidao").mock(
+            return_value=Response(
+                500, 
+                json=json_response
+            )
+        )
+
+        api_requester = AlagoasAPIRequester(
+            base_url=BASE_URL,
+            http=HttpxClient()
+        )
+
+        with pytest.raises(CouldNotGeneratePDF) as e:
+            api_requester.get_certificado(cnpj="32652732000189")
+
+        assert route.called
+        assert e.value.message == f"Could not generate PDF caused by CNPJ issues: API Response: {json_response}"
+
+    @respx.mock
+    def test_500_response_with_unexpected_error(self):
+        json_response = {
+            'message': 'unexpected error'
+        }
+        route = respx.post(f"{BASE_URL}/certidao/sfz-certidao-api/api/public/emitirCertidao").mock(
+            return_value=Response(500, json=json_response)
+        )
+
+        api_requester = AlagoasAPIRequester(
+            base_url=BASE_URL,
+            http=HttpxClient()
+        )
+
+        with pytest.raises(UnexpectedError) as e:
+            api_requester.get_certificado(cnpj="32652732000189")
+
+        assert route.called
+        assert e.value.message == f"Unexpected error. API Response: {json_response}"
+
+    
