@@ -42,7 +42,7 @@ class DocumentFederalDownloader(DocumentDownloaderPort):
         except APIRequesterException as e:
             return (
                 "OBS: the request to block the search for the certificate got an error: "
-                f"{e.message}"
+                f"{str(e)}"
             )
 
     def _get_base64_or_raise_ressalvas(self, *, cnpj: str) -> str:
