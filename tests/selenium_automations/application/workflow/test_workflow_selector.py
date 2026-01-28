@@ -45,7 +45,7 @@ class TestWorkflowSelector:
 
     def test_if_raises_value_error_when_not_valid_municipio(self):
         mock_municipio_getter_port = Mock(spec=MunicipioGetterPort)
-        mock_municipio_getter_port.run.return_value = "DELMIRO GOUVEIA"
+        mock_municipio_getter_port.run.return_value = "INVALID"
         
         workflow_selector = WorkflowSelector(
             municipio_getter_port=mock_municipio_getter_port,
@@ -57,7 +57,7 @@ class TestWorkflowSelector:
         with pytest.raises(WorkflowSelectorException) as e:
             workflow = workflow_selector.get_workflow(cnpj, document_type)
         
-        assert "there is no workflow to download the certificate for the given municipality: {}".format("DELMIRO GOUVEIA") in str(e.value)
+        assert "there is no workflow to download the certificate for the given municipality: {}".format("INVALID") in str(e.value)
 
     def test_if_raises_value_error_when_document_type_is_not_a_document_type_enum(self):
         mock_municipio_getter_port = Mock(spec=MunicipioGetterPort)
@@ -107,5 +107,68 @@ class TestWorkflowSelector:
         
         assert "there is no workflow to download the certificate for the given state: {}".format("INVALID") in str(e.value)
 
+    def test_if_returns_arapiraca_workflow_when_municipio_is_arapiraca(self):
+        mock_municipio_getter_port = Mock(spec=MunicipioGetterPort)
+        mock_municipio_getter_port.run.return_value = "ARAPIRACA"
         
+        workflow_selector = WorkflowSelector(
+            municipio_getter_port=mock_municipio_getter_port,
+            estado_getter_port=MagicMock(spec=EstadoGetterPort)
+        )
+
+        cnpj = "12345678912345"
+        document_type = DocumentTypeEnum.CERTIDAO_NEGATIVA_MUNICIPAL
+        workflow = workflow_selector.get_workflow(cnpj, document_type)
+
+        assert isinstance(workflow, Workflow)
+        assert isinstance(workflow.document_downloader, DocumentArapiracaDownloader)
+
+    def test_if_returns_maceio_workflow_when_municipio_is_maceio(self):
+        mock_municipio_getter_port = Mock(spec=MunicipioGetterPort)
+        mock_municipio_getter_port.run.return_value = "MACEIO"
+        
+        workflow_selector = WorkflowSelector(
+            municipio_getter_port=mock_municipio_getter_port,
+            estado_getter_port=MagicMock(spec=EstadoGetterPort)
+        )
+
+        cnpj = "12345678912345"
+        document_type = DocumentTypeEnum.CERTIDAO_NEGATIVA_MUNICIPAL
+        workflow = workflow_selector.get_workflow(cnpj, document_type)
+
+        assert isinstance(workflow, Workflow)
+        assert isinstance(workflow.document_downloader, DocumentMaceioDownloader)
+
+    def test_if_returns_delmiro_workflow_when_municipio_is_delmiro_gouveia(self):
+        mock_municipio_getter_port = Mock(spec=MunicipioGetterPort)
+        mock_municipio_getter_port.run.return_value = "DELMIRO GOUVEIA"
+        
+        workflow_selector = WorkflowSelector(
+            municipio_getter_port=mock_municipio_getter_port,
+            estado_getter_port=MagicMock(spec=EstadoGetterPort)
+        )
+
+        cnpj = "12345678912345"
+        document_type = DocumentTypeEnum.CERTIDAO_NEGATIVA_MUNICIPAL
+        workflow = workflow_selector.get_workflow(cnpj, document_type)
+
+        assert isinstance(workflow, Workflow)
+        assert isinstance(workflow.document_downloader, DocumentDelmiroDownloader)
+
+    def test_if_returns_penedo_workflow_when_municipio_is_penedo(self):
+        mock_municipio_getter_port = Mock(spec=MunicipioGetterPort)
+        mock_municipio_getter_port.run.return_value = "PENEDO"
+        
+        workflow_selector = WorkflowSelector(
+            municipio_getter_port=mock_municipio_getter_port,
+            estado_getter_port=MagicMock(spec=EstadoGetterPort)
+        )
+
+        cnpj = "12345678912345"
+        document_type = DocumentTypeEnum.CERTIDAO_NEGATIVA_MUNICIPAL
+        workflow = workflow_selector.get_workflow(cnpj, document_type)
+
+        assert isinstance(workflow, Workflow)
+        assert isinstance(workflow.document_downloader, DocumentPenedoDownloader)
+
         
