@@ -8,7 +8,7 @@ from automacao_certificados.config import settings
 from automacao_certificados.selenium_automations.infra.api_requester import (
     AlagoasAPIRequester,
     CertificadoAPIRequester,
-    PPEAPIRequester
+    PPEAPIRequester,
 )
 
 
@@ -19,6 +19,10 @@ class AlagoasWorkflowFactory(WorkflowFactory):
         document_downloader = DocumentAlagoasDownloader(
             api_requester=AlagoasAPIRequester(
                 http=http_client
+            ),
+            ppe_api_requester=PPEAPIRequester(
+                http=http_client,
+                api_key=settings.ppe_api_key
             )
         )
         certificado_api_persistance = CertificadoApiPersistance(
