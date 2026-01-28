@@ -5,11 +5,23 @@ from selenium.webdriver.chrome.options import Options
 
 from automacao_certificados.config import settings
 
+import os
+
 HEADLESS = settings.headless
 
 def get_options():
     options = webdriver.ChromeOptions()
+    download_dir = os.path.abspath("downloads")
 
+    prefs = {
+        "download.default_directory": download_dir,
+        "download.prompt_for_download": False,
+        "download.directory_upgrade": True,
+        "plugins.always_open_pdf_externally": True,  # key line
+    }
+    
+    options.add_experimental_option("prefs", prefs)
+    
     if HEADLESS:
         options.add_argument('--headless')
         options.add_argument("--no-sandbox")
