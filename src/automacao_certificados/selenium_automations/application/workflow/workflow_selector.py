@@ -64,6 +64,8 @@ class WorkflowSelector:
             return MaceioWorkflowFactory().get_workflow()
         if municipio == "DELMIRO GOUVEIA":
             return DelmiroWorkflowFactory().get_workflow()
+        if municipio == "PENEDO":
+            return PenedoWorkflowFactory().get_workflow()
         else:
             raise MunicipioNotSupportedException("there is no workflow to download the certificate for the given municipality: {}".format(municipio))
 

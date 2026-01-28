@@ -4,3 +4,4 @@ from .document_alagoas_downloader import DocumentAlagoasDownloader
 from .document_arapiraca_downloader import DocumentArapiracaDownloader
 from .document_federal_downloader import DocumentFederalDownloader
 from .document_delmiro_downloader import DocumentDelmiroDownloader
+from .document_penedo_downloader import DocumentPenedoDownloader
