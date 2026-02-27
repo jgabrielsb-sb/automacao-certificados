@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     email_host_user: str
     email_host_password: str
 
+    ####
+    email_financeiro: str
+
     # ✅ new way to define config
     model_config = SettingsConfigDict(
         env_file=".env",
