@@ -71,7 +71,8 @@ class AdapterFactory:
             Configured ReceitaAPIRequester instance.
         """
         return ReceitaAPIRequester(
-            http=self.infrastructure.http_client
+            http=self.infrastructure.http_client,
+            base_url=settings.nota_facil_base_url
         )
     
     def create_direct_data_api_requester(self) -> DirectDataAPIRequester:

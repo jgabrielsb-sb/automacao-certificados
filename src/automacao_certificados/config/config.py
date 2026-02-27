@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     # receita api
     nota_facil_username: str
     nota_facil_password: str
+    nota_facil_base_url: str
 
     ##### EMAIL SETTINGS #####
     email_host: str

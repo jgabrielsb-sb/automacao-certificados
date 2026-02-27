@@ -1,32 +1,7 @@
-from automacao_certificados.selenium_automations.adapters.selenium.certidao_municipal_penedo.pages.consulta_page import ConsultaPage
-from automacao_certificados.selenium_automations.adapters.selenium.certidao_municipal_penedo.pages.download_page import DownloadPage
-
 from automacao_certificados.selenium_automations.composition.container import Container
-from automacao_certificados.selenium_automations.adapters.image_processor import GroqImageProcessor
-from automacao_certificados.selenium_automations.adapters.municipio_getter.receita_api_getter import ReceitaAPIMunicipioGetter
-import base64
-from automacao_certificados.selenium_automations.infra.api_requester import ReceitaAPIRequester
-if __name__ == "__main__":
-    container = Container()
 
-    municipio = ReceitaAPIMunicipioGetter(
-        api_requester=ReceitaAPIRequester(
-            http=container.infrastructure.http_client
-        )
-    ).get_municipio_by_cnpj('12243697000100')
-    print(municipio)
-    # consulta_page = ConsultaPage(
-    #     driver=container.infrastructure.webdriver,
-    #     image_processor=GroqImageProcessor(
-    #         client=container.infrastructure.groq_client,
-    #     )
-    # )
-    # download_page = DownloadPage(
-    #     driver=container.infrastructure.webdriver,
-    # )
-    # consulta_page.run(cnpj='12243697000100')
-    # document_extracted, base64_pdf = download_page.run()
-    
-    # with open('output.pdf', 'wb') as f:
-    #     f.write(base64.b64decode(base64_pdf))
-    # print(document_extracted)
+container = Container()
+
+api_requester = container.adapter_factory.create_receita_api_requester()
+company = api_requester.get_company(cnpj='12243697000100')
+print(company)

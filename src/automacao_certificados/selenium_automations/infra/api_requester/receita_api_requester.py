@@ -22,49 +22,6 @@ class ReceitaAPIRequester:
         self.base_url = base_url
         self.http = http
 
-    def _get_token(self) -> str:
-        """
-        Gets the token for the Receita API requests.
-
-        :return: The token.
-        :rtype: str
-        :raises UnexpectedError: If an unexpected error occurs.
-        """
-        headers = {'Content-Type': 'application/x-www-form-urlencoded',}
-
-        data_to_send = {
-            'username': settings.nota_facil_username, 
-            'password': settings.nota_facil_password,
-            'grant_type': 'password',
-            'scope': 'read:self'
-        }
-
-        response = self.http.post(url=f"https://api.notafacil.hml.sebrae.al/ppe/api/v1/token", data=data_to_send, headers=headers)
-        status_code = response.status_code
-
-        if status_code == HTTPStatus.OK:
-            token = response.json().get('access_token')
-            return token
-        else:
-            raise UnexpectedError(
-                route=f"{self.base_url}/token",
-                message=f"Unexpected error. The API Response down: {response.text}",
-                status_code=status_code
-            )
-
-    def _get_headers(self) -> dict:
-        """
-        Gets the headers for the Receita API requests.
-
-        :return: The headers.
-        :rtype: dict
-        """
-        token = self._get_token()
-        headers = {
-            'Authorization': f'Bearer {token}',
-        }
-        return headers
-
     def get_company(
         self,
         cnpj: str
@@ -80,11 +37,11 @@ class ReceitaAPIRequester:
         :raises NotFoundError: If the company is not found.
         :raises UnexpectedError: If an unexpected error occurs.
         """
-        url = f"{self.base_url}/empresa-receita/get-by-cnpj/{cnpj}"
-        response = self.http.get(url, headers=self._get_headers())
+        url = f"{self.base_url}/receita/api/v1/empresa-receita/get-by-cnpj/{cnpj}"
+        response = self.http.get(url)
     
         if response.status_code == HTTPStatus.OK:
-            data = response.json()["data"]
+            data = response.json()
             return ReceitaAPIGetCompanyResponse.model_validate(data)
         
         elif response.status_code == HTTPStatus.NOT_FOUND:
@@ -92,7 +49,6 @@ class ReceitaAPIRequester:
                 raise RouteNotFoundError(
                     route=url, 
                     message=f"Route not found: {url}",
-                    status_code=response.status_code
                 )
             
             raise NotFoundError(
