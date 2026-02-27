@@ -16,7 +16,7 @@ download_certificates_use_case = container.use_case_factory.create_download_cert
 send_application_broke_email_use_case = container.use_case_factory.create_send_application_broke_report_via_email_use_case()
 send_report_email_use_case = container.use_case_factory.create_send_download_certificates_report_via_email_use_case()
 
-send_to_emails=["jgabrielsb2002@gmail.com"]
+send_to_emails=["jgabrielsb2002@gmail.com","souza@al.sebrae.com.br"]
 sender_email=settings.email_host_user
 
 def run():
