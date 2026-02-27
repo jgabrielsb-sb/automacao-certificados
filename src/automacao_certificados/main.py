@@ -21,14 +21,15 @@ sender_email=settings.email_host_user
 
 def run():
     download_certificates_output = download_certificates_use_case.run()
-    send_report_email_use_case.run(
-        input=SendDownloadCertificatesReportViaEmailUseCaseInput(
-            download_certificates_output=download_certificates_output,
-            send_to_emails=send_to_emails,
-            sender_email=sender_email,
-            date=date.today()
+    for email in send_to_emails:
+        send_report_email_use_case.run(
+            input=SendDownloadCertificatesReportViaEmailUseCaseInput(
+                download_certificates_output=download_certificates_output,
+                send_to_emails=[email],
+                sender_email=sender_email,
+                date=date.today()
+            )
         )
-    )
 
 
 schedule.every().day.at(settings.run_cron_time).do(run)
