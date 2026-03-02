@@ -2,7 +2,8 @@
 from automacao_certificados.selenium_automations.adapters.extractors.certificado_federal_extractor import CertificadoFederalExtractor
 from automacao_certificados.selenium_automations.core.exceptions.adapters.api_requester_exceptions import (
     APIRequesterException, 
-    SucessoComRessalvasException
+    SucessoComRessalvasException,
+    DocumentoEntidadeNaoEncontradaException
 )
 from automacao_certificados.selenium_automations.core.interfaces import DocumentDownloaderPort
 from automacao_certificados.selenium_automations.core.models.interfaces.dto_document_downloader import DocumentDownloaderInput, DocumentDownloaderOutput
@@ -54,7 +55,10 @@ class DocumentFederalDownloader(DocumentDownloaderPort):
         """
         try:
             return self.api_requester.get_certificado_base64(cnpj=cnpj)
-        except SucessoComRessalvasException as e:
+        except (
+            SucessoComRessalvasException,
+            DocumentoEntidadeNaoEncontradaException
+        ) as e:
             note = self._block_on_ppe(cnpj=cnpj)
             raise SucessoComRessalvasException(message=f"{e.message}. {note}") from e
 

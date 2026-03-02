@@ -6,7 +6,8 @@ from http import HTTPStatus
 from automacao_certificados.selenium_automations.core.exceptions.adapters.api_requester_exceptions import (
     CouldNotGeneratePDF, 
     UnexpectedError, 
-    SucessoComRessalvasException
+    SucessoComRessalvasException,
+    DocumentoEntidadeNaoEncontradaException
 )
 from automacao_certificados.selenium_automations.core.interfaces.http_client import HttpClient
 from automacao_certificados.selenium_automations.utils.utils import validate_cnpj
@@ -46,6 +47,10 @@ class DirectDataAPIRequester:
                 return url
             elif 'Sucesso Com Ressalvas' in message:
                 raise SucessoComRessalvasException(
+                    message=f"The api call on {url} could not generate PDF. The response message: {message}"
+                )
+            elif 'Documento Entidade Não Encontrada' in message:
+                raise DocumentoEntidadeNaoEncontradaException(
                     message=f"The api call on {url} could not generate PDF. The response message: {message}"
                 )
             else:

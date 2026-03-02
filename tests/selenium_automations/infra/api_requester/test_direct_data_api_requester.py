@@ -5,7 +5,12 @@ import respx
 import pytest
 
 from automacao_certificados.selenium_automations.adapters.http.httpx_client import HttpxClient
-from automacao_certificados.selenium_automations.core.exceptions.adapters.api_requester_exceptions import CouldNotGeneratePDF, UnexpectedError
+from automacao_certificados.selenium_automations.core.exceptions.adapters.api_requester_exceptions import (
+    CouldNotGeneratePDF,
+    SucessoComRessalvasException, 
+    UnexpectedError, 
+    DocumentoEntidadeNaoEncontradaException
+)
 from automacao_certificados.selenium_automations.core.interfaces.http_client import HttpClient
 from automacao_certificados.selenium_automations.infra.api_requester.direct_data_api_requester import DirectDataAPIRequester
 
@@ -76,6 +81,38 @@ SUCESS_COM_RESALVAS_JSON_RESPONSE = {
   }
 }
 
+CERTIDAO_DEVE_SER_ENVIADA_PARA_A_MATRIZ_RESPONSE =  {
+  "metaDados": {
+    "consultaNome": "CCD - Certidão Conjunta de Débitos - Pessoa Jurídica",
+    "consultaUid": "direct-5f97c62f-a1d7-45ab-be61-42ee283305f3",
+    "chave": "CNPJ=17086031000100;",
+    "usuario": "João Gabriel Sampaio de Barros",
+    "mensagem": "Documento Entidade Não Encontrada.A certidão deve ser emitida para a matriz do contribuinte consultado",
+    "ip": "201.17.208.230",
+    "resultadoId": 2,
+    "resultado": "Sucesso Com Ressalvas",
+    "apiVersao": "v3",
+    "enviarCallback": False,
+    "gerarComprovante": True,
+    "urlComprovante": None,
+    "assincrono": False,
+    "data": "02/12/2025 15:40:53",
+    "tempoExecucaoMs": 9736
+  },
+  "retorno": {
+    "titulo": None,
+    "cnpj": "17.086.031/0001-00",
+    "nome": "ATITUDE SERVICOS DE LIMPEZA LTDA",
+    "portaria": None,
+    "emitidaAs": None,
+    "validaAte": None,
+    "status": "As informações disponíveis na Receita Federal e na Procuradoria-Geral da Fazenda Nacional sobre o contribuinte são insuficientes para emitir a certidão pela Internet.",
+    "possuiDividas": None,
+    "listaDividas": [],
+    "codigoControleCertidao": None
+  }
+}
+
 class TestDirectDataAPIRequester:
 
     @pytest.fixture 
@@ -117,13 +154,30 @@ class TestDirectDataAPIRequester:
             return_value=Response(status_code=200, json=SUCESS_COM_RESALVAS_JSON_RESPONSE),
         )
 
-        with pytest.raises(CouldNotGeneratePDF) as e:
+        with pytest.raises(SucessoComRessalvasException) as e:
             mock_direct_data_api_requester.get_certificado_url(cnpj)
 
         sucesso_com_ressalvas_message = "Sucesso Com Ressalvas. As informações disponíveis na Receita Federal e na Procuradoria-Geral da Fazenda Nacional sobre o contribuinte são insuficientes para emitir a certidão pela Internet"
         
         assert url in str(e.value)
         assert sucesso_com_ressalvas_message in str(e.value)
+
+    @respx.mock
+    def test_documento_entidade_nao_encontrada_get_certificado_url(
+        self,
+        mock_direct_data_api_requester
+    ):
+        cnpj = "12345678912345"
+        url = f"{mock_direct_data_api_requester.base_url}/api/CertidaoConjuntaDebitosPessoaJuridica"
+        route = respx.get(url=url).mock(
+            return_value=Response(status_code=200, json=CERTIDAO_DEVE_SER_ENVIADA_PARA_A_MATRIZ_RESPONSE),
+        )
+
+        with pytest.raises(DocumentoEntidadeNaoEncontradaException) as e:
+            mock_direct_data_api_requester.get_certificado_url(cnpj)
+
+        assert url in str(e.value)
+        assert "Documento Entidade Não Encontrada" in str(e.value)
 
     @respx.mock
     def test_unexpected_response(

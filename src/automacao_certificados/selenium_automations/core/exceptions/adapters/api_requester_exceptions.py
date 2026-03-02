@@ -90,6 +90,14 @@ class SucessoComRessalvasException(APIRequesterException):
         super().__init__(message)
         self.message = message
 
+class DocumentoEntidadeNaoEncontradaException(APIRequesterException):
+    def __init__(
+        self,
+        message: str
+    ):
+        super().__init__(message)
+        self.message = message
+
 class CouldNotGeneratePDF(APIRequesterException):
     def __init__(
         self,
