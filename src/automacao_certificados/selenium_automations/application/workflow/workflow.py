@@ -120,15 +120,29 @@ class Workflow:
                 )
             )
 
-            ppe_api_persistance_output = self.persist_data_in_ppe_api(
-                PPEPostCertificateRequest(
-                    document=cnpj,
-                    certificate=DocumentTypeEnum(document_downloader_output.output.document_extracted.document_type),
-                    number=document_downloader_output.output.document_extracted.identifier,
-                    validity=document_downloader_output.output.document_extracted.expiration_date,
-                    pdf=document_downloader_output.output.base64_pdf,
+           
+            if certificado_api_persistance_output.sucess == False:
+                
+                error_message = (
+                    "Erro ao persistir a certidão na API de Certidões."
+                    "Obs: A certidão será enviada ao PPE apenas em caso"
+                    "de persistência bem sucedida na API de Certidões."
                 )
-            )
+                ppe_api_persistance_output = StepResult(
+                    sucess=False, 
+                    error_message=error_message, 
+                    output=None
+                )
+            else:
+                ppe_api_persistance_output = self.persist_data_in_ppe_api(
+                    PPEPostCertificateRequest(
+                        document=cnpj,
+                        certificate=DocumentTypeEnum(document_downloader_output.output.document_extracted.document_type),
+                        number=document_downloader_output.output.document_extracted.identifier,
+                        validity=document_downloader_output.output.document_extracted.expiration_date,
+                        pdf=document_downloader_output.output.base64_pdf,
+                    )
+                )
         
 
         return WorkflowOutput(

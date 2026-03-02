@@ -1,9 +1,10 @@
+from automacao_certificados.selenium_automations.adapters.persistance import certificado_api_persistance
 from automacao_certificados.selenium_automations.application.workflow.workflow import Workflow
 from automacao_certificados.selenium_automations.core.exceptions.interfaces.exceptions import *
 from automacao_certificados.selenium_automations.core.interfaces import *
 from automacao_certificados.selenium_automations.core.models import *
 import pytest
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock, MagicMock, patch
 
 from automacao_certificados.selenium_automations.core.models.interfaces.dto_workflow import StepResult
 from automacao_certificados.selenium_automations.adapters.persistance.certificado_api_persistance import CertificadoApiPersistance
@@ -193,3 +194,47 @@ class TestWorkflow:
             persistance_output_result=StepResult(sucess=True, error_message=None, output=certificado_api_persistance.run.return_value),
             ppe_output_result=StepResult(sucess=True, error_message=None, output=ppe_api_persistance.run.return_value),
         )
+
+    def test_if_run_returns_correct_workflow_output_result_when_certificado_api_persistance_fails(
+        self,
+        workflow: Workflow,
+        monkeypatch
+    ):
+        document_extracted = DocumentExtracted(
+            supplier=Supplier(cnpj='12345678912345'),
+            document_type=DocumentTypeEnum.CERTIDAO_NEGATIVA_MUNICIPAL.value,
+            identifier='test',
+            expiration_date=date(2025, 1, 1)
+        )
+        perform_download_result = StepResult(
+            output=DocumentDownloaderOutput(
+                document_extracted=document_extracted,
+                base64_pdf="test"
+            ),
+            sucess=True,
+            error_message=None,
+        )
+
+        certificado_api_persistance_result = StepResult(
+            output=None,
+            sucess=False,
+            error_message="test error"
+        )
+
+        with (
+            patch.object(workflow,"perform_download",return_value=perform_download_result),
+            patch.object(workflow,"persist_data_in_certificado_api", return_value=certificado_api_persistance_result)
+        ):
+            result = workflow.run(cnpj="test")
+            
+            assert isinstance(result, WorkflowOutput)
+            
+            assert isinstance(result.ppe_output_result, StepResult)
+            assert result.ppe_output_result.sucess == False
+            assert "Erro ao persistir a certidão na API de Certidões" in result.ppe_output_result.error_message
+            assert result.ppe_output_result.output is None
+
+        
+
+        
+        
