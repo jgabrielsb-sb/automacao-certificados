@@ -49,6 +49,8 @@ class CertificadoApiPersistance(DocumentPersistancePort):
             return self.api_requester.register_supplier(
                 SupplierCreate(cnpj=supplier.cnpj)
             )
+        except Exception as e:
+            raise RuntimeError(f"Failed on get or create supplier: {e}")
 
     def save(self, input: DocumentPersistanceInput):
         """
@@ -77,6 +79,8 @@ class CertificadoApiPersistance(DocumentPersistancePort):
             raise DocumentTypeNotFoundError(
                 message=f"Document Type not found on API: {input.document_extracted.document_type}. Register it first."
             )
+        except Exception as e:
+            raise RuntimeError(f"Failed on get document type: {e}")
 
         # 3) Register document metadata
         document_create = DocumentCreate(

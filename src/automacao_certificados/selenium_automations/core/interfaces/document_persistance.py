@@ -31,4 +31,4 @@ class DocumentPersistancePort(ABC):
         try:
             return self.save(input)
         except Exception as e:
-            raise DocumentPersistanceException(e)
+            raise DocumentPersistanceException("Document Persistance failed: " + str(e))
