@@ -23,6 +23,38 @@ api_requester = CertificadoAPIRequester(
     http=HttpxClient()
 )
 
+class TestGetSupplier:
+    @respx.mock
+    def test_if_raises_not_found_error_if_there_is_not_supplier(self):
+        mock_response = Response(
+            200,
+            json={
+                "data": [],
+                "meta": {
+                    "page": 1,
+                    "per_page": 10,
+                    "total_items": 0,
+                    "total_pages": 1,
+                    "has_next": False,
+                    "has_previous": False
+                }
+            }
+        )
+
+        route = respx.get(f"{BASE_URL}/api/v1/suppliers/").mock(mock_response)
+       
+        # Create the HttpxClient inside the mocked context
+        http_client = HttpxClient()
+        api_requester = CertificadoAPIRequester(base_url=BASE_URL, http=http_client)
+
+        with pytest.raises(NotFoundError) as e:
+            api_requester.get_supplier(
+                dto_supplier.SupplierCreate(cnpj="12345678912")
+            )
+
+        assert "12345678912" in str(e)
+        
+
 class TestRegisterSupplier:
     @respx.mock
     def test_success_response(self):

@@ -20,7 +20,7 @@ class SendDownloadCertificatesReportViaEmailUseCase:
                 sender_email=input.sender_email
             ),
             email_content=EmailContent(
-                subject=f"[Certificados Automação] Relatório de Certificados {input.date.strftime('%d/%m/%Y')}",
+                subject=f"[Certidões Automação] Relatório de Certidões {input.date.strftime('%d/%m/%Y')}",
                 is_html=True,
                 body=download_certificates_report
             )
@@ -40,7 +40,7 @@ class SendApplicationBrokeReportViaEmailUseCase:
                 sender_email=input.sender_email
             ),
             email_content=EmailContent(
-                subject=f"[Certificados Automação] Aplicação Quebrou",
+                subject=f"[Certidões Automação] Aplicação Quebrou",
                 is_html=False,
                 body=input.error_details
             )
