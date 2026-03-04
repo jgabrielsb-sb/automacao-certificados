@@ -349,7 +349,7 @@ class DownloadCertificatesReportGenerator:
 </head>
 <body>
     <div class="report-container">
-        <h1>Relatório de Certificados - {date.strftime('%d/%m/%Y')}</h1>
+        <h1>Relatório de Certidões - {date.strftime('%d/%m/%Y')}</h1>
         {table_html}
     </div>
 </body>
