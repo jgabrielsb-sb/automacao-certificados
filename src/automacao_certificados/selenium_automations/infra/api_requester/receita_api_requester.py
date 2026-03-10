@@ -4,14 +4,12 @@ from automacao_certificados.selenium_automations.core.models import *
 from automacao_certificados.config import settings
 
 from http import HTTPStatus
-BASE_URL = "https://api.notafacil.hml.sebrae.al/receita/api/v1"
-
 
 class ReceitaAPIRequester:
     def __init__(
         self,
         http: HttpClient,
-        base_url: str = BASE_URL,
+        base_url: str,
     ):
         """
         The receita api requester is responsible for making requests to the Receita API.

@@ -48,7 +48,8 @@ class AdapterFactory:
         """
         return PPEAPIRequester(
             http=self.infrastructure.http_client,
-            api_key=settings.ppe_api_key
+            api_key=settings.ppe_api_key,
+            base_url=settings.base_ppe_api_url
         )
     
     def create_certificado_api_requester(self) -> CertificadoAPIRequester:

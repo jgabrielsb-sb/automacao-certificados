@@ -4,14 +4,12 @@ from automacao_certificados.selenium_automations.core.exceptions import *
 
 from http import HTTPStatus
 
-BASE_URL = 'https://ppe.hml.sebrae.al'
-
 class PPEAPIRequester:
     def __init__(
         self,
         http: HttpClient,
         api_key: str,
-        base_url: str = BASE_URL,
+        base_url: str,
     ):
         """
         The ppe api requester is responsible for making requests to the PPE API.
