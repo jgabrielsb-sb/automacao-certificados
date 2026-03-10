@@ -12,15 +12,12 @@ from automacao_certificados.selenium_automations.core.exceptions.adapters.api_re
 from automacao_certificados.selenium_automations.core.interfaces.http_client import HttpClient
 from automacao_certificados.selenium_automations.utils.utils import validate_cnpj
 
-DEFAULT_BASE_URL = 'https://apiv3.directd.com.br'
-
-
 class DirectDataAPIRequester:
     def __init__(
         self,
         http: HttpClient,
         token: str,
-        base_url: str = DEFAULT_BASE_URL
+        base_url: str
     ):
         self.base_url = base_url
         self.http = http

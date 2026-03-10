@@ -141,4 +141,4 @@ class WorkflowSelector:
                 raise DocumentTypeNotSupportedException("there is no workflow to download the certificate for the given document type: {}".format(document_type))
         
         except Exception as e:
-            raise WorkflowSelectorException(e)
+            raise WorkflowSelectorException("Unexpected error when selecting the workflow: {}".format(str(e)))

@@ -15,7 +15,10 @@ class Settings(BaseSettings):
     # ppe api
     base_ppe_api_url: str
     ppe_api_key: str
+
+    # direct data api
     direct_data_api_key: str
+    base_direct_data_api_url: str
 
     # receita api
     nota_facil_username: str

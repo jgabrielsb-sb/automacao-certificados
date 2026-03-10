@@ -17,15 +17,19 @@ class FederalWorkflowFactory(WorkflowFactory):
         #driver = get_global_webdriver()
         http_client = HttpxClient()
 
+        ppe_api_requester = PPEAPIRequester(
+            http=http_client,
+            api_key=settings.ppe_api_key,
+            base_url=settings.base_ppe_api_url
+        )
+
         document_downloader = DocumentFederalDownloader(
             api_requester=DirectDataAPIRequester(
                 http=http_client,
-                token=settings.direct_data_api_key
+                token=settings.direct_data_api_key,
+                base_url=settings.base_direct_data_api_url
             ),
-            ppe_api_requester=PPEAPIRequester(
-                http=http_client,
-                api_key=settings.ppe_api_key
-            )
+            ppe_api_requester=ppe_api_requester
         )
         
         certificado_api_persistance = CertificadoApiPersistance(
@@ -36,10 +40,7 @@ class FederalWorkflowFactory(WorkflowFactory):
         )
 
         ppe_api_persistance = PPEPersistance(
-            api_requester=PPEAPIRequester(
-                http=http_client,
-                api_key=settings.ppe_api_key
-            )
+            api_requester=ppe_api_requester
         )
 
         return Workflow(
