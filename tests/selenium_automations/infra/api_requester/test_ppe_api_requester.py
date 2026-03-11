@@ -8,11 +8,15 @@ from automacao_certificados.selenium_automations.infra.api_requester import PPEA
 def ppe_api_requester():
     return PPEAPIRequester(
         http=HttpxClient(),
-        api_key='test_api_key'
+        api_key='test_api_key',
+        base_url='https://test.ppe.api.com'
     )
 
 class TestPPEAPIRequester:
-    def test_convert_response_to_certificates_to_download(self):
+    def test_convert_response_to_certificates_to_download(
+        self, 
+        ppe_api_requester: PPEAPIRequester
+    ):
         mock_response_data = [
             {
             'cnpj': '14868712000131', 
@@ -42,11 +46,6 @@ class TestPPEAPIRequester:
             CertificateToDownload(cnpj='04740876000125', document_type=DocumentTypeEnum.CERTIDAO_NEGATIVA_FGTS),
             CertificateToDownload(cnpj='04740876000125', document_type=DocumentTypeEnum.CERTIDAO_NEGATIVA_MUNICIPAL),
         ]
-
-        ppe_api_requester = PPEAPIRequester(
-            http=HttpxClient(),
-            api_key='test_api_key'
-        )
 
         certificates_to_download = ppe_api_requester._convert_response_to_certificates_to_download(mock_response_data)
         assert certificates_to_download == expected_certificates_to_download
