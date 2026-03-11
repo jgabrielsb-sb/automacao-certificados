@@ -63,6 +63,76 @@ class TestGetOrCreateSupplier:
         assert supplier_response.id == 1
         assert supplier_response.cnpj == "12345678912"
 
+
+class TestGetOrCreateDocument:
+    def test_if_returns_existing_document_when_document_exists(
+        self,
+    ):
+        api_mock = Mock(spec=CertificadoAPIRequester)
+        api_mock.get_document.return_value = [
+            dto_document.DocumentResponse(
+                id=1,
+                supplier_id=1,
+                document_type_id=1,
+                identifier="test",
+                expiration_date=date(2025, 1, 1),
+                base64_pdf="PDF"
+            )
+        ]
+
+        api_persistence = CertificadoApiPersistance(api_requester=api_mock)
+        document_response = api_persistence.get_or_create_document(
+            dto_document.DocumentCreate(
+                supplier_id=1,
+                document_type_id=1,
+                identifier="test",
+                expiration_date=date(2025, 1, 1),
+                base64_pdf="PDF"
+            )
+        )
+
+        assert document_response.id == 1
+        assert document_response.supplier_id == 1
+        assert document_response.document_type_id == 1
+        assert document_response.identifier == "test"
+        assert document_response.expiration_date == date(2025, 1, 1)
+        assert document_response.base64_pdf == "PDF"
+
+    def test_if_returns_created_document_when_document_does_not_exist(
+        self,
+    ):
+        api_mock = Mock(spec=CertificadoAPIRequester)
+        api_mock.get_document.side_effect = NotFoundError(
+            route="test route",
+            message="test message"
+        )
+        api_mock.register_document.return_value = dto_document.DocumentResponse(
+            id=1,
+            supplier_id=1,
+            document_type_id=1,
+            identifier="test",
+            expiration_date=date(2025, 1, 1),
+            base64_pdf="PDF"
+        )
+
+        api_persistence = CertificadoApiPersistance(api_requester=api_mock)
+        document_response = api_persistence.get_or_create_document(
+            dto_document.DocumentCreate(
+                supplier_id=1,
+                document_type_id=1,
+                identifier="test",
+                expiration_date=date(2025, 1, 1),
+                base64_pdf="PDF"
+            )
+        )
+
+        assert document_response.id == 1
+        assert document_response.supplier_id == 1
+        assert document_response.document_type_id == 1
+        assert document_response.identifier == "test"
+        assert document_response.expiration_date == date(2025, 1, 1)
+        assert document_response.base64_pdf == "PDF"
+
 class TestSave:
     def test_sucess_case_with_already_created_supplier(
         self,
@@ -99,6 +169,10 @@ class TestSave:
             )
 
         api_mock = Mock(spec=CertificadoAPIRequester)
+        api_mock.get_document.side_effect = NotFoundError(
+            route="test route",
+            message="test message"
+        )
         monkeypatch.setattr(api_mock, "get_document_type", fake_api_get_document_type)
         monkeypatch.setattr(api_mock, "register_document", fake_api_register_document)
 

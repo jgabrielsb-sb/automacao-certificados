@@ -18,11 +18,12 @@ class AlagoasWorkflowFactory(WorkflowFactory):
         http_client = HttpxClient()
         document_downloader = DocumentAlagoasDownloader(
             api_requester=AlagoasAPIRequester(
-                http=http_client
+                http=http_client,
             ),
             ppe_api_requester=PPEAPIRequester(
                 http=http_client,
-                api_key=settings.ppe_api_key
+                api_key=settings.ppe_api_key,
+                base_url=settings.base_ppe_api_url
             )
         )
         certificado_api_persistance = CertificadoApiPersistance(
@@ -34,7 +35,8 @@ class AlagoasWorkflowFactory(WorkflowFactory):
         ppe_api_persistance = PPEPersistance(
             api_requester=PPEAPIRequester(
                 http=http_client,
-                api_key=settings.ppe_api_key
+                api_key=settings.ppe_api_key,
+                base_url=settings.base_ppe_api_url
             )
         )
         return Workflow(

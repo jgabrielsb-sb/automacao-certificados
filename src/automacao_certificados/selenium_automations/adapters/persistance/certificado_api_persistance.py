@@ -6,6 +6,8 @@ from automacao_certificados.selenium_automations.core.models import (
     SupplierResponse, 
     SupplierFilter,
     DocumentCreate,
+    DocumentFilter,
+    DocumentResponse,
     DocumentTypeFilter,
     DocumentPersistanceInput,
     DocumentPersistanceOutput,
@@ -52,6 +54,26 @@ class CertificadoApiPersistance(DocumentPersistancePort):
         except Exception as e:
             raise RuntimeError(f"Failed on get or create supplier: {e}")
 
+    def get_or_create_document(self, document: DocumentCreate) -> DocumentResponse:
+        try:
+            return self.api_requester.get_document(
+                DocumentFilter(
+                    identifier=document.identifier
+                )
+            )[0]
+        except NotFoundError:
+            return self.api_requester.register_document(
+                DocumentCreate(
+                    supplier_id=document.supplier_id,
+                    document_type_id=document.document_type_id,
+                    identifier=document.identifier,
+                    expiration_date=document.expiration_date,
+                    base64_pdf=document.base64_pdf
+                )
+            )
+        except Exception as e:
+            raise RuntimeError(f"Failed on get or create document: {e}")
+
     def save(self, input: DocumentPersistanceInput):
         """
         Saves the document on database using the certificado api.
@@ -91,6 +113,5 @@ class CertificadoApiPersistance(DocumentPersistancePort):
             base64_pdf=input.base64_pdf
         )
         
-        created = self.api_requester.register_document(document=document_create)        
-
+        created = self.get_or_create_document(document=document_create)        
         return DocumentPersistanceOutput(result=created.model_dump(mode="json"))
