@@ -41,7 +41,8 @@ class PenedoWorkflowFactory(WorkflowFactory):
         ppe_api_persistance = PPEPersistance(
             api_requester=PPEAPIRequester(
                 http=http_client,
-                api_key=settings.ppe_api_key
+                api_key=settings.ppe_api_key,
+                base_url=settings.base_ppe_api_url
             )
         )
 
